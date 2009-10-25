@@ -1,20 +1,29 @@
 //#include "png_canvas.h"
 //#include "all_objects.h"
 
-#include "types.h"
-#include "matrix.h"
+#include "interval.h"
 
 int main () {
-	glib::matrix<bool> shit(10,10,2);
+	glib::interval<int> kk(10,20,30);
+	kk.add_more(1,15,20);
 	
-	shit.set(9,9,1,1);
+	glib::interval<int> lll=kk;
+	glib::interval<int> llk(0,0,0);
+	llk = lll;
 	
-	glib::matrix<bool> opossum;
-	opossum = shit;
+	glib::interval<int> ll;
+	ll=llk;
 	
-	std::cout << opossum.get(9,9,1)<<"\n";
 
 	
+	std::cout<<ll.most_left()<<" "<<ll.get(0)<<" "<<ll.get(10)<<" "<<ll.get(20)<<" "<<ll.most_right()<<"\n";
+	
+	glib::interval<int> posledni;
+	posledni.move(1);
+	posledni.get_all();
+	std::cout<<posledni.most_left()<<" "<<posledni.get(0)<<" "<<posledni.get(10)<<" "<<posledni.get(20)<<" "<<posledni.most_right()<<"\n";
+	ll=posledni;
+	std::cout<<ll.most_left()<<" "<<ll.get(0)<<" "<<ll.get(10)<<" "<<ll.get(20)<<" "<<ll.most_right()<<"\n";
 	return 0;
 }
 
