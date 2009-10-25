@@ -1,6 +1,6 @@
 program=canvas
 OBJECTS=main.o
-HEADS=types.h matrix.h
+HEADS=types.h matrix.h interval.h
 
 
 CPPFLAGS=-O0 -g -Wall -I./headers
