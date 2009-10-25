@@ -1,1 +1,12 @@
-This is just an empty file LOL
+Canvas (or glib) is a projct for c++ lessons.
+
+It does nothing great and therefore you shouldn't really be interested.
+
+If you still are, go ahead and look around. It's under BSD licence, altought it's not written anywhere except this file.
+
+(C) karel bilek 2009
+
+
+The comments are mostly in Czech, sorry.
+
+The object methids are sometimes logically divided into CONSTRUCTOR, GETTER, SETTER, that doesn't mean the methods in GETTERS are "traditional" getters/setters, it's just to divide it into cathegories that returns something / set something.
