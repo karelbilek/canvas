@@ -58,10 +58,9 @@ namespace glib {
 		
 		contents recur_all() const;
 			//vrati obsahy vsech svych deti, *ale ne* sebe
-			
-		interval<T>* give_copy() const;
-			//vytvori novy strom, kopii sam sebe, a vrati.
-			//pouzivano POUZE ve tvaru _left->give_copy();
+
+		
+		interval<T>* give_homogenous_copy() const;
 
 	public:
 		
@@ -74,6 +73,8 @@ namespace glib {
 			//"klasicky" konstruktor
 		interval (const interval<T>& other);
 			//zkopiruje z dalsiho nodu
+		
+		interval (const interval<bool>& other, const T& what);
 			
 		interval ();
 			//prazdny
@@ -118,8 +119,8 @@ namespace glib {
 	  _start(other._start), 
 	  _end(other._end),
 	  _content(other._content),
-	  _left((other._left!=NULL)?(other._left->give_copy()):(NULL)),
-	  _right((other._right!=NULL)?(other._right->give_copy()):(NULL)),
+	  _left((other._left!=NULL)?(new interval<T> (*other._left)):(NULL)),
+	  _right((other._right!=NULL)?(new interval<T> (*other._right)):(NULL)),
 	  _empty(other._empty) { 
 		  //Vic se mi libi, kdyz je vsechno v inicializaci. Jako napr. tady.
 
@@ -144,6 +145,21 @@ namespace glib {
 	  _right(NULL),
 	  _empty(true) {
 	}
+	
+		//zkopiruje z BOOLu.
+		//povsimnout faktu, ze je uplne jedno, jestli je tam TRUE nebo FALSE
+		//mam tam bool jenom proto, ze je nejmensi :)
+	template<class T> 
+	interval<T>::interval (const interval<bool>& other, const T& what) :
+	  _start(other._start),
+	  _end(other._end),
+	  _content(what),
+	  _left((other._left!=NULL)?(new interval<T> (*other._left)):(NULL)),
+	  _right((other._right!=NULL)?(new interval<T> (*other._right)):(NULL)),
+	  _empty(false){
+	}
+	
+	
 	
 	//---------------------DESTRUCTOR
 	
@@ -200,11 +216,11 @@ namespace glib {
 			
 			if (other._left != NULL) {
 				//pokud je, zustane NULL z minula, vse ok
-				_left = other._left->give_copy();
+				_left = new interval(*other._left);
 			}
 			
 			if (other._right != NULL) {
-				_right = other._right->give_copy();
+				_left = new interval(*other._right);
 
 			}
 		}
@@ -446,24 +462,6 @@ namespace glib {
 
 	}
 	
-	template<class T>
-	glib::interval<T>* glib::interval<T>::give_copy() const {
-		
-		//this is the same with _empty, essentialy because it is NEVER used on _empty
-		//viz nahore
-	
-		interval<T>* res = new interval<T>(_start, _end, _content);
-				//rekurze - jednoducha, jasna.
-	
-		if (_left!=NULL) {
-			res->_left = _left->give_copy();
-		}
-		if (_right!=NULL) {
-			res->_right = _right->give_copy();
-		}
-		
-		return res;
-	}
 	
 		
 	template<class T>   
