@@ -90,6 +90,7 @@ namespace glib {
 		
 		plane<T> move(const glib_int pivot_width, const glib_int start_height);
 			//posune cely plane, aby mel "novy" pivot_width a start_height
+			//pozor, sam se sebou neposune, ale posunty VRACI
 		
 		void add(const plane<T>& other);
 			//slouci s jinou plochou 
@@ -322,7 +323,7 @@ namespace glib {
 		res._end_height += height_diff;
 			//posouvame vysku
 	
-		for (size_t i = 0; i < __real_height; ++i) {
+		for (glib_int i = 0; i < __real_height; ++i) {
 			res._intervals[i].move(width_diff);
 		}
 			//posouvame sirku
