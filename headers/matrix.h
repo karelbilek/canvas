@@ -28,11 +28,13 @@ namespace glib {
 	public:
 		typedef unsigned char small;
 	private:
+		
+		
 		small _element_width;
 		glib_int _height;
 		glib_int _width;
-		T* _array;
 		
+		T* _array;
 		
 	public:
 		matrix<T>& operator= (const matrix<T>& other);

@@ -1,10 +1,10 @@
-//#include "png_canvas.h"
-//#include "all_objects.h"
-
 #include "plane.h"
-
+ 
 int main () {
-	glib::plane<int> kk;
+	glib::plane<bool> kk(10,20,30,50,false);
+	glib::plane<int> kl(kk,888);
+	
+	//kl=kk;
 	
 	return 0;
 }

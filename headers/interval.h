@@ -66,7 +66,14 @@ namespace glib {
 		
 		glib_int most_left() const;
 		glib_int most_right() const;
+		glib_int get_start() const;
+		glib_int get_end() const;
 		
+		const interval<T> get_left() const;
+		const interval<T> get_right() const;
+		
+		bool has_left() const;
+		bool has_right() const;
 		
 		
 		interval (const glib_int start, const glib_int end, const T& content);
@@ -74,7 +81,6 @@ namespace glib {
 		interval (const interval<T>& other);
 			//zkopiruje z dalsiho nodu
 		
-		interval (const interval<bool>& other, const T& what);
 			
 		interval ();
 			//prazdny
@@ -105,6 +111,8 @@ namespace glib {
 			//Tady je videt to mysleni "po pixelech" - ano, je to diskretni :)
 		
 		void add_another(const interval<T>& other);
+		void create_from_bool(const interval<bool>& other, const T& what);
+		
 		
 		
 		
@@ -123,7 +131,6 @@ namespace glib {
 	  _right((other._right!=NULL)?(new interval<T> (*other._right)):(NULL)),
 	  _empty(other._empty) { 
 		  //Vic se mi libi, kdyz je vsechno v inicializaci. Jako napr. tady.
-
 	}
 
 	template<class T>
@@ -144,21 +151,8 @@ namespace glib {
 	  _left(NULL),
 	  _right(NULL),
 	  _empty(true) {
-	}
-	
-		//zkopiruje z BOOLu.
-		//povsimnout faktu, ze je uplne jedno, jestli je tam TRUE nebo FALSE
-		//mam tam bool jenom proto, ze je nejmensi :)
-	template<class T> 
-	interval<T>::interval (const interval<bool>& other, const T& what) :
-	  _start(other._start),
-	  _end(other._end),
-	  _content(what),
-	  _left((other._left!=NULL)?(new interval<T> (*other._left)):(NULL)),
-	  _right((other._right!=NULL)?(new interval<T> (*other._right)):(NULL)),
-	  _empty(false){
-	}
-	
+
+	}	
 	
 	
 	//---------------------DESTRUCTOR
@@ -191,6 +185,40 @@ namespace glib {
 		}
 		
 	}
+	
+	template<class T>void 
+	interval<T>::create_from_bool(const interval<bool>& other, const T& what) {
+		
+		
+		if (_left!=NULL) {
+			delete _left;
+		}
+		
+		if (_right!=NULL) {
+			delete _right;
+		}
+		
+		_start = other.get_start();
+		_end = other.get_end();
+		_content = what;
+		_empty = false;
+		
+		if (!other.has_left()) {
+			_left = NULL;
+		} else {
+			_left = new interval<T>;
+			_left->create_from_bool(other.get_left(), what);
+		}
+				
+		if (!other.has_right()) {
+			_right = NULL;
+		} else {
+			_right = new interval<T>;
+			_right->create_from_bool(other.get_right(), what);
+		}
+		
+	}
+	
 	
 	template<class T> interval<T>&
 	interval<T>::operator=(const interval<T>& other) {
@@ -410,7 +438,7 @@ namespace glib {
 	
 	template<class T>
 	T 
-	glib::interval<T>::get(glib::glib_int where) const {
+	interval<T>::get(glib::glib_int where) const {
 		//fakt trivialni rekurze
 		
 		if (_empty) {
@@ -437,8 +465,8 @@ namespace glib {
 		}
 	}
 	
-	template<class T> glib::glib_int
-	glib::interval<T>::most_left() const {
+	template<class T> glib_int
+	interval<T>::most_left() const {
 
 		if (_empty) {
 			return 0;
@@ -449,9 +477,41 @@ namespace glib {
 		}
 	
 	}
+	
+	template<class T> glib_int
+	interval<T>::get_start() const {
+		return _start;
+	}
+	
+	template<class T> const interval<T> 
+	interval<T>::get_left() const {
+		return *_left;
+	}
+	
+	template<class T> bool 
+	interval<T>::has_left() const {
+		return (_left!=NULL);
+	}
+	
+	template<class T> const interval<T> 
+	interval<T>::get_right() const {
+		return *_right;
+	}
+	
+	template<class T> bool 
+	interval<T>::has_right() const {
+		return (_right!=NULL);
+	}
+	
+	
+	template<class T> glib_int
+	interval<T>::get_end() const {
+		return _end;
+	}
+	
 
 	template<class T> glib::glib_int
-	glib::interval<T>::most_right() const {
+	interval<T>::most_right() const {
 		if (_empty) {
 			return 0;
 		} else if (_right != NULL) {
@@ -465,8 +525,8 @@ namespace glib {
 	
 		
 	template<class T>   
-	typename glib::interval<T>::contents 
-	glib::interval<T>::get_all() const {
+	typename interval<T>::contents 
+	interval<T>::get_all() const {
 		
 		if (_empty) {
 			return contents();
@@ -488,8 +548,8 @@ namespace glib {
 	
 	
 	template<class T>
-	typename glib::interval<T>::contents 
-	glib::interval<T>::recur_all() const {
+	typename interval<T>::contents 
+	interval<T>::recur_all() const {
 		//vraci v trochu zvlastnim poradi, ale ono je to jedno
 		contents res;
 		if (_left != NULL) {
@@ -516,7 +576,7 @@ namespace glib {
 	
 	template<class T>
 	void 
-	glib::interval<T>::check() {
+	interval<T>::check() {
 		
 		//Otce nekontroluju (ja o nem vlastne i prd vim) - kdyztak, on zkontruluje on me
 		//Proto kontroluji i vpravo i vlevo.

@@ -25,22 +25,22 @@ namespace glib {
 		 *
 		 * vic o intervalech v interval.h (snad)
 		 */
-		
-	private:	
+	public:
 		typedef std::vector< interval<T> > T_intervals;
 		
+	private:	
 		
 		glib_int _pivot_width; //sirka, co se pouziva pro posouvani z mista na misto 
 		glib_int _start_height; //zacatecni vyska
 		glib_int _end_height; //konecna vyska
 		
-		T_intervals _intervals; 
+		T_intervals _intervals;
 		
 	public:	
 		typedef std::list<interval_content<T> > T_list;
 			//list "obsahu" - obsah struktura T, zacatek, konec
 		
-		typedef std::list<interval_content<bool> > bool_list;
+		//typedef std::list<interval_content<bool> > bool_list;
 			//totez special pro bool - hodi se pro jeden konstruktor
 		
 		plane();
@@ -59,6 +59,8 @@ namespace glib {
 		glib_int get_end_height() const;
 		glib_int get_real_height() const;
 		glib_int get_pivot_width() const;
+		T_intervals get_intervals() const;
+		
 			//klasicke gettery
 		
 		glib_int first_non_zero() const;
@@ -100,35 +102,52 @@ namespace glib {
 	//--------------------------------CONSTRUCTORS
 	template<class T>
 	plane<T>::plane() : 
-	  	 _pivot_width(0),
+	  _pivot_width(0),
 	  _start_height(0), 
-	  _end_height(0),  
-	  _intervals() {
+	  _end_height(0),
+	  _intervals(){
 	}
 	
 	template<class T>
 	plane<T>::plane(const glib_int start_height, const glib_int end_height, const glib_int pivot_width) :
+	  _pivot_width(pivot_width) ,
 	  _start_height(start_height), 
 	  _end_height(__maximum(start_height, end_height)),	
-	  _intervals(__real_height),
-	  _pivot_width(pivot_width) {
+	  _intervals(__real_height){
 	}
+	
+	
+	
 	
 		//cely zaplni whatem
 	template<class T>
 	plane<T>::plane(const glib_int start_width, const glib_int end_width, const glib_int start_height, const glib_int end_height, const T& what) : 
+	  _pivot_width(start_width),
 	  _start_height(start_height),
+	
 	  _end_height(__maximum(start_height, end_height)), 
-	  _intervals(__real_height, interval<T>(start_width, end_width-1, what)),
-	  _pivot_width(start_width) {
+	
+	  _intervals(__real_height, interval<T>(start_width, end_width-1, what)) {
 	}
+	
+	
+	
+	
 	
 	template<class T>   
 	plane<T>::plane(const plane<bool>& other, const T& what) : 
-	  _start_height(other._start_height),
-	  _end_height(other._end_height), 
-	  _intervals(other._intervals), 
-	  _pivot_width(other._pivot_width) {
+	
+	  _pivot_width( other.get_pivot_width() ),
+	  _start_height( other.get_start_height() ),
+	  _end_height( other.get_end_height()) , 
+	  _intervals( __real_height ) {
+
+		plane<bool>::T_intervals bool_intervals = other.get_intervals();
+		
+		int rs = __real_height;
+		for (int i=0; i<rs; ++i) {
+			_intervals[i].create_from_bool(bool_intervals[i], what);
+		}
 	}
 	
 	//--------------------------------GETTERS
@@ -224,6 +243,13 @@ namespace glib {
 	plane<T>::get_pivot_width() const {
 		return _pivot_width;
 	}
+	
+	template <class T> 
+	typename plane<T>::T_intervals
+	plane<T>::get_intervals() const {
+		return _intervals;
+	}
+	
 	
 	template<class T> 
 	typename plane<T>::T_list 
