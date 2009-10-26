@@ -74,6 +74,7 @@ namespace glib {
 		
 		bool has_left() const;
 		bool has_right() const;
+		bool is_empty() const;
 		
 		
 		interval (const glib_int start, const glib_int end, const T& content);
@@ -491,6 +492,11 @@ namespace glib {
 	template<class T> bool 
 	interval<T>::has_left() const {
 		return (_left!=NULL);
+	}
+	
+	template<class T> bool 
+	interval<T>::is_empty() const {
+		return _empty;
 	}
 	
 	template<class T> const interval<T> 

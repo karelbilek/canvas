@@ -75,8 +75,6 @@ namespace glib {
 		glib_int most_left() const;
 		glib_int most_right() const;
 		
-		glib_int min_x() const;
-		glib_int max_x() const;
 		
 		T_list get_row(glib_int y) const;
 			//vrati konkretni radek v listu paru <T, rozsah>
@@ -85,7 +83,7 @@ namespace glib {
 			//vrati hodnotu na konkretni pozici, nebo defaultni T(), pokud tam nic neni
 		
 		void set(const glib_int x, const glib_int y, const T& what);
-			//nastavi konkretni hodnotu
+			//nastavi konkretni hodnotu (pozor, SCITA!)
 		
 		void set_more(const glib_int start_x, const glib_int end_x, const glib_int y, const T& what);
 			//nastavi na y radku vse od start_x do end_x na what (tj, prida interval, mozna neco upravi)
@@ -200,7 +198,7 @@ namespace glib {
 	template <class T> 
 	glib_int
 	plane<T>::first_non_zero() const {
-		for (glib_uint i = 0; i < __real_height; ++i) {
+		for (glib_int i = 0; i < __real_height; ++i) {
 			if (!_intervals[i].is_empty())
 				return i+_start_height;
 		}
