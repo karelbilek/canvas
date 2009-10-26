@@ -100,7 +100,7 @@ namespace glib {
 	//--------------------------------CONSTRUCTORS
 	template<class T>
 	plane<T>::plane() : 
-	  _pivot_width(0),
+	  	 _pivot_width(0),
 	  _start_height(0), 
 	  _end_height(0),  
 	  _intervals() {
