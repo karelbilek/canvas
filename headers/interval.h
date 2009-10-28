@@ -60,7 +60,6 @@ namespace glib {
 			//vrati obsahy vsech svych deti, *ale ne* sebe
 
 		
-		interval<T>* give_homogenous_copy() const;
 
 	public:
 		
@@ -71,6 +70,9 @@ namespace glib {
 		
 		const interval<T> get_left() const;
 		const interval<T> get_right() const;
+		
+		void add_left(interval<T>* const other);
+		void add_right(interval<T>* const other);
 		
 		bool has_left() const;
 		bool has_right() const;
@@ -96,10 +98,9 @@ namespace glib {
 		~interval();
 			//Smaze svoje deti
 		
+		
+		// void recur_check();
 		void check();
-			//zkontroluje, jestli nezabira zbytecne misto - tj, jestli vedle sebe nejsou dva stejne intervaly, co by sly spojit
-			//To se muze stat dost dobre - napr. pridam hned po sobe 5,3,4 se stejnym obsahem
-			//- kdyby necheckovalo, mel bych 3 zbytecne nody, takhle mam jeden. Myslim.
 		
 		contents get_all() const;
 			//vrati obsahy vsech svych deti, *vcetne* sebe
@@ -112,13 +113,16 @@ namespace glib {
 			//Tady je videt to mysleni "po pixelech" - ano, je to diskretni :)
 		
 		void add_another(const interval<T>& other);
-		void create_from_bool(const interval<bool>& other, const T& what);
 		
 		
 		
 		
 		interval<T>& operator=(const interval<T>& other);
 			//vrati kopii
+			
+			
+		template <class U>
+		interval<U>* flatten_interval(const U& what) const;
 	};
 	
 
@@ -173,6 +177,27 @@ namespace glib {
 
 	//----------------------------SETTERS
 	
+	
+	template<class T>
+	void 
+	interval<T>::add_left(interval<T>* const other) {
+		if (_left==NULL) {
+			_left = other;
+		} else {
+			throw 1;
+		}
+	}
+	
+	template<class T>
+	void 
+	interval<T>::add_right(interval<T>* const other) {
+		if (_right==NULL) {
+			_right = other;
+		} else {
+			throw 1;
+		}
+	}
+	
 	template<class T>void 
 	interval<T>::add_another(const interval<T>& other) {
 		if (!other._empty) {
@@ -187,37 +212,21 @@ namespace glib {
 		
 	}
 	
-	template<class T>void 
-	interval<T>::create_from_bool(const interval<bool>& other, const T& what) {
-		
+	
+	template <class T>
+	template <class U>
+	interval<U>* 
+	interval<T>::flatten_interval(const U& what) const {
+		interval<U>* result= new interval<U>(_start, _end, what);
 		
 		if (_left!=NULL) {
-			delete _left;
+			result->add_left(_left->flatten_interval<U>(what));
 		}
-		
 		if (_right!=NULL) {
-			delete _right;
+			result->add_right(_right->flatten_interval<U>(what));
 		}
-		
-		_start = other.get_start();
-		_end = other.get_end();
-		_content = what;
-		_empty = false;
-		
-		if (!other.has_left()) {
-			_left = NULL;
-		} else {
-			_left = new interval<T>;
-			_left->create_from_bool(other.get_left(), what);
-		}
-				
-		if (!other.has_right()) {
-			_right = NULL;
-		} else {
-			_right = new interval<T>;
-			_right->create_from_bool(other.get_right(), what);
-		}
-		
+		result->check();
+		return result;
 	}
 	
 	
@@ -610,6 +619,18 @@ namespace glib {
 		}
 
 	}
+	
+	// template<class T>
+	// void 
+	// interval<T>::recur_check() {
+	// 	check();
+	// 	if (_left!=NULL) {
+	// 		_left->check();
+	// 	}
+	// 	if (_right!=NULL) {
+	// 		_right->check();
+	// 	}
+	// }
 
 }
 

@@ -51,9 +51,9 @@ namespace glib {
 		
 		plane(const glib_int start_width, const glib_int end_width, const glib_int start_height, const glib_int end_height, const T& what);
 			//konstruktor, co se mu jeste da zacatek a konec kazdeho radku a on do kazdeho prida velky interval s danou hodnotou
-		
-		plane(const plane<bool>& other, const T& what);
-			//POZOR - bool je umyslne! Tenhle konstruktor vezme nejaky uz hotovy plane<bool>, a kde je true, da what.
+	
+		template <class U>
+		plane<U> flatten_plane(const U& what) const;
 		
 		glib_int get_start_height() const;
 		glib_int get_end_height() const;
@@ -76,8 +76,11 @@ namespace glib {
 		glib_int most_right() const;
 		
 		
-		T_list get_row(glib_int y) const;
+		T_list get_row(const glib_int y) const;
 			//vrati konkretni radek v listu paru <T, rozsah>
+			
+		void set_whole_interval(const glib_int y, const interval<T> new_interval);
+			//vlaste pomerne troufale, ale co :)
 		
 		T get(const glib_int x, const glib_int y) const;
 			//vrati hodnotu na konkretni pozici, nebo defaultni T(), pokud tam nic neni
@@ -129,25 +132,6 @@ namespace glib {
 	  _intervals(__real_height, interval<T>(start_width, end_width-1, what)) {
 	}
 	
-	
-	
-	
-	
-	template<class T>   
-	plane<T>::plane(const plane<bool>& other, const T& what) : 
-	
-	  _pivot_width( other.get_pivot_width() ),
-	  _start_height( other.get_start_height() ),
-	  _end_height( other.get_end_height()) , 
-	  _intervals( __real_height ) {
-
-		plane<bool>::T_intervals bool_intervals = other.get_intervals();
-		
-		int rs = __real_height;
-		for (int i=0; i<rs; ++i) {
-			_intervals[i].create_from_bool(bool_intervals[i], what);
-		}
-	}
 	
 	//--------------------------------GETTERS
 	template <class T> 
@@ -261,6 +245,15 @@ namespace glib {
 	}
 	
 	//--------------------------------------SETTERS
+	template<class T>
+	void 
+	plane<T>::set_whole_interval(const glib_int y, const interval<T> new_interval) {
+		if (y<=__real_height) {
+			_intervals[y]=new_interval;
+			//tohle trva, bohuzel, pomerne dlouho
+		}
+	}
+	
 	template<class T> 
 	void 
 	plane<T>::set(const glib_int x, const glib_int y, const T& what) {
@@ -330,6 +323,25 @@ namespace glib {
 		return res; //ta-taa
 	}
 	
+	
+	template<class T>
+	template<class U>   
+	plane<U>
+	plane<T>::flatten_plane(const U& what) const {
+		
+		plane<U> result(_start_height, _end_height, _pivot_width);
+		
+		int rs = __real_height;
+		for (int i=0; i<rs; ++i) {
+			interval<U>* p_int = (_intervals[i]).template flatten_interval<U>(what);
+			result.set_whole_interval(i, *p_int);
+			delete p_int;
+				//tohle vypada hrozne, ale tady by mel ve vetsine pripadu vylezt interval,
+				// co bude mit velmi malo potomku, jestli vubec nejake
+		}
+		
+		return result;
+	}
 	
 
 	

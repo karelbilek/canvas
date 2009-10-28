@@ -1,0 +1,29 @@
+---
+- stručně: zjistit co kreslit
+  postupy: 
+      - pomocí plane (intervalů) už nakresleného (jen bool) zjistim, co už bylo, na každym řádku extra nakreslim jenom to
+      - jednodušší - pomocí plane nakresleného a POUZE ČTVERCOVOU "APROXIMACÍ" pomocí topů atd. zjistim, jestli má cenu kreslit - pokud MALINKO cokoliv kouká, nakreslim VŠECHNO
+
+- stručně: antialiasing
+  postupy:
+      - antialiasing je vlastnost canvasu
+      - ale ten dává při kreslení vědět objektům
+      - ty se s A.A kreslí JINAK než bez něj
+      - vynuluje se painted (viz dál)
+      
+- stručně: painted
+  postupy: 
+      - odkládané malování
+      - každý objekt se namaluje, až když musí
+      - tj. pokud vůbec nemusí (viz 1), nekreslí se
+      - naopak, víckrát za sebou se nekreslí - jednou je nakreslen a je to
+      
+- stručně: ukaz. copy constructory
+  postupy:
+      - každý z gr_object nich musí umět zkopírovat se z "defaultního" ukazatele na gr_object
+
+- stručně: spojit mezilehlé
+  postupy:
+      - nejsou potřeba blbé abstraktní třídy
+      - naopak, stačí jedna jak na vyplněné, tak nevyplňované útvary
+      - zbavim se tedy 2 (!) blbých abstraktních tříd
