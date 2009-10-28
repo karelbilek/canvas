@@ -1,6 +1,6 @@
 program=canvas
 OBJECTS=main.o RGBa.o
-HEADS=types.h matrix.h interval.h plane.h RGBa.h
+HEADS=types.h matrix.h interval.h plane.h RGBa.h gr_object.h
 
 
 CPPFLAGS=-O0 -g -Wall -Weffc++ -Wextra -I./headers
