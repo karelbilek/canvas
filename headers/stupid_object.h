@@ -10,6 +10,8 @@ namespace glib {
 		virtual plane<bool> pixels(glib_int height, glib_int width, bool antialias, plane<bool> painted_so_far);
 		
 		virtual gr_object* copy_me() const {new stupid_object other*=stupid_object(*this); return other;}
+		
+		stupid_object(const glib_int x, const glib_int y, const RGBa& colour):_x(x),_y(y),_colour(colour) {}
 	};
 	
 	plane<bool>::pixels(glib_int height, glib_int width, bool antialias, plane<bool> painted_so_far) {
