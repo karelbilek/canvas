@@ -55,7 +55,7 @@ namespace glib{
 		
 		
 		bool operator==(const RGBa& other) const;
-		bool operator<(const RGBa& other) const;
+		bool operator>=(const RGBa& other) const;
 		
 		RGBa operator*(const glib_float quoc) const;
 		//vynasobeni nejakym cislem

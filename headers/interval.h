@@ -122,7 +122,7 @@ namespace glib {
 			
 			
 		template <class U>
-		interval<U>* flatten_interval(const U& what) const;
+		interval<U>* flatten_interval(const U& what, const T& min) const;
 	};
 	
 
@@ -216,17 +216,26 @@ namespace glib {
 	template <class T>
 	template <class U>
 	interval<U>* 
-	interval<T>::flatten_interval(const U& what) const {
-		interval<U>* result= new interval<U>(_start, _end, what);
-		
-		if (_left!=NULL) {
-			result->add_left(_left->flatten_interval<U>(what));
+	interval<T>::flatten_interval(const U& what, const T& min) const {
+		if (_content >= min ) {
+				//jednodussi varianta
+			interval<U>* result = new interval<U>(_start, _end, what);
+			
+			if (_left!=NULL) {
+				result->add_left(_left->flatten_interval<U>(what, min));
+			}
+			if (_right!=NULL) {
+				result->add_right(_right->flatten_interval<U>(what, min));
+			}
+			result->check();
+			return result;
+		} else {
+			interval<U>* novy = _left->flatten_interval<U>(what, min);
+				//trva mnohem dyl :/
+			novy->add_another(*(_right->flatten_interval<U>(what, min)));
+			novy->check();
+			return novy;
 		}
-		if (_right!=NULL) {
-			result->add_right(_right->flatten_interval<U>(what));
-		}
-		result->check();
-		return result;
 	}
 	
 	

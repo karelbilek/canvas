@@ -63,21 +63,9 @@ RGBa::operator==(const RGBa& other) const {
 }
 
 bool
-RGBa::operator<(const RGBa& other) const {
+RGBa::operator>=(const RGBa& other) const {
 		
-	if (_alpha != other._alpha)
-		return _alpha<other._alpha;
-
-	else if (_red != other._red)
-		return _red<other._red;
-
-	else if (_green != other._green)
-		return _green<other._green;
-
-	else if (_blue != other._blue)
-		return _blue<other._blue;
-
-	else return false;
+	return _alpha>=other._alpha;
 }
 
 RGBa RGBa::operator+(const RGBa& other) const {
@@ -91,9 +79,13 @@ RGBa RGBa::operator+(const RGBa& other) const {
 		//preteceni
 	};
 	
-	glib_float other_f = (glib_float)other._alpha / (glib_float)res_alpha;
-	glib_float this_f = 1 - other_f;
-	//jakou vahou prispeje ktera barva
+	// glib_float other_f = (glib_float)other._alpha / (glib_float)res_alpha;
+	// glib_float this_f = 1 - other_f;
+	//obraceny smysl scitani barev
+	
+	glib_float this_f = (glib_float)_alpha / (glib_float)res_alpha;
+	glib_float other_f = 1 - this_f;
+	
 	
 	glib_component res_red = static_cast<glib_component>(this_f * _red + other_f * other._red);
 	glib_component res_green = static_cast<glib_component>(this_f * _green + other_f * other._green);

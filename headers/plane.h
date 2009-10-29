@@ -53,7 +53,7 @@ namespace glib {
 			//konstruktor, co se mu jeste da zacatek a konec kazdeho radku a on do kazdeho prida velky interval s danou hodnotou
 	
 		template <class U>
-		plane<U> flatten_plane(const U& what) const;
+		plane<U> flatten_plane(const U& what, const T& min) const;
 		
 		glib_int get_start_height() const;
 		glib_int get_end_height() const;
@@ -327,13 +327,13 @@ namespace glib {
 	template<class T>
 	template<class U>   
 	plane<U>
-	plane<T>::flatten_plane(const U& what) const {
+	plane<T>::flatten_plane(const U& what, const T& min) const {
 		
 		plane<U> result(_start_height, _end_height, _pivot_width);
 		
 		int rs = __real_height;
 		for (int i=0; i<rs; ++i) {
-			interval<U>* p_int = (_intervals[i]).template flatten_interval<U>(what);
+			interval<U>* p_int = (_intervals[i]).template flatten_interval<U>(what, min);
 			result.set_whole_interval(i, *p_int);
 			delete p_int;
 				//tohle vypada hrozne, ale tady by mel ve vetsine pripadu vylezt interval,
