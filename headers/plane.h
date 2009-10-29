@@ -46,7 +46,7 @@ namespace glib {
 		plane();
 			//defaultni konstruktor - vytvori prazdnou plochu s velikosti 1
 		
-		plane(const glib_int start_height, const glib_int end_height, const glib_int pivot_width);
+		plane(const glib_int start_height, const glib_int end_height, const glib_int pivot_width=0);
 			//konstruktor, co chce pocatecni a konecnou vysku a pivotni sirku a neprida nikam nic
 		
 		plane(const glib_int start_width, const glib_int end_width, const glib_int start_height, const glib_int end_height, const T& what);
@@ -111,7 +111,7 @@ namespace glib {
 	}
 	
 	template<class T>
-	plane<T>::plane(const glib_int start_height, const glib_int end_height, const glib_int pivot_width) :
+	plane<T>::plane(const glib_int start_height, const glib_int end_height, const glib_int pivot_width=0) :
 	  _pivot_width(pivot_width) ,
 	  _start_height(start_height), 
 	  _end_height(__maximum(start_height, end_height)),	
