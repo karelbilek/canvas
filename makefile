@@ -1,10 +1,10 @@
 program=canvas
-OBJECTS=main.o RGBa.o canvas.o
-HEADS=types.h matrix.h interval.h plane.h RGBa.h gr_object.h canvas.h
+OBJECTS=main.o RGBa.o canvas.o png_paint.o
+HEADS=types.h matrix.h interval.h plane.h RGBa.h gr_object.h canvas.h png_paint.h
 
 
-CPPFLAGS=-O0 -g -Wall -Weffc++ -Wextra -I./headers
-LDFLAGS=
+CPPFLAGS=-O0 -g -Wall -Weffc++ -Wextra -I./headers 
+LDFLAGS=-lpng
 
 
 REAL_OBJECTS=$(addprefix objects/, ${OBJECTS})
