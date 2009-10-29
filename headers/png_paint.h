@@ -2,6 +2,6 @@
 
 namespace glib {
 		
-	void png_paint(const std::string& path, const canvas& my_canvas);
+	void png_paint(const std::string& path,  canvas& my_canvas);
 	
 }
