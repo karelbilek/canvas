@@ -1,6 +1,7 @@
 #include "canvas.h"
 #include "png_paint.h"
 #include "stupid_object.h"
+#include "style.h"
 
 int main () {
 	glib::canvas prvni(100,100,glib::RGBa(255,0,0,255), false);

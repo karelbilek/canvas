@@ -28,7 +28,7 @@ namespace glib{
 		  _brush_is(brush_is),
 		  _fill_is(false), 
 		  _fill_color(),
-		  _line_color(line_color)
+		  _line_color(line_color),
 		  _line_size(line_size) {}
 			//bez vyplne, jenom cara
 		
