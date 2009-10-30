@@ -26,7 +26,7 @@ namespace glib {
 		 * vic o intervalech v interval.h (snad)
 		 */
 	public:
-		typedef std::vector< interval<T> > T_intervals;
+		typedef interval<T>* T_intervals;
 		
 	private:	
 		
@@ -34,7 +34,7 @@ namespace glib {
 		glib_int _start_height; //zacatecni vyska
 		glib_int _end_height; //konecna vyska
 		
-		T_intervals _intervals;
+		interval<T>* _intervals;
 		
 	public:	
 		typedef std::list<interval_content<T> > T_list;
@@ -44,13 +44,17 @@ namespace glib {
 			//totez special pro bool - hodi se pro jeden konstruktor
 		
 		plane();
-			//defaultni konstruktor - vytvori prazdnou plochu s velikosti 1
+		
+		plane(const plane<T>& other);
 		
 		plane(const glib_int start_height, const glib_int end_height, const glib_int pivot_width=0);
 			//konstruktor, co chce pocatecni a konecnou vysku a pivotni sirku a neprida nikam nic
 		
 		plane(const glib_int start_width, const glib_int end_width, const glib_int start_height, const glib_int end_height, const T& what);
 			//konstruktor, co se mu jeste da zacatek a konec kazdeho radku a on do kazdeho prida velky interval s danou hodnotou
+	
+	
+		~plane();
 	
 		template <class U>
 		plane<U> flatten_plane(const U& what, const T& min) const;
@@ -98,6 +102,8 @@ namespace glib {
 		void add(const plane<T>& other);
 			//slouci s jinou plochou 
 			//POZOR - z jine plochy vezme jen veci od _start_height po _end_height, zbytek ignoruje
+			
+		plane<T>& operator=(const plane<T>& other);
 	};
 
 
@@ -107,7 +113,7 @@ namespace glib {
 	  _pivot_width(0),
 	  _start_height(0), 
 	  _end_height(0),
-	  _intervals(){
+	  _intervals(NULL){
 	}
 	
 	template<class T>
@@ -115,7 +121,20 @@ namespace glib {
 	  _pivot_width(pivot_width) ,
 	  _start_height(start_height), 
 	  _end_height(__maximum(start_height, end_height)),	
-	  _intervals(__real_height){
+	  _intervals(new interval<T>[__real_height]){
+	}
+	
+	template<class T>
+	plane<T>::plane(const glib::plane<T>& other) :
+	  _pivot_width(other._pivot_width) ,
+	  _start_height(other._start_height), 
+	  _end_height(other._end_height),	
+	  _intervals(new interval<T>[__real_height]) {
+		
+		glib_int rs = __real_height;
+		for (glib_int i = 0; i < rs; ++i) {
+			_intervals[i]=other._intervals[i];
+		}
 	}
 	
 	
@@ -126,12 +145,20 @@ namespace glib {
 	plane<T>::plane(const glib_int start_width, const glib_int end_width, const glib_int start_height, const glib_int end_height, const T& what) : 
 	  _pivot_width(start_width),
 	  _start_height(start_height),
-	
 	  _end_height(__maximum(start_height, end_height)), 
-	
-	  _intervals(__real_height, interval<T>(start_width, end_width-1, what)) {
+	  _intervals(new interval<T>[__real_height]) {
+		
+		glib_int rs = __real_height;
+		for (glib_int i = 0; i < rs; ++i) {
+			_intervals[i]=interval<T>(start_width, end_width-1, what);
+		}
 	}
 	
+	//-------------------------------DESTRUCTORS
+	template<class T>
+	plane<T>::~plane() {
+		delete [] _intervals; 
+	}
 	
 	//--------------------------------GETTERS
 	template <class T> 
@@ -245,6 +272,24 @@ namespace glib {
 	}
 	
 	//--------------------------------------SETTERS
+	
+	template<class T>
+	plane<T>&
+	plane<T>::operator=(const glib::plane<T>& other) {
+		_pivot_width = other._pivot_width;
+		_start_height = other._start_height;
+		_end_height=other._end_height;
+		delete [] _intervals;
+		
+		glib_int rs = __real_height;
+		_intervals=new interval<T>[__real_height];
+		
+		for (glib_int i = 0; i < __real_height; ++i) {
+			_intervals[i]=other._intervals[i];
+		}
+		return *this;
+	}
+	
 	template<class T>
 	void 
 	plane<T>::set_whole_interval(const glib_int y, const interval<T> new_interval) {
@@ -258,10 +303,8 @@ namespace glib {
 	void 
 	plane<T>::set(const glib_int x, const glib_int y, const T& what) {
 		if ((y >= _end_height) || (y < _start_height)) {
-			std::cout<<"LOL YOU SUCK x="<<x<<" y="<<y<<"\n";
 			return;
 		}
-		std::cout<<"lezu do intervalu x="<<x<<" y="<<y<<"\n";
 			//odolne proti chybam - prijde mi to uzitecnejsi
 		_intervals[y-_start_height].add_one(x, what);
 	

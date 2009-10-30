@@ -13,8 +13,8 @@
 #include <list>
 
 #define __PI (4*atan(1))
-#define __DEG2RAD(_co) (static_cast<glib_float>(((_co)/180)*PI))
-#define __RAD2DEG(_co) (static_cast<glib_float>(((_co)/PI)*180))
+#define __DEG2RAD(_co) (static_cast<glib_float>(((_co)/180)*__PI))
+#define __RAD2DEG(_co) (static_cast<glib_float>(((_co)/__PI)*180))
 
 #define __minimum(_a,_b) (((_a)<(_b))?(_a):(_b))
 #define __maximum(_a,_b) (((_a)>(_b))?(_a):(_b))
