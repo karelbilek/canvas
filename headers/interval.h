@@ -219,22 +219,39 @@ namespace glib {
 	interval<T>::flatten_interval(const U& what, const T& min) const {
 		if (_content >= min ) {
 				//jednodussi varianta
+			std::cout<<"Jednodussi varianta\n";
 			interval<U>* result = new interval<U>(_start, _end, what);
 			
+			std::cout<<"novy vytvoren, zkontrolujem leve/prave puvodniho\n";
 			if (_left!=NULL) {
+				std::cout<<"lezu doleva\n";
 				result->add_left(_left->flatten_interval<U>(what, min));
 			}
 			if (_right!=NULL) {
+				std::cout<<"lezu doprava\n";
 				result->add_right(_right->flatten_interval<U>(what, min));
 			}
+			std::cout<<"jeste checknu\n";
 			result->check();
+			std::cout<<"done\n";
 			return result;
 		} else {
-			interval<U>* novy = _left->flatten_interval<U>(what, min);
-				//trva mnohem dyl :/
-			novy->add_another(*(_right->flatten_interval<U>(what, min)));
-			novy->check();
-			return novy;
+				//trva mnohem dyl :/ horsi varianta
+			std::cout<<"horsi varianta\n";
+			if (_left!=NULL) {
+				interval<U>* novy = _left->flatten_interval<U>(what, min);
+					//trva mnohem dyl :/
+				novy->add_another(*(_right->flatten_interval<U>(what, min)));
+				novy->check();
+				return novy;
+			} else if (_right != NULL) {
+				interval<U>* novy = _right->flatten_interval<U>(what, min);
+				novy->check();
+				return novy;
+			} else {
+				interval<U>* novy= new interval<U>();
+				return novy;
+			}
 		}
 	}
 	

@@ -59,18 +59,29 @@ matrix<glib_component> canvas::get_matrix(const size_t red_pos, const size_t gre
 
 plane<RGBa> 
 canvas::get_plane()  {
-	plane<RGBa> all_plane(0, _height, 0, _width, _background);
-	//nejdriv si vse pridam do plane (je to rychle)
-	//az pak si to prehodim do rasteru
 	RGBa full(0,0,0,255);
 	
+	plane<RGBa> all_plane(0, _height);
+	//nejdriv si vse pridam do plane (je to rychle)
+	//az pak si to prehodim do rasteru
+	
+	
+	
 	plane<bool> painted_so_far(0,_height,0);
+	bool done;
 	
 	for (gr_objects::const_iterator i = _gr_objects.begin(); i != _gr_objects.end(); ++i) {
-		plane<RGBa> pixels = (**i).pixels(_height, _width, _antialias, painted_so_far);
-		all_plane.add(pixels);
-		painted_so_far.add(pixels.flatten_plane<bool>(1, full));
+		
+		
+		plane<RGBa> pixels = (**i).pixels(_height, _width, _antialias, painted_so_far, done);
+		if (done) {
+			all_plane.add(pixels);
+			painted_so_far.add(pixels.flatten_plane<bool>(1, full));
+		}
 	}
+		//tohle je mozna antiintuitivni, ale kreslim zeshora dolu, tj. pozadi prictu jako posledni
+	all_plane.add(plane<RGBa>(0, _height, 0, _width, _background));
+	
 	return all_plane;
 }
 

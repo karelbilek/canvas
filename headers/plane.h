@@ -111,7 +111,7 @@ namespace glib {
 	}
 	
 	template<class T>
-	plane<T>::plane(const glib_int start_height, const glib_int end_height, const glib_int pivot_width=0) :
+	plane<T>::plane(const glib_int start_height, const glib_int end_height, const glib_int pivot_width) :
 	  _pivot_width(pivot_width) ,
 	  _start_height(start_height), 
 	  _end_height(__maximum(start_height, end_height)),	
@@ -258,8 +258,10 @@ namespace glib {
 	void 
 	plane<T>::set(const glib_int x, const glib_int y, const T& what) {
 		if ((y >= _end_height) || (y < _start_height)) {
+			std::cout<<"LOL YOU SUCK x="<<x<<" y="<<y<<"\n";
 			return;
 		}
+		std::cout<<"lezu do intervalu x="<<x<<" y="<<y<<"\n";
 			//odolne proti chybam - prijde mi to uzitecnejsi
 		_intervals[y-_start_height].add_one(x, what);
 	
@@ -333,9 +335,13 @@ namespace glib {
 		
 		int rs = __real_height;
 		for (int i=0; i<rs; ++i) {
+			std::cout<<"Flatuju radek i!!§\n";
 			interval<U>* p_int = (_intervals[i]).template flatten_interval<U>(what, min);
+			std::cout<<"Hotovo, du nastavit\n";
 			result.set_whole_interval(i, *p_int);
+			std::cout<<"Nastaveno, du mazat\n";
 			delete p_int;
+			std::cout<<"Mazano\n";
 				//tohle vypada hrozne, ale tady by mel ve vetsine pripadu vylezt interval,
 				// co bude mit velmi malo potomku, jestli vubec nejake
 		}
