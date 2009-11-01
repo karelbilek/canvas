@@ -13,7 +13,7 @@ namespace glib{
 
 	public:
 		
-		virtual const std::list<const moved_arrays> get_arrays() = 0;
+		virtual std::list<moved_arrays> get_arrays() = 0;
 
 		virtual gr_object* get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) = 0;
 				//cara s tloustkou

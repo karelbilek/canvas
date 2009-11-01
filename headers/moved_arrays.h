@@ -20,7 +20,7 @@ namespace glib {
 		
 	public:
 		moved_arrays(glib_int start, glib_int end);
-		moved_arrays(moved_arrays& other);
+		moved_arrays(const moved_arrays& other);
 		~moved_arrays();
 		
 		moved_arrays& operator=(const moved_arrays& other);

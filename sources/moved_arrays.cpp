@@ -17,7 +17,7 @@ moved_arrays::moved_arrays(glib_int min_y, glib_int max_y)
 
 }
 
-moved_arrays::moved_arrays(moved_arrays& other)
+moved_arrays::moved_arrays(const moved_arrays& other)
   : _first(other._first),
   _min_x(other._min_x),
   _max_x(other._max_x),

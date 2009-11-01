@@ -1,4 +1,4 @@
-#include "circle.h"
+#include "curves/circle.h"
 
 using namespace glib;
 using namespace std;
@@ -8,16 +8,17 @@ circle::circle(point center, glib_float radius) :
   _radius(radius) {
 }
 
-circle::
-const list<const moved_arrays> get_arrays() {
 
-	list<const moved_arrays> res;
+list<moved_arrays> 
+circle::get_arrays() {
+
+	std::list<moved_arrays> res;
 	
 	if (_radius <= 0.5) {
 		moved_arrays one(_center.y, _center.y);
 		one.set(_center.x, _center.y);
 		
-		res.push(one);
+		res.push_back(one);
 	}
 	else if (_radius <= 1) {
 		moved_arrays small(_center.y-1, _center.y+1);
@@ -28,7 +29,7 @@ const list<const moved_arrays> get_arrays() {
 		small.set(_center.x, _center.y+1);
 		small.set(_center.x, _center.y-1);
 		
-		res.push(small);
+		res.push_back(small);
 	} else {
 	
 		glib_float lx = 0;
@@ -39,7 +40,7 @@ const list<const moved_arrays> get_arrays() {
 		moved_arrays right(_center.y-_radius, _center.y+_radius);
 	
 	
-		paint4(0,ly,left,right);
+		paint_more(0,ly,left,right);
 		while (ly>lx) {
 			if (d<0) {
 				d = d + 2*lx + 3;
@@ -48,17 +49,18 @@ const list<const moved_arrays> get_arrays() {
 				--ly;
 			}
 			++lx;
-			paint4(lx,ly,left,right);
+			paint_more(lx,ly,left,right);
 		} //^^ algoritmus ze slidu :)
 		
-		res.push(left);
-		res.push(right);
+		res.push_back(left);
+		res.push_back(right);
 	}
 	return res;
 }
 
-circle::
-void paint_more(glib_float x, glib_float y, moved_arrays& left, moved_arrays& right){
+
+void 
+circle::paint_more(glib_float x, glib_float y, moved_arrays& left, moved_arrays& right){
 	left.set(_center.x-x, _center.y+y);
 	left.set(_center.x-y, _center.y+x);
 	left.set(_center.x-x, _center.y-y);
@@ -70,22 +72,29 @@ void paint_more(glib_float x, glib_float y, moved_arrays& left, moved_arrays& ri
 	right.set(_center.x+y, _center.y-x);
 }
 
-circle::
-glib_int get_min_y() const {
-	return _center.y - radius;
+glib_int 
+circle::get_min_y() const {
+	return _center.y - _radius;
 }
 
-circle::
-glib_int get_max_y() const {
-	return _center.y + radius;
+glib_int 
+circle::get_max_y() const {
+	return _center.y + _radius;
 }
 
-circle::
-glib_int get_min_x() const {
-	return _center.x - radius;
+
+glib_int 
+circle::get_min_x() const {
+	return _center.x - _radius;
 }
 
-circle::
-glib_int get_max_x() const {
-	return _center.x + radius;
+glib_int 
+circle::get_max_x() const {
+	return _center.x + _radius;
+}
+
+gr_object* 
+circle::get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) {
+	throw 1;
+	return NULL;
 }

@@ -16,11 +16,10 @@ namespace glib{
 	public:	
 		circle(point center, glib_float radius);
 		
-		virtual const std::list<const moved_arrays> get_arrays();
+		virtual std::list<moved_arrays> get_arrays();
 
 		virtual gr_object* get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next);
 
-				
 		virtual glib_int get_min_y() const;
 		virtual glib_int get_max_y() const;
 		virtual glib_int get_min_x() const;
