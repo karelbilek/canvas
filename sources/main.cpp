@@ -1,18 +1,21 @@
-#include "canvas.h"
-#include "png_paint.h"
-#include "stupid_object.h"
-#include "style.h"
+#include "curve.h"
+#include "moved_arrays.h"
 
 int main () {
-	glib::canvas prvni(100,100,glib::RGBa(255,0,0,255), false);
+	glib::moved_arrays marray(10,20);
 	
-	glib::stupid_object stupid(50,50,glib::RGBa(0,255,0,255));
-	prvni.push_front(&stupid);
-	prvni.push_front(&stupid);
+	std::cout<<marray.is_set(15)<<"\n";
+	marray.set(20,15);
 	
+	std::cout<<marray.is_set(15)<<" "<<marray.get_start(15)<<" "<<marray.get_end(15)<<"\n";
+	marray.set(21,15);
+	std::cout<<marray.is_set(15)<<" "<<marray.get_start(15)<<" "<<marray.get_end(15)<<"\n";
 	
-	
-	glib::png_paint("here.png", prvni);
+	glib::moved_arrays sarray(marray);
+	std::cout<<sarray.is_set(15)<<" "<<sarray.get_start(15)<<" "<<sarray.get_end(15)<<"\n";
+	glib::moved_arrays sarrai(1,2);
+	sarrai = sarray;
+	std::cout<<sarrai.is_set(15)<<" "<<sarrai.get_start(15)<<" "<<sarrai.get_end(15)<<"\n";
 	
 	return 0;
 }
