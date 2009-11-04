@@ -89,10 +89,10 @@ namespace glib {
 		T get(const glib_int x, const glib_int y) const;
 			//vrati hodnotu na konkretni pozici, nebo defaultni T(), pokud tam nic neni
 		
-		void set(const glib_int x, const glib_int y, const T& what);
+		void add(const glib_int x, const glib_int y, const T& what);
 			//nastavi konkretni hodnotu (pozor, SCITA!)
 		
-		void set_more(const glib_int start_x, const glib_int end_x, const glib_int y, const T& what);
+		void add_more(const glib_int start_x, const glib_int end_x, const glib_int y, const T& what);
 			//nastavi na y radku vse od start_x do end_x na what (tj, prida interval, mozna neco upravi)
 		
 		plane<T> move(const glib_int pivot_width, const glib_int start_height);
@@ -301,7 +301,7 @@ namespace glib {
 	
 	template<class T> 
 	void 
-	plane<T>::set(const glib_int x, const glib_int y, const T& what) {
+	plane<T>::add(const glib_int x, const glib_int y, const T& what) {
 		if ((y >= _end_height) || (y < _start_height)) {
 			return;
 		}
@@ -311,7 +311,7 @@ namespace glib {
 	}
 
 	template<class T> void  
-	glib::plane<T>::set_more(const glib::glib_int start_x, const glib::glib_int end_x, const glib::glib_int y, const T& what) {
+	glib::plane<T>::add_more(const glib::glib_int start_x, const glib::glib_int end_x, const glib::glib_int y, const T& what) {
 		if ((y >= _end_height) || (y < _start_height)) {
 			return;
 		}

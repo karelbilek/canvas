@@ -10,14 +10,14 @@ canvas::canvas(const size_t width, const size_t height, const RGBa& background, 
   _height(height),
   _width(width),
   _background(background),
-  _gr_objects() {}
+  _shapes() {}
 
 canvas::canvas() :
   _antialias(false),
   _height(1),
   _width(1),
   _background(),
-  _gr_objects() {}
+  _shapes() {}
 
 //----------------------------------DESTRUCTORS
 canvas::~canvas() {
@@ -70,10 +70,10 @@ canvas::get_plane()  {
 	plane<bool> painted_so_far(0,_height,0);
 	bool done;
 	
-	for (gr_objects::const_iterator i = _gr_objects.begin(); i != _gr_objects.end(); ++i) {
+	for (_shapes::const_iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		
 		
-		plane<RGBa> pixels = (**i).pixels(_height, _width, _antialias, painted_so_far, done);
+		plane<RGBa> pixels = (*i).pixels(_height, _width, _antialias, painted_so_far, done);
 		if (done) {
 			all_plane.add(pixels);
 			painted_so_far.add(pixels.flatten_plane<bool>(1, full));
@@ -88,73 +88,64 @@ canvas::get_plane()  {
 
 
 //----------------------------------SETTERS ("vector-like")
-void canvas::push_front(const gr_object* const g) {
-	gr_object* copy= g->copy_me();
+void canvas::push_front(const shape g) {
 	
-	_gr_objects.push_front(copy);
+	_shapes.push_front(g);
 }
 
-void canvas::push_back(const gr_object* const g) {
-	gr_object* copy= g->copy_me();
-	
-	_gr_objects.push_back(copy);
+void canvas::push_back(const shape g) {
+
+	_shapes.push_back(g);
 }
 
-void canvas::push_front(const gr_object* const g, const size_t pos) {
-	gr_object* copy= g->copy_me();
+void canvas::push_front(const shape g, const size_t pos) {
 	
-	size_t pos_c=__minimum(pos, _gr_objects.size());
+	size_t pos_c=__minimum(pos, _shapes.size());
 	
-	gr_objects::iterator it = _gr_objects.begin();
+	gr_objects::iterator it = _shapes.begin();
 	for (size_t i = 0; i < pos_c; ++i) {
 		++it;
 	}
-	_gr_objects.insert(it, copy);
+	_shapes.insert(it, g);
 	
 }
 
-void canvas::push_back(const gr_object* const g, const size_t pos) {
-	gr_object* copy= g->copy_me();
+void canvas::push_back(const shape g, const size_t pos) {
 	
-	size_t pos_c=__minimum(pos, _gr_objects.size());
+	size_t pos_c=__minimum(pos, _shapes.size());
 	
 	
-	gr_objects::iterator it = _gr_objects.end();
+	gr_objects::iterator it = _shapes.end();
 	for (size_t i = 0; i < pos_c; ++i) {
 		--it;
 	}
 	
-	_gr_objects.insert(it, copy);
+	_shapes.insert(it, g);
 }
 
 void canvas::remove(const size_t pos) {
-	if (pos < _gr_objects.size()) {
-		gr_objects::iterator it = _gr_objects.begin();
+	if (pos < _shapes.size()) {
+		gr_objects::iterator it = _shapes.begin();
 		for (size_t i = 0; i < pos; ++i, ++it) {}
-		_gr_objects.remove(*it);
-		delete *it;//delam si kopie, tedy tohle je OK
+		_shapes.remove(*it);
 	}
 }
 
 void canvas::remove_all() {
-	while (!_gr_objects.empty()){
+	while (!_shapes.empty()){
 		pop_back();
 	}
 	
 }
 
 void canvas::pop_back(){
-    if (!_gr_objects.empty()) {
-        gr_object* g = _gr_objects.back();
-		_gr_objects.pop_back();
-		delete g;
+    if (!_shapes.empty()) {
+		_shapes.pop_back();
     }
 }
 
 void canvas::pop_front(){
-    if (!_gr_objects.empty()) {
-        gr_object* g = _gr_objects.front();
-		_gr_objects.pop_front();
-		delete g;
+    if (!_shapes.empty()) {
+		_shapes.pop_front();
     }
 }

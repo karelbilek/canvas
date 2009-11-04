@@ -1,8 +1,6 @@
 #ifndef CURVE_INC
 #define CURVE_INC
 
-
-#include "gr_object.h"
 #include "moved_arrays.h"
 #include <list>
 
@@ -15,15 +13,15 @@ namespace glib{
 		
 		virtual std::list<moved_arrays> get_arrays() = 0;
 
-		virtual gr_object* get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) = 0;
+		virtual shape_type get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) const = 0;
 				//cara s tloustkou
-				//prepsat gr object na neco lepsiho!!§
 				
 		virtual glib_int get_min_y() const = 0;
 		virtual glib_int get_max_y() const = 0;
 		virtual glib_int get_min_x() const = 0;
 		virtual glib_int get_max_x() const = 0;
-
+		
+		virtual curve* clone() const;
 	
 		virtual ~curve() {};
 				//pro jistotu :)

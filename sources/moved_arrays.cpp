@@ -6,11 +6,14 @@ moved_arrays::moved_arrays(glib_int min_y, glib_int max_y)
   : _first(true),
   _min_x(0),
   _max_x(0),
+  _min_nonempty_y(0),
+  _max_nonempty_y(0),
   _min_y(min_y),
   _max_y(max_y+1),
   _starts(new glib_int[max_y-min_y+2]), //chci to vcetne max_yu, plus 1 na obcasne zaokrouhleni
   _ends(new glib_int[max_y-min_y+2]),
-  _is_set(new bool[max_y-min_y+2]) {
+  _is_set(new bool[max_y-min_y+2]),
+  _sorting_hint(_min_y) {
 	for (glib_int i = 0; i < max_y-min_y+2; ++i) {
 		_is_set[i]=false;
 	}
@@ -21,11 +24,15 @@ moved_arrays::moved_arrays(const moved_arrays& other)
   : _first(other._first),
   _min_x(other._min_x),
   _max_x(other._max_x),
+  _min_nonempty_y(other._min_nonempty_y),
+  _max_nonempty_y(other._max_nonempty_y),
   _min_y(other._min_y),
+  _max_y(other._max_y),
   _max_y(other._max_y),
   _starts(new glib_int[_max_y-_min_y+2]), 
   _ends(new glib_int[_max_y-_min_y+2]),
-  _is_set(new bool[_max_y-_min_y+2]) {
+  _is_set(new bool[_max_y-_min_y+2]),
+  _sorting_hint(other._sorting_hint) {
 	for (glib_int i = 0; i < _max_y-_min_y+2; ++i) {
 		_starts[i]=other._starts[i];
 		_ends[i]=other._ends[i];
@@ -45,9 +52,12 @@ moved_arrays&
 moved_arrays::operator=(const moved_arrays& other) {
 	_min_y = other._min_y;
 	_max_y = other._max_y;
+	_min_nonempty_y = other._min_nonempty_y;
+	_max_nonempty_y = other._max_nonempty_y;
 	_min_x = other._min_x;
 	_max_x = other._max_x;
 	_first = other._first;
+	_sorting_hint = other._sorting_hint;
 	delete [] _starts;
 	delete [] _ends;
 	delete [] _is_set;
@@ -87,6 +97,7 @@ moved_arrays::set(const glib_int x, const glib_int y) {
 	}
 	if (_first) {
 		_min_x = (_max_x = x);
+		_min_nonempty_y = (_max_nonempty_y = y);
 		_first = false;
 	} else {
 		if (x < _min_x) {
@@ -94,6 +105,12 @@ moved_arrays::set(const glib_int x, const glib_int y) {
 		}
 		if (x > _max_x) {
 			_max_x = x;
+		}
+		if (y < _min_nonempty_y) {
+			_min_nonempty_y = y;
+		}
+		if (y > _max_nonempty_y) {
+			_max_nonempty_y = y;
 		}
 	}
 	
@@ -133,7 +150,14 @@ moved_arrays::is_near(const glib_int x, const glib_int y) const {
 	return ((x_levo >= -1) && (x_pravo >= -1));
 }
 
+bool 
+moved_arrays::is_horizontal() const {
+	return (_min_nonempty_y==_max_nonempty_y);
+}
+
 glib_int moved_arrays::get_min_x() const {return _min_x;}
 glib_int moved_arrays::get_max_x() const {return _max_x;}
 glib_int moved_arrays::get_min_y() const {return _min_y;}
 glib_int moved_arrays::get_max_y() const {return _max_y;}
+glib_int moved_arrays::get_min_nonempty_y() const {return _min_nonempty_y;}
+glib_int moved_arrays::get_max_nonempty_y() const {return _max_nonempty_y;}

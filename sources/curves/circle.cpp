@@ -79,7 +79,7 @@ circle::get_min_y() const {
 
 glib_int 
 circle::get_max_y() const {
-	return _center.y + _radius;
+	return _center.y + _radius+1;
 }
 
 
@@ -90,11 +90,15 @@ circle::get_min_x() const {
 
 glib_int 
 circle::get_max_x() const {
-	return _center.x + _radius;
+	return _center.x + _radius+1;
 }
 
-gr_object* 
+shape_type
 circle::get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) {
-	throw 1;
-	return NULL;
+	circle* circle_in= new circle(center, radius-(thickness/2));
+	circle* circle_out= new circle(center, radius+(thickness/2));
+	list<shape*> res;
+	res.push_back(circle_in);
+	res.push_back(circle_out);
+	return (1,0,res);
 }

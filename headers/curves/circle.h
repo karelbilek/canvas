@@ -3,6 +3,7 @@
 
 #include "curve.h"
 #include "point.h"
+#include <list>
 
 namespace glib{
 	class circle:public curve {
@@ -18,7 +19,7 @@ namespace glib{
 		
 		virtual std::list<moved_arrays> get_arrays();
 
-		virtual gr_object* get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next);
+		virtual std::list<curves*> get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next);
 
 		virtual glib_int get_min_y() const;
 		virtual glib_int get_max_y() const;

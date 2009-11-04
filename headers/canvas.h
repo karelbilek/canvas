@@ -2,12 +2,12 @@
 #define CANVAS_INC
 
 #include "matrix.h"
-#include "gr_object.h"
+#include "shape.h"
 
 namespace glib {
 	class canvas {
 	public:
-		typedef std::list<gr_object*> gr_objects; //list vsech grafickych objektu
+		//typedef std::list<shape> shapes; //list vsech grafickych objektu
 		typedef plane<RGBa>::T_list colors_row;	//list struktur (barva, zacatek, konec) z plane
 	private:
 		
@@ -17,7 +17,7 @@ namespace glib {
 		                
 		RGBa _background;
 		
-		gr_objects _gr_objects;
+		std::list<shape> _shapes;
 		
 	public:
 		glib_int get_width() const;
@@ -36,12 +36,12 @@ namespace glib {
 		void remove(const size_t pos);
 		void pop_back();
 		void pop_front();
-		void push_front(const gr_object* const g);
-		void push_back(const gr_object* const g);
-		void push_front(const gr_object* const g, size_t pos);
-		void push_back(const gr_object* const g, size_t pos);
+		void push_front(const shape g);
+		void push_back(const shape g);
+		void push_front(const shape g, size_t pos);
+		void push_back(const shape g, size_t pos);
 		void remove_all();
-		gr_object* get_object(size_t pos) const;
+		shape get_object(size_t pos) const;
 	};
 }
 
