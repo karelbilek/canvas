@@ -1,6 +1,6 @@
 program=canvas
-OBJECTS=main.o RGBa.o canvas.o png_paint.o point.o moved_arrays.o curves/circle.o
-HEADS=types.h matrix.h interval.h plane.h RGBa.h curve.h gr_object.h canvas.h png_paint.h stupid_object.h style.h point.h moved_arrays.h curves/circle.h
+OBJECTS=canvas.o curves/circle.o main.o moved_arrays.o png_paint.o point_o RGBa.o shape.o
+HEADS=all_shapes.h canvas.h curve.h curves/circle.h interval.h matrix.h moved_arrays.h plane.h png_paint.h point.h RGBa.h shape.h types.h
 
 
 CPPFLAGS=-O0 -g -Wall -Weffc++ -Wextra -I./headers 
