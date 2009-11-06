@@ -8,8 +8,8 @@ namespace glib {
 	private:
 		
 		bool _first;
-		glib_int _min_x;
-		glib_int _max_x;
+		//glib_int _min_x;
+		//glib_int _max_x;
 		
 		glib_int _min_nonempty_y;
 		glib_int _max_nonempty_y;
@@ -44,10 +44,10 @@ namespace glib {
 		
 		bool is_horizontal() const;
 		
-		glib_int get_min_x() const;
-		glib_int get_min_y() const;
-		glib_int get_max_x() const;
-		glib_int get_max_y() const;
+		//glib_int get_min_x() const;
+		//glib_int get_min_y() const;
+		//glib_int get_max_x() const;
+		//glib_int get_max_y() const;
 		
 		glib_int get_min_nonempty_y() const;
 		glib_int get_max_nonempty_y() const;
