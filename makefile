@@ -1,6 +1,6 @@
 program=canvas
-OBJECTS=canvas.o curves/circle.o main.o moved_arrays.o png_paint.o point_o RGBa.o shape.o
-HEADS=all_shapes.h canvas.h curve.h curves/circle.h interval.h matrix.h moved_arrays.h plane.h png_paint.h point.h RGBa.h shape.h types.h
+OBJECTS=canvas.o curves/circle.o main.o moved_arrays.o png_paint.o point.o RGBa.o shape.o shape_type.o
+HEADS=all_shapes.h canvas.h curve.h curves/circle.h interval.h matrix.h moved_arrays.h plane.h png_paint.h point.h RGBa.h shape.h types.h shape_type.h
 
 
 CPPFLAGS=-O0 -g -Wall -Weffc++ -Wextra -I./headers 
@@ -19,4 +19,4 @@ ${program}: $(REAL_OBJECTS)
 	g++ -o $@ ${REAL_OBJECTS} $(LDFLAGS)
 
 clean:
-	rm -f objects/*.o ${program}
+	rm -f objects/*.o objects/curves/*.o ${program}

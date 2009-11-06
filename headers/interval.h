@@ -132,10 +132,9 @@ namespace glib {
 	  _start(other._start), 
 	  _end(other._end),
 	  _content(other._content),
-	  _left((other._left!=NULL)?(new interval<T> (*other._left)):(NULL)),
-	  _right((other._right!=NULL)?(new interval<T> (*other._right)):(NULL)),
+	  _left((other._left!=NULL)?(new interval<T> (*(other._left))):(NULL)),
+	  _right((other._right!=NULL)?(new interval<T> (*(other._right))):(NULL)),
 	  _empty(other._empty) { 
-		  //Vic se mi libi, kdyz je vsechno v inicializaci. Jako napr. tady.
 	}
 
 	template<class T>
@@ -204,7 +203,7 @@ namespace glib {
 			add_more(other._start, other._end, other._content);
 			if (other._left!=NULL) {
 				add_another(*other._left);
-			}
+			} 
 			if (other._right!=NULL) {
 				add_another(*other._right);
 			}
@@ -219,25 +218,18 @@ namespace glib {
 	interval<T>::flatten_interval(const U& what, const T& min) const {
 		if (_content >= min ) {
 				//jednodussi varianta
-			std::cout<<"Jednodussi varianta\n";
 			interval<U>* result = new interval<U>(_start, _end, what);
 			
-			std::cout<<"novy vytvoren, zkontrolujem leve/prave puvodniho\n";
 			if (_left!=NULL) {
-				std::cout<<"lezu doleva\n";
 				result->add_left(_left->flatten_interval<U>(what, min));
 			}
 			if (_right!=NULL) {
-				std::cout<<"lezu doprava\n";
 				result->add_right(_right->flatten_interval<U>(what, min));
 			}
-			std::cout<<"jeste checknu\n";
 			result->check();
-			std::cout<<"done\n";
 			return result;
 		} else {
 				//trva mnohem dyl :/ horsi varianta
-			std::cout<<"horsi varianta\n";
 			if (_left!=NULL) {
 				interval<U>* novy = _left->flatten_interval<U>(what, min);
 					//trva mnohem dyl :/
@@ -284,7 +276,7 @@ namespace glib {
 			}
 			
 			if (other._right != NULL) {
-				_left = new interval(*other._right);
+				_right = new interval(*other._right);
 
 			}
 		}
@@ -311,8 +303,9 @@ namespace glib {
 	template<class T>
 	void 
 	interval<T>::add_more(const glib_int start, const glib_int end, const T& what) {
-		//Tady je to trochu zajimave!
-		// = -> stare, - -> nove
+		
+		
+		
 		if (_empty) {
 			_empty= false;
 			_start = start;
@@ -322,6 +315,7 @@ namespace glib {
 			_right = NULL;
 		} else {
 			if (start < _start) {
+				
 				glib_int smaller = __minimum (_start-1, end);
 					//Chceme vlozit neco, co zacina driv
 					//Uvazuju ale jenom to, co "nekouka" pripadne prese mne - to pak poresim.
@@ -348,8 +342,10 @@ namespace glib {
 			}
 			if (end > _end) {
 				//totez v bledemodrem
+				
 				glib_int bigger = __maximum(_end+1, start);
 				if (_right == NULL) {
+					
 					_right = new interval<T> (bigger, end, what);
 				} else {
 					_right -> add_more(bigger, end, what);
@@ -370,16 +366,23 @@ namespace glib {
 					//musim poresit cast vlevo, udelam to tak, ze sam sebe posunu doprava a
 					//pridam "novou" levou cast - je to kvuli tomu, aby se mohla pripadne checknout a 
 					//sloucit s necim, co uz je vlevo
+					
+				
 				glib_int b = _start;
 				_start = end + 1;
 				add_more(b, end, _content + what);
 		
+		
 			} else if (start > _start && end >= _end && start <= _end) {
 				//       ==========
 				//           ---------
+				
+
 				glib_int e = _end;
 				_end = start - 1;
 				add_more(start, e, _content + what);
+				
+				
 		
 			} else if (start > _start && end < _end) {
 					// je tam ostra!
@@ -387,18 +390,23 @@ namespace glib {
 					//      ---
 					//3 kousky
 					
+				
 				glib_int old_end = _end;
 				glib_int old_start = _start;
 				T old_content = _content;
 				
 				_start = start;
 				_end = end;
+				
+				
 				_content = _content + what;
 				
 				add_more(old_start, start-1, old_content); //vlevo, ty ukazatele si to vyresi
 				add_more(end+1, old_end, old_content); //vpravo
+				
 		
 			}
+			//check();
 		}
 	}
 	
@@ -645,18 +653,6 @@ namespace glib {
 		}
 
 	}
-	
-	// template<class T>
-	// void 
-	// interval<T>::recur_check() {
-	// 	check();
-	// 	if (_left!=NULL) {
-	// 		_left->check();
-	// 	}
-	// 	if (_right!=NULL) {
-	// 		_right->check();
-	// 	}
-	// }
 
 }
 

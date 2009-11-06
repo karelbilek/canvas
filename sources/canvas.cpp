@@ -1,6 +1,6 @@
 #include "canvas.h"
 
-
+using namespace std;
 using namespace glib;
 
 //-----------------------------CONSTRUCTORS
@@ -43,11 +43,11 @@ matrix<glib_component> canvas::get_matrix(const size_t red_pos, const size_t gre
 	for (glib_int y = 0; y < _height; ++y) {
 		
 		colors_row row = all_plane.get_row(y);
-		
 		for (colors_row::iterator i = row.begin(); i != row.end(); ++i) {
 			
 			glib_component color[4];
 			i->_cont.get_colors (color+red_pos, color+green_pos, color+blue_pos, color+alpha_pos);
+			
 			all_matrix.set_more(__maximum(i->_start,0), i->_end, y, color);
 			
 		}
@@ -70,10 +70,10 @@ canvas::get_plane()  {
 	plane<bool> painted_so_far(0,_height,0);
 	bool done;
 	
-	for (_shapes::const_iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
+	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		
 		
-		plane<RGBa> pixels = (*i).pixels(_height, _width, _antialias, painted_so_far, done);
+		plane<RGBa> pixels = (*i).get_pixels(_height, _width, _antialias, painted_so_far, done);
 		if (done) {
 			all_plane.add(pixels);
 			painted_so_far.add(pixels.flatten_plane<bool>(1, full));
@@ -102,7 +102,7 @@ void canvas::push_front(const shape g, const size_t pos) {
 	
 	size_t pos_c=__minimum(pos, _shapes.size());
 	
-	gr_objects::iterator it = _shapes.begin();
+	list<shape>::iterator it = _shapes.begin();
 	for (size_t i = 0; i < pos_c; ++i) {
 		++it;
 	}
@@ -115,7 +115,7 @@ void canvas::push_back(const shape g, const size_t pos) {
 	size_t pos_c=__minimum(pos, _shapes.size());
 	
 	
-	gr_objects::iterator it = _shapes.end();
+	list<shape>::iterator it = _shapes.end();
 	for (size_t i = 0; i < pos_c; ++i) {
 		--it;
 	}
@@ -125,9 +125,9 @@ void canvas::push_back(const shape g, const size_t pos) {
 
 void canvas::remove(const size_t pos) {
 	if (pos < _shapes.size()) {
-		gr_objects::iterator it = _shapes.begin();
+		list<shape>::iterator it = _shapes.begin();
 		for (size_t i = 0; i < pos; ++i, ++it) {}
-		_shapes.remove(*it);
+		_shapes.erase(it);
 	}
 }
 
@@ -148,4 +148,13 @@ void canvas::pop_front(){
     if (!_shapes.empty()) {
 		_shapes.pop_front();
     }
+}
+
+void 
+canvas::push_front(const shape_style& style, const shape_type& type) {
+	push_front(shape(style, type));
+}
+
+void canvas::push_back(const shape_style& style, const shape_type& type) {
+	push_back(shape(style, type));
 }

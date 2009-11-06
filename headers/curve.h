@@ -2,6 +2,7 @@
 #define CURVE_INC
 
 #include "moved_arrays.h"
+#include "shape_type.h"
 #include <list>
 
 namespace glib{
@@ -21,7 +22,7 @@ namespace glib{
 		virtual glib_int get_min_x() const = 0;
 		virtual glib_int get_max_x() const = 0;
 		
-		virtual curve* clone() const;
+		virtual curve* clone() const=0;
 	
 		virtual ~curve() {};
 				//pro jistotu :)

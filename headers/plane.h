@@ -135,6 +135,7 @@ namespace glib {
 		for (glib_int i = 0; i < rs; ++i) {
 			_intervals[i]=other._intervals[i];
 		}
+		
 	}
 	
 	
@@ -332,7 +333,9 @@ namespace glib {
 			glib_uint it = i - _start_height;
 			glib_uint oth_it = i - other._start_height;
 				//beru primo z vektoru, bez get_row, musim vedet jak svuj index (it) tak index toho druheho (oth_it)
+
 			_intervals[it].add_another(other._intervals[oth_it]);
+		
 		}
 	}
 	
@@ -378,13 +381,9 @@ namespace glib {
 		
 		int rs = __real_height;
 		for (int i=0; i<rs; ++i) {
-			std::cout<<"Flatuju radek i!!§\n";
 			interval<U>* p_int = (_intervals[i]).template flatten_interval<U>(what, min);
-			std::cout<<"Hotovo, du nastavit\n";
 			result.set_whole_interval(i, *p_int);
-			std::cout<<"Nastaveno, du mazat\n";
 			delete p_int;
-			std::cout<<"Mazano\n";
 				//tohle vypada hrozne, ale tady by mel ve vetsine pripadu vylezt interval,
 				// co bude mit velmi malo potomku, jestli vubec nejake
 		}

@@ -11,9 +11,9 @@ namespace glib {
 		glib_float _radius;
 		
 		disk(const point& center, const glib_float radius):
+		  shape_type(1,1),
 		  _center(center),
-		  _radius(radius),
-		  shape_type(1,1){
+		  _radius(radius) {
 			_curves.push_back(new circle(center, radius));
 		} 
 	};

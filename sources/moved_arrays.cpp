@@ -20,6 +20,24 @@ moved_arrays::moved_arrays(glib_int min_y, glib_int max_y)
 
 }
 
+moved_arrays::moved_arrays(glib_float min_y, glib_float max_y)
+  : _first(true),
+  _min_x(0),
+  _max_x(0),
+  _min_nonempty_y(0),
+  _max_nonempty_y(0),
+  _min_y(static_cast<glib_int>(min_y)),
+  _max_y(static_cast<glib_int>(max_y+1)),
+  _starts(new glib_int[_max_y-_min_y+1]), //chci to vcetne max_yu, plus 1 na obcasne zaokrouhleni
+  _ends(new glib_int[_max_y-_min_y+1]),
+  _is_set(new bool[_max_y-_min_y+1]),
+  _sorting_hint(_min_y) {
+	for (glib_int i = 0; i < _max_y-_min_y+1; ++i) {
+		_is_set[i]=false;
+	}
+
+}
+
 moved_arrays::moved_arrays(const moved_arrays& other)
   : _first(other._first),
   _min_x(other._min_x),
@@ -27,7 +45,6 @@ moved_arrays::moved_arrays(const moved_arrays& other)
   _min_nonempty_y(other._min_nonempty_y),
   _max_nonempty_y(other._max_nonempty_y),
   _min_y(other._min_y),
-  _max_y(other._max_y),
   _max_y(other._max_y),
   _starts(new glib_int[_max_y-_min_y+2]), 
   _ends(new glib_int[_max_y-_min_y+2]),
@@ -115,7 +132,6 @@ moved_arrays::set(const glib_int x, const glib_int y) {
 	}
 	
 	if (_is_set[my_y]) {
-		std::cout<<my_y<<"uz je nastaveno....\n";
 		if (x < _starts[my_y]) {
 			_starts[my_y] = x;
 		}
@@ -123,11 +139,15 @@ moved_arrays::set(const glib_int x, const glib_int y) {
 			_ends[my_y] = x;
 		}
 	} else {
-		std::cout<<"nastavuju "<<my_y<<"na "<<x<<"oboje\n";
 		_is_set[my_y] = true;
 		_starts[my_y] = x;
 		_ends[my_y] = x;
 	}
+}
+
+void
+moved_arrays::set(const glib_float x, const glib_float y) {
+	set(static_cast<glib_int>(x), static_cast<glib_int>(y));
 }
 
 bool

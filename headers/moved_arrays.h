@@ -26,6 +26,8 @@ namespace glib {
 		glib_int _sorting_hint; //hack for comparator function
 		
 		moved_arrays(glib_int start, glib_int end);
+		moved_arrays(glib_float start, glib_float end);
+		
 		moved_arrays(const moved_arrays& other);
 		~moved_arrays();
 		
@@ -35,6 +37,7 @@ namespace glib {
 		glib_int get_end(const glib_int y) const;
 		
 		void set(const glib_int x, const glib_int y);
+		void set(const glib_float x, const glib_float y);
 		
 		bool is_set(const glib_int y) const;
 		bool is_near(const glib_int x, const glib_int y) const;

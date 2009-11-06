@@ -38,6 +38,10 @@ namespace glib {
 		void pop_front();
 		void push_front(const shape g);
 		void push_back(const shape g);
+		
+		void push_front(const shape_style& style, const shape_type& type);
+		void push_back(const shape_style& style, const shape_type& type);
+		
 		void push_front(const shape g, size_t pos);
 		void push_back(const shape g, size_t pos);
 		void remove_all();

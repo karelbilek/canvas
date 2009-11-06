@@ -19,12 +19,13 @@ namespace glib{
 		
 		virtual std::list<moved_arrays> get_arrays();
 
-		virtual std::list<curves*> get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next);
+		virtual shape_type get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next)const;
 
 		virtual glib_int get_min_y() const;
 		virtual glib_int get_max_y() const;
 		virtual glib_int get_min_x() const;
 		virtual glib_int get_max_x() const;
+		virtual circle* clone() const {circle* n= new circle(_center,_radius);return n;}
 
 	};
 }

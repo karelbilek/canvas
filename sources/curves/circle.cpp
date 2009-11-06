@@ -1,4 +1,5 @@
 #include "curves/circle.h"
+#include "shape.h"
 
 using namespace glib;
 using namespace std;
@@ -15,6 +16,7 @@ circle::get_arrays() {
 	std::list<moved_arrays> res;
 	
 	if (_radius <= 0.5) {
+		
 		moved_arrays one(_center.y, _center.y);
 		one.set(_center.x, _center.y);
 		
@@ -74,31 +76,31 @@ circle::paint_more(glib_float x, glib_float y, moved_arrays& left, moved_arrays&
 
 glib_int 
 circle::get_min_y() const {
-	return _center.y - _radius;
+	return static_cast<glib_int>(_center.y - _radius);
 }
 
 glib_int 
 circle::get_max_y() const {
-	return _center.y + _radius+1;
+	return static_cast<glib_int>(_center.y + _radius+1);
 }
 
 
 glib_int 
 circle::get_min_x() const {
-	return _center.x - _radius;
+	return static_cast<glib_int>(_center.x - _radius);
 }
 
 glib_int 
 circle::get_max_x() const {
-	return _center.x + _radius+1;
+	return static_cast<glib_int>(_center.x + _radius+1);
 }
 
 shape_type
-circle::get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) {
-	circle* circle_in= new circle(center, radius-(thickness/2));
-	circle* circle_out= new circle(center, radius+(thickness/2));
-	list<shape*> res;
+circle::get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) const{
+	circle* circle_in= new circle(_center, _radius-(thickness/2));
+	circle* circle_out= new circle(_center, _radius+(thickness/2));
+	list<curve*> res;
 	res.push_back(circle_in);
 	res.push_back(circle_out);
-	return (1,0,res);
+	return shape_type(1,0,res);
 }
