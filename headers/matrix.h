@@ -3,7 +3,7 @@
 
 #include "types.h" //kvuli glib_int
 
-#define is_legal(_x,_y,_kolik) (((_x) < _width) && ((_y) < _height) && ((_x) >= 0) && ((_y) >= 0) && ((_kolik)>=0) && ((_kolik) < _element_width))
+#define is_legal(_x,_y,_kolik) (((_x) < _width) && ((_y) < _height) && ((_x) >= 0) && ((_y) >= 0) && ((_kolik) < _element_width))
 	//jestli je cislo v ramci mezi
 #define position(_x,_y,_kolik) ((_y) * _width * _element_width + (_x) * _element_width + (_kolik))
 
@@ -25,8 +25,6 @@ namespace glib {
 		 * Cimz vlastne muzu obejit to private:, ktere je tim vlastne pro _array jenom tak pro okrasu,
 		 * ale ja toho v tom poli tolik zkazit nemuzu.
 		 */
-	public:
-		typedef unsigned char small;
 	private:
 		
 		
@@ -55,6 +53,9 @@ namespace glib {
 		
 		T get(const glib_int x, const glib_int y, const small element) const;
 			//vrati konkretni prvek na pozici
+			
+		glib_int get_width() const {return _width;}
+		glib_int get_height() const {return _height;}
 
 		void set_more(const glib_int start_x, const glib_int end_x, const glib_int y, const T* what);
 			//nastavi vsechno od start_x do end_x na vysce y na to, co je na T
@@ -148,6 +149,7 @@ T** glib::matrix<T>::get_rows() {
 template<class T>
 void 
 glib::matrix<T>::set(const glib_int x, const glib_int y, const small element, const T& what) {
+	
 	if (is_legal(x,y,element)) {
 		_array[position(x,y,element)] = what;
 	}
@@ -203,7 +205,6 @@ glib::matrix<T> glib::matrix<T>::half() {
 				T d = _array[position(x*2+1, y*2+1, i)];
 				T prum = (a+b+c+d)/4;
 				res.set(x,y,i,prum);
-					//here I cannot use position macro, because it has DIFFERENT size!
 			}
 		}
 	}

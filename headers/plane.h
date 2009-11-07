@@ -30,13 +30,16 @@ namespace glib {
 		
 	private:	
 		
-		glib_int _pivot_width; //sirka, co se pouziva pro posouvani z mista na misto 
+		
 		glib_int _start_height; //zacatecni vyska
 		glib_int _end_height; //konecna vyska
 		
 		interval<T>* _intervals;
 		
-	public:	
+	public:
+		glib_int _pivot_width; 
+		glib_int _pivot_height;
+		
 		typedef std::list<interval_content<T> > T_list;
 			//list "obsahu" - obsah struktura T, zacatek, konec
 		
@@ -62,8 +65,10 @@ namespace glib {
 		glib_int get_start_height() const;
 		glib_int get_end_height() const;
 		glib_int get_real_height() const;
-		glib_int get_pivot_width() const;
 		T_intervals get_intervals() const;
+		
+		glib_int get_pivot_height() const {return _pivot_height;}
+		glib_int get_pivot_width() const {return _pivot_width;}
 		
 			//klasicke gettery
 		
@@ -109,27 +114,30 @@ namespace glib {
 
 	//--------------------------------CONSTRUCTORS
 	template<class T>
-	plane<T>::plane() : 
-	  _pivot_width(0),
-	  _start_height(0), 
+	plane<T>::plane() :
+	  _start_height(0),
 	  _end_height(0),
-	  _intervals(NULL){
+	  _intervals(NULL),
+	  _pivot_width(0),
+	  _pivot_height(0) {
 	}
 	
 	template<class T>
 	plane<T>::plane(const glib_int start_height, const glib_int end_height, const glib_int pivot_width) :
-	  _pivot_width(pivot_width) ,
 	  _start_height(start_height), 
 	  _end_height(__maximum(start_height, end_height)),	
-	  _intervals(new interval<T>[__real_height]){
+	  _intervals(new interval<T>[__real_height]),
+	  _pivot_width(pivot_width),
+	  _pivot_height(0){
 	}
 	
 	template<class T>
 	plane<T>::plane(const glib::plane<T>& other) :
-	  _pivot_width(other._pivot_width) ,
 	  _start_height(other._start_height), 
 	  _end_height(other._end_height),	
-	  _intervals(new interval<T>[__real_height]) {
+	  _intervals(new interval<T>[__real_height]),
+	  _pivot_width(other._pivot_width),
+	  _pivot_height(other._pivot_height) {
 		
 		glib_int rs = __real_height;
 		for (glib_int i = 0; i < rs; ++i) {
@@ -144,10 +152,11 @@ namespace glib {
 		//cely zaplni whatem
 	template<class T>
 	plane<T>::plane(const glib_int start_width, const glib_int end_width, const glib_int start_height, const glib_int end_height, const T& what) : 
-	  _pivot_width(start_width),
 	  _start_height(start_height),
 	  _end_height(__maximum(start_height, end_height)), 
-	  _intervals(new interval<T>[__real_height]) {
+	  _intervals(new interval<T>[__real_height]),
+	  _pivot_width(0),
+	  _pivot_height(0) {
 		
 		glib_int rs = __real_height;
 		for (glib_int i = 0; i < rs; ++i) {
@@ -249,11 +258,6 @@ namespace glib {
 		return _end_height;
 	}
 
-	template <class T> 
-	glib_int
-	plane<T>::get_pivot_width() const {
-		return _pivot_width;
-	}
 	
 	template <class T> 
 	typename plane<T>::T_intervals
@@ -278,6 +282,8 @@ namespace glib {
 	plane<T>&
 	plane<T>::operator=(const glib::plane<T>& other) {
 		_pivot_width = other._pivot_width;
+		_pivot_height = other._pivot_height;
+		
 		_start_height = other._start_height;
 		_end_height=other._end_height;
 		delete [] _intervals;
@@ -285,7 +291,7 @@ namespace glib {
 		glib_int rs = __real_height;
 		_intervals=new interval<T>[__real_height];
 		
-		for (glib_int i = 0; i < __real_height; ++i) {
+		for (glib_int i = 0; i < rs; ++i) {
 			_intervals[i]=other._intervals[i];
 		}
 		return *this;
@@ -352,20 +358,24 @@ namespace glib {
 	//----------------------------------------OTHER
 	template <class T> 
 	plane<T>
-	plane<T>::move(const glib_int pivot_width, const glib_int start_height) {
+	plane<T>::move(const glib_int new_width, const glib_int new_height) {
 		plane<T> res = plane<T>(*this);
 			//neni overloadnuty CC - neni se tu ceho bat, neni tu zadne pole
 			//(stromova struktura intervals sama sebe umi zkopirovat)
 	
-		glib_int height_diff = (start_height - _start_height); //- kdyz nahoru, + kdyz dolu
-		glib_int width_diff = (_pivot_width - pivot_width);
 		
-		res._start_height += height_diff;
-		res._end_height += height_diff;
+		glib_int height_diff = (new_height - _pivot_height); //- kdyz nahoru, + kdyz dolu
+		glib_int width_diff = (new_width - _pivot_width);
+				
+		res._start_height = res._start_height + height_diff;
+		res._end_height = res._end_height + height_diff;
 			//posouvame vysku
+		
+		res._pivot_width = new_width;
+		res._pivot_height = new_height;
 	
 		for (glib_int i = 0; i < __real_height; ++i) {
-			res._intervals[i].move(width_diff);
+			res._intervals[i].move(-width_diff);
 		}
 			//posouvame sirku
 		return res; //ta-taa

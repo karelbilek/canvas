@@ -232,9 +232,10 @@ namespace glib {
 				//trva mnohem dyl :/ horsi varianta
 			if (_left!=NULL) {
 				interval<U>* novy = _left->flatten_interval<U>(what, min);
-					//trva mnohem dyl :/
-				novy->add_another(*(_right->flatten_interval<U>(what, min)));
-				novy->check();
+				if (_right!=NULL) {
+					novy->add_another(*(_right->flatten_interval<U>(what, min)));
+					novy->check();
+				}
 				return novy;
 			} else if (_right != NULL) {
 				interval<U>* novy = _right->flatten_interval<U>(what, min);

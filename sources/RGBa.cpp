@@ -64,8 +64,7 @@ RGBa::operator==(const RGBa& other) const {
 
 bool
 RGBa::operator>=(const RGBa& other) const {
-		
-	return _alpha>=other._alpha;
+		return _alpha>=other._alpha;
 }
 
 RGBa RGBa::operator+(const RGBa& other) const {
@@ -83,6 +82,7 @@ RGBa RGBa::operator+(const RGBa& other) const {
 	// glib_float this_f = 1 - other_f;
 	//obraceny smysl scitani barev
 	
+	
 	glib_float this_f = (glib_float)_alpha / (glib_float)res_alpha;
 	glib_float other_f = 1 - this_f;
 	
@@ -90,9 +90,8 @@ RGBa RGBa::operator+(const RGBa& other) const {
 	glib_component res_red = static_cast<glib_component>(this_f * _red + other_f * other._red);
 	glib_component res_green = static_cast<glib_component>(this_f * _green + other_f * other._green);
 	glib_component res_blue = static_cast<glib_component>(this_f * _blue + other_f * other._blue);
-	//vysledky kazde barvy spektra extra
+
 	return RGBa(res_red, res_green, res_blue, res_alpha); 
-	//ta-taa
 }
 
 RGBa RGBa::operator* (const glib_float quoc) const {

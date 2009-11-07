@@ -1,8 +1,12 @@
 #include "shape.h"
 #include "moved_arrays.h"
+#include "point.h"
+#include "all_shapes.h"
 
 using namespace glib;
 using namespace std;
+
+map<glib_int, plane<bool> > glib::shape::brushes;
 
 shape::
 shape(const shape_style& style, const shape_type& type):
@@ -21,20 +25,18 @@ shape_style(glib_int line_size, const RGBa& line_color, bool fill_is, const RGBa
 
 plane<RGBa> 
 shape::get_pixels(const glib_int height, const glib_int width, const bool antialias, const plane<bool>& painted_so_far, bool& done) {
-	//TODO - 2x stejny sofar PRUNIK minmax -> neprekresluj
-	//TODO - brush a ty kruznice
 	
-	shape_type type_copy = _type; //kvuli antialiasu :/
+	shape_type* type_copy = &_type; //kvuli antialiasu :/
 	if (antialias) {
-		//TODO - doublesize
+		type_copy = type_copy->clone_double(); //pozor, tady alokuju novy
 	}
 	
-	std::list<curve*>::iterator i = type_copy._curves.begin();
+	std::list<curve*>::iterator i = type_copy->_curves.begin();
 	
-	std::list<curve*>::iterator one_before_end = type_copy._curves.end();
+	std::list<curve*>::iterator one_before_end = type_copy->_curves.end();
 	--one_before_end;
-	std::list<curve*>::iterator begin = type_copy._curves.begin();
-	std::list<curve*>::iterator end = type_copy._curves.end();
+	std::list<curve*>::iterator begin = type_copy->_curves.begin();
+	std::list<curve*>::iterator end = type_copy->_curves.end();
 	
 	
 	glib_int min_x = (**i).get_min_x();
@@ -77,48 +79,76 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 	
 	if (_style._line_size != 0) {
 		for (i=begin;i!=end; ++i) {
-			curve* previous;
-			curve* next;
-		
-			if (i==begin) {
-				if (type_copy._joined_ends) {
-					previous = *one_before_end;
-				} else {
-					previous = NULL;
-				}
-			} else {
-				std::list<curve*>::iterator j = i;
-				--j;
-				previous = *j;
-			}
-		
-			if (i==one_before_end) {
-				if (type_copy._joined_ends) {
-					next = *begin;
-				} else {
-					next = NULL;
-				}
-			} else {
-				std::list<curve*>::iterator j = i;
-				++j;
-				next = *j;
-			}
-		
-			plane<bool> curve_painted = paint((**i).get_thick_line(_style._line_size, previous, next));
-			result.add(curve_painted.flatten_plane<RGBa>(_style._line_color, true));
 			
+			plane<bool> line(min_y, max_y);
 			
+			if ((**i).have_thick_line()) {
+				curve* previous;
+				curve* next;
 		
+				if (i==begin) {
+					if (type_copy->_joined_ends) {
+						previous = *one_before_end;
+					} else {
+						previous = NULL;
+					}
+				} else {
+					std::list<curve*>::iterator j = i;
+					--j;
+					previous = *j;
+				}
+		
+				if (i==one_before_end) {
+					if (type_copy->_joined_ends) {
+						next = *begin;
+					} else {
+						next = NULL;
+					}
+				} else {
+					std::list<curve*>::iterator j = i;
+					++j;
+					next = *j;
+				}
+			
+				shape_type okraj = (**i).get_thick_line((antialias?2:1)*_style._line_size, previous, next);
+				line = paint(&(okraj), min_y, max_y);
+				//result.add(().flatten_plane<RGBa>(_style._line_color, true));
+			} else {
+				glib_int thickness = static_cast<glib_int>((antialias?2:1)*(_style._line_size)+1);
+				
+				if (!brushes.count(thickness)) {
+					shape_type b = disk(point(thickness,thickness), thickness/2);
+					plane<bool> p = paint(&b, 0, 2*thickness);
+					p._pivot_width = thickness;
+					p._pivot_height = thickness;
+					brushes.insert(pair<glib_int,plane<bool> >(thickness, p));
+				}
+				
+				plane<bool> p = brushes[thickness];
+				list<moved_arrays> borders = type_copy->all_curve_arrays();
+				
+				for (list<moved_arrays>::iterator i=borders.begin(); i!=borders.end(); ++i) {
+					for (glib_int y = i->get_min_nonempty_y(); y<=i->get_max_nonempty_y(); ++y) {
+						for (glib_int x = i->get_start(y); x<=i->get_end(y); ++x) {
+							plane<bool> m = p.move(x,y);
+							m.add(x,y,1);
+							line.add(m);
+						}
+					}
+				}
+			}
+			result.add(line.flatten_plane<RGBa>(_style._line_color, true)); 
 		}
 	}
 	
 	
 	
 	if (_style._fill_is) {
-		plane<bool> fill_painted = paint(type_copy, min_y, max_y);
-		result.add(fill_painted.flatten_plane<RGBa>(_style._fill_color, true));
+		result.add((paint(type_copy, min_y, max_y)).flatten_plane<RGBa>(_style._fill_color, true));
 		
-		
+	}
+	if (antialias) {
+		delete type_copy;
 	}
 	
 	return result;
@@ -164,14 +194,11 @@ shape::compare_by_row(const moved_arrays& a, const moved_arrays& b) {
 		//reflexivita? WHO CARES!! WEEEEE
 }
 
-plane<bool> 
-shape::paint(const shape_type& type, glib_int min_y, glib_int max_y){
-	//neni pres referenci ale kopii, protoze ho budu menit
-	list<moved_arrays> borders;
-	for(list<curve*>::const_iterator i = type._curves.begin(); i!=type._curves.end(); ++i) {
-		list<moved_arrays> to_add = (**i).get_arrays();
-		borders.splice(borders.end(), to_add); 
-	}
+plane<bool>
+shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
+	
+	//to min_y neni pres referenci ale kopii, protoze ho budu menit
+	list<moved_arrays> borders = type->all_curve_arrays();
 	
 	//borders.sort(compare_by_top);
 	
@@ -196,8 +223,9 @@ shape::paint(const shape_type& type, glib_int min_y, glib_int max_y){
 		
 		for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ++i) {
 			i->_sorting_hint = y; //I got no better idea than this crap
-		}
-		borders.sort(compare_by_row);
+		} 
+		
+		borders.sort(shape::compare_by_row);
 		
 		glib_int paint_start = 0;
 		glib_int paint_end = 0;
@@ -220,6 +248,5 @@ shape::paint(const shape_type& type, glib_int min_y, glib_int max_y){
 		
 		
 	}
-	
 	return res;
 }

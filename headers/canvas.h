@@ -20,8 +20,8 @@ namespace glib {
 		std::list<shape> _shapes;
 		
 	public:
-		glib_int get_width() const;
-		glib_int get_height() const;
+		// glib_int get_width() const;
+		// glib_int get_height() const;
 		
 		canvas(const size_t width, const size_t height, const RGBa& background, bool antialias);
 		canvas();

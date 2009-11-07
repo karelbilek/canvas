@@ -26,21 +26,13 @@ canvas::~canvas() {
 
 //-----------------------------------GETTERS
 
-glib_int canvas::get_width() const {
-	return _width;
-}
-
-glib_int canvas::get_height() const {
-	return _height;
-}
-
 matrix<glib_component> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) {
-	
+	small quoc = (_antialias?2:1);
 	
 	plane<RGBa> all_plane = get_plane();
-	matrix<glib_component> all_matrix(_width,_height,4);
+	matrix<glib_component> all_matrix(quoc*_width,quoc*_height,4);
 	
-	for (glib_int y = 0; y < _height; ++y) {
+	for (glib_int y = 0; y < quoc*_height; ++y) {
 		
 		colors_row row = all_plane.get_row(y);
 		for (colors_row::iterator i = row.begin(); i != row.end(); ++i) {
@@ -53,7 +45,11 @@ matrix<glib_component> canvas::get_matrix(const size_t red_pos, const size_t gre
 		}
 	}
 	
-	return all_matrix;
+	if (!_antialias) {
+		return all_matrix;
+	} else {
+		return all_matrix.half();
+	}
 }
 
 
@@ -61,26 +57,27 @@ plane<RGBa>
 canvas::get_plane()  {
 	RGBa full(0,0,0,255);
 	
-	plane<RGBa> all_plane(0, _height);
+	small quoc = (_antialias?2:1);
+	plane<RGBa> all_plane(0, quoc*_height);
 	//nejdriv si vse pridam do plane (je to rychle)
 	//az pak si to prehodim do rasteru
 	
 	
 	
-	plane<bool> painted_so_far(0,_height,0);
+	plane<bool> painted_so_far(0,quoc*_height,0);
 	bool done;
 	
 	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		
 		
-		plane<RGBa> pixels = (*i).get_pixels(_height, _width, _antialias, painted_so_far, done);
+		plane<RGBa> pixels = (*i).get_pixels(quoc*_height, quoc*_width, _antialias, painted_so_far, done);
 		if (done) {
 			all_plane.add(pixels);
 			painted_so_far.add(pixels.flatten_plane<bool>(1, full));
 		}
 	}
 		//tohle je mozna antiintuitivni, ale kreslim zeshora dolu, tj. pozadi prictu jako posledni
-	all_plane.add(plane<RGBa>(0, _height, 0, _width, _background));
+	all_plane.add(plane<RGBa>(0, quoc*_height, 0, quoc*_width, _background));
 	
 	return all_plane;
 }

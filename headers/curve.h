@@ -14,6 +14,7 @@ namespace glib{
 		
 		virtual std::list<moved_arrays> get_arrays() = 0;
 
+		virtual bool have_thick_line()=0;
 		virtual shape_type get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) const = 0;
 				//cara s tloustkou
 				
@@ -22,7 +23,10 @@ namespace glib{
 		virtual glib_int get_min_x() const = 0;
 		virtual glib_int get_max_x() const = 0;
 		
+		
+		
 		virtual curve* clone() const=0;
+		virtual curve* clone_double() const=0;
 	
 		virtual ~curve() {};
 				//pro jistotu :)

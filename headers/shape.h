@@ -5,6 +5,7 @@
 #include "curve.h"
 #include "shape_type.h"
 #include <list>
+#include <map>
 
 namespace glib {
 	
@@ -23,10 +24,14 @@ namespace glib {
 	class shape {
 	private:
 		
+		static std::map<glib_int, plane<bool> > brushes;
+		
 		shape_style _style;
 		shape_type _type;
 		
-		static plane<bool> paint(const shape_type& type, glib_int min_y=0, glib_int max_y=0);
+
+		static plane<bool> paint(const shape_type* const type, glib_int min_y, glib_int max_y);
+				//neni const, protoze meni sorting hint		
 		
 		//static bool compare_by_top(const moved_arrays& a, const moved_arrays& b);
 		static bool compare_by_row(const moved_arrays& a, const moved_arrays& b);

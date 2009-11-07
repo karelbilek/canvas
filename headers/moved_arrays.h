@@ -2,6 +2,7 @@
 #define MIARRAYS_INC
 
 #include "types.h"
+#include <vector>
 
 namespace glib {
 	class moved_arrays {
@@ -18,20 +19,20 @@ namespace glib {
 		glib_int _min_y;
 		glib_int _max_y;
 		
-		glib_int* _starts;
-		glib_int* _ends;
-		bool* _is_set;
+		std::vector<glib_int> _starts;
+		std::vector<glib_int> _ends;
+		std::vector<bool> _is_set;
 		
 	public:
-		glib_int _sorting_hint; //hack for comparator function
+		glib_int _sorting_hint; //hack for comparator function - I have no better way of doing this :(
 		
 		moved_arrays(glib_int start, glib_int end);
 		moved_arrays(glib_float start, glib_float end);
 		
-		moved_arrays(const moved_arrays& other);
-		~moved_arrays();
+		//moved_arrays(const moved_arrays& other);
+		//~moved_arrays();
 		
-		moved_arrays& operator=(const moved_arrays& other);
+		//moved_arrays& operator=(const moved_arrays& other);
 		
 		glib_int get_start(const glib_int y) const;
 		glib_int get_end(const glib_int y) const;

@@ -29,7 +29,8 @@
 
 
 namespace glib {
-
+	
+	typedef unsigned char small;
 	typedef unsigned long glib_uint;
 	typedef long glib_int; 
 	typedef unsigned char glib_component;
