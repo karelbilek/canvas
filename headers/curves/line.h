@@ -18,12 +18,16 @@ namespace glib{
 		bool _increasing;
 		
 		
-	public:	
+	public:
+		
+		point get_first() const;
+		point get_second() const;
+		
 		line(point a, point b);
 		
 		virtual std::list<moved_arrays> get_arrays();
 
-		virtual shape_type get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next)const{throw 1;}
+		virtual shape_type get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) const;
 
 		virtual glib_int get_min_y() const;
 		virtual glib_int get_max_y() const;
@@ -31,7 +35,7 @@ namespace glib{
 		virtual glib_int get_max_x() const;
 		virtual line* clone() const {line* n= new line(_a,_b);return n;}
 		virtual line* clone_double() const {line* n= new line(_a*2,_b*2);return n;}
-		virtual bool have_thick_line() {return 0;}
+		virtual bool have_thick_line() {return 1;}
 	};
 }
 
