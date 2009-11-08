@@ -78,6 +78,8 @@ namespace glib {
 		bool has_right() const;
 		bool is_empty() const;
 		
+		bool includes(const glib_int from, const glib_int to) const;
+		
 		
 		interval (const glib_int start, const glib_int end, const T& content);
 			//"klasicky" konstruktor
@@ -124,6 +126,33 @@ namespace glib {
 		template <class U>
 		interval<U>* flatten_interval(const U& what, const T& min) const;
 	};
+	
+	template<class T>
+	bool 
+	interval<T>::includes(const glib_int from, const glib_int to) const {
+		//paradoxne, to co jde primo "na me" ignoruju
+		
+		if (from < _start) {
+			if (_left == NULL) {
+				return false;
+			} else {
+				if(!_left->includes(from,_start-1)) {
+					return false;
+				}
+			}
+		}
+		if (to > _end) {
+			if (_right==NULL) {
+				return false;
+			} else {
+				if (!_right->includes(_end+1,to)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	
 
 	//----------------CONSTRUCTORS

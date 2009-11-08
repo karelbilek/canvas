@@ -4,6 +4,7 @@
 #include "shape.h"
 #include "curves/circle.h"
 #include "curves/line.h"
+#include "curves/bezier.h"
 #include <vector>
 
 namespace glib {
@@ -18,6 +19,13 @@ namespace glib {
 	struct segment:public shape_type {
 		segment(const glib_float ax, const glib_float ay, const glib_float bx, const glib_float by): shape_type(0,0) {
 			_curves.push_back(new line(point(ax,ay),point(bx,by)));
+		} 
+	};
+	
+	struct bezier_segment:public shape_type {
+		bezier_segment(const point& a, const point& b, const point& c, const point& d): shape_type(0,0) {
+			_curves.push_back(new bezier(a,b,c,d));
+		
 		} 
 	};
 	

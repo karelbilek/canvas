@@ -63,13 +63,7 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 	max_y = __maximum(max_y, 0);
 	
 	//for (glib_int y=min_y; )
-	if (painted_so_far.most_left()<min_x 
-		&& 
-		painted_so_far.most_right()>max_x 
-		&& 
-		painted_so_far.first_non_zero()<min_y
-		&&
-		painted_so_far.last_non_zero()>max_y) {
+	if (painted_so_far.includes_square(min_x, min_y, max_x, max_y)) {
 		done = false;
 		return plane<RGBa>();	
 	}

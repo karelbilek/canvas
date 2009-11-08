@@ -12,7 +12,7 @@ circle::circle(point center, glib_float radius) :
 
 list<moved_arrays> 
 circle::get_arrays() {
-	
+	//algoritmus nekde odsud http://cgg.ms.mff.cuni.cz/~pepca/, zrovna to nebezi
 
 	std::list<moved_arrays> res;
 	

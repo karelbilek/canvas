@@ -17,6 +17,7 @@ line::line(point a, point b) :
 
 list<moved_arrays>
 line::get_arrays() {
+	//algoritmus nekde odsud http://cgg.ms.mff.cuni.cz/~pepca/, zrovna to nebezi
 	
 	moved_arrays res(__minimum(_a.y,_b.y),__maximum(_a.y, _b.y));
 	

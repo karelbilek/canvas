@@ -109,6 +109,8 @@ namespace glib {
 			//POZOR - z jine plochy vezme jen veci od _start_height po _end_height, zbytek ignoruje
 			
 		plane<T>& operator=(const plane<T>& other);
+		
+		bool includes_square(const glib_int min_x, const glib_int min_y, const glib_int max_x, const glib_int max_y) const;
 	};
 
 
@@ -274,6 +276,26 @@ namespace glib {
 		}
 		return _intervals[y-_start_height].get_all();
 			//opet, odolnost proti chybam, jinak se vse prenasi na intervals[]
+	}
+	
+	template<class T>
+	bool
+	plane<T>::includes_square(const glib_int min_x, const glib_int min_y, const glib_int max_x, const glib_int max_y) const {
+		if (min_y < _start_height) {
+			return false;
+		}
+		
+		if (max_y > _end_height) {
+			return false;
+		}
+		
+		for (int y = min_y; y < max_y; ++y) {
+			if (!_intervals[y-_start_height].includes(min_x, max_x)) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	//--------------------------------------SETTERS
