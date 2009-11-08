@@ -52,17 +52,17 @@ geom_line::intersection(const geom_line& another)const {
 
 geom_line
 geom_line::parallel_intersection(const geom_line& another, const glib_float distance) const{
-	return geom_line(parallel(true, distance).intersection(another.parallel(true,distance)), parallel(false, distance).intersection(another.parallel(false,distance)));
+	return geom_line(parallel(true, distance).intersection(another.parallel(false,distance)), parallel(false, distance).intersection(another.parallel(true,distance)));
 }
 
 geom_line 
 geom_line::normalised(const glib_float length) const {
-	glib_float my_width = __abs(a.x-b.x);
-	glib_float my_height = __abs(a.y-b.y);
+	glib_float my_width = (a.x-b.x);
+	glib_float my_height = (a.y-b.y);
 	
 	glib_float my_length = static_cast<glib_float>( sqrt(static_cast<double>(my_width*my_width + my_height*my_height)));
 	
-	return geom_line(a, point(a.x+(length/my_length)*my_width, b.x+(length/my_length)*my_height));
+	return geom_line(a, point(a.x+(length/my_length)*my_width, a.y+(length/my_length)*my_height));
 }
 
 point

@@ -59,6 +59,10 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 	max_y = __minimum(max_y, width);
 	max_x = __minimum(max_x, height);
 	
+	min_y = __maximum(min_y, 0);
+	max_y = __maximum(max_y, 0);
+	
+	//for (glib_int y=min_y; )
 	if (painted_so_far.most_left()<min_x 
 		&& 
 		painted_so_far.most_right()>max_x 
@@ -82,7 +86,7 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 			
 			plane<bool> line(min_y, max_y);
 			
-			if ((**i).have_thick_line()) {
+			if ((**i).have_thick_line() && _style._line_size > 300) {
 				curve* previous;
 				curve* next;
 		
@@ -230,11 +234,19 @@ shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
 	}
 	
 	plane<bool> res(min_y,max_y);
+	
+	for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ++i) {
+		res.add(i->to_plane());
+	}
+	
 	for (glib_int y = min_y; y < max_y; ++y) {
+		
+		// if (y>=383 && y <= 388) {
+		// 	std::cout << "radek "<<y<<": reporting in!\n";
+		// }
 		
 		for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ++i) {
 			i->_sorting_hint = y; //I got no better idea than this crap
-			res.add(i->to_plane());
 		} 
 		
 		borders.sort(shape::compare_by_row);
@@ -243,19 +255,48 @@ shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
 		glib_int paint_end = 0;
 		bool paint_part = false;
 		
+		bool previous_was_ending=false;
+		bool previous_was_starting=false;
+		
 		for (list<moved_arrays>::iterator i = borders.begin();i!=borders.end() && i->is_set(y);++i) {
 			if (!paint_part) {
 				paint_start = i->get_end(y);
+	
+				previous_was_ending = (y==i->get_max_nonempty_y());
+				
+				previous_was_starting = (y==i->get_min_nonempty_y());
+				paint_part = true;
 			} else {
-				paint_end = i->get_start(y);
-				if (paint_end > paint_start) {
-					res.add_more(paint_start, paint_end, y, true);
-				} else {					
-					res.add_more(paint_end, paint_start, y, true);
+				if (i->is_set(y)) {
+					paint_end = i->get_start(y);
+					
+					bool should_paint = true;
+					if (y==i->get_max_nonempty_y()) { //konci
+						
+						if (previous_was_starting&&paint_end<=paint_start) {
+							should_paint = false;
+						}
+					} else if (y==i->get_min_nonempty_y()) {
+					
+						
+						if (previous_was_ending&&paint_end<=paint_start) {
+							should_paint = false;
+						}
+					}
+					previous_was_ending = (y==i->get_max_nonempty_y());
+					previous_was_starting = (y==i->get_min_nonempty_y());
+					
+					if (should_paint) {
+						if (paint_end >= paint_start) {
+							res.add_more(paint_start, paint_end, y, true);
+						} else {
+							res.add_more(paint_end, paint_start, y, true);
+						}
+						paint_part = false;
+					}
 				}
 			}
 			
-			paint_part = !paint_part;
 		}
 		
 		

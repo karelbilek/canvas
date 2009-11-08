@@ -89,13 +89,16 @@ moved_arrays::set(const glib_int x, const glib_int y) {
 
 void
 moved_arrays::set(const glib_float x, const glib_float y) {
+	set(static_cast<glib_int>(x), static_cast<glib_int>(y));
 	
-	set(static_cast<glib_int>(x+0.5), static_cast<glib_int>(y+0.5));
+	//set(static_cast<glib_int>(x+0.5), static_cast<glib_int>(y+0.5));
 }
 
 void
 moved_arrays::set(const double x, const double y) {
-	set(static_cast<glib_int>(x+0.5), static_cast<glib_int>(y+0.5));
+	set(static_cast<glib_int>(x), static_cast<glib_int>(y));
+	
+	//set(static_cast<glib_int>(x+0.5), static_cast<glib_int>(y+0.5));
 }
 
 plane<bool> 

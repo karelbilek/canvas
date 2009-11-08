@@ -1,5 +1,6 @@
 #include "curves/line.h"
 #include "all_shapes.h"
+#include "geom_line.h"
 
 using namespace glib;
 using namespace std;
@@ -78,8 +79,8 @@ line::get_thick_line(const glib_float thickness, const curve* const previous, co
 	point c;
 	point d;
 	
-	if (const line* previous_line = dynamic_cast<const line*>previous) {
-		geom_line res = (geom_line(get_first(),get_second())).parallel_intersection(geom_line(previous_line.get_first(), previous_line.get_second()),thickness/2);
+	if (const line* previous_line = dynamic_cast<const line*>(previous)) {
+		geom_line res = (geom_line(get_first(),get_second())).parallel_intersection(geom_line(previous_line->get_first(), previous_line->get_second()),thickness/2);
 		//prvni vrati VLEVO, pak VPRAVO
 		a=res.a;
 		b=res.b;
@@ -89,15 +90,14 @@ line::get_thick_line(const glib_float thickness, const curve* const previous, co
 		b = this_gl.right_angle_a(0,thickness/2);
 	}
 	
-	if (const line* next_line = dynamic_cast<const line*>next) {
-		geom_line res = (geom_line(get_first(),get_second())).parallel_intersection(geom_line(next_line.get_first(), next_line.get_second()),thickness/2);
-		//prvni vrati VLEVO, pak VPRAVO
-		d = res.a;
-		c = res.b;
+	if (const line* next_line = dynamic_cast<const line*>(next)) {
+		geom_line res = (geom_line(get_first(),get_second())).parallel_intersection(geom_line(next_line->get_first(), next_line->get_second()),thickness/2);
+		c = res.a;
+		d = res.b;
 	} else {
 		geom_line this_gl = geom_line(get_first(), get_second());
-		c = this_gl.right_angle_b(1,thickness/2);
-		d = this_gl.right_angle_b(0,thickness/2);
+		d = this_gl.right_angle_b(1,thickness/2);
+		c = this_gl.right_angle_b(0,thickness/2);
 	}
 	
 	return polygon(a,b,c,d);

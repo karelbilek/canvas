@@ -36,6 +36,7 @@ namespace glib {
 			_curves.push_back(new line(b,c));
 			_curves.push_back(new line(c,d));
 			_curves.push_back(new line(d,a));
+			std::cout<<"novy.push_front(style2, glib::polygon(glib::point("<<a.x<<","<<a.y<<"), glib::point("<<b.x<<","<<b.y<<"), glib::point("<<c.x<<","<<c.y<<"), glib::point("<<d.x<<","<<d.y<<")));\n";
 		}
 		
 		polygon(const point& a, const point& b, const point& c, const point& d, const point& e):shape_type(1,1) {
