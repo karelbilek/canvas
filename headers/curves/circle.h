@@ -27,7 +27,7 @@ namespace glib{
 		virtual glib_int get_max_x() const;
 		virtual circle* clone() const {circle* n= new circle(_center,_radius);return n;}
 		virtual circle* clone_double() const {circle* n= new circle(_center*2,_radius*2);return n;}
-		virtual bool have_thick_line() {return 1;}
+		virtual bool have_thick_line() {return 0;}
 	};
 }
 

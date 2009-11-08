@@ -10,7 +10,7 @@
  #include <vector>
 #include <map>
 #include <string>
-//#include <iostream>
+#include <iostream>
 #include <list>
 
 #define __PI (4*atan(1))
@@ -19,7 +19,7 @@
 
 #define __minimum(_a,_b) (((_a)<(_b))?(_a):(_b))
 #define __maximum(_a,_b) (((_a)>(_b))?(_a):(_b))
-#define __abs2(a) (((a)>0)?((a)):(-(a)))
+#define __abs(a) (((a)>0)?((a)):(-(a)))
 
 	//tyhle makra se straaaasne hodi
 

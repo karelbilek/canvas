@@ -26,6 +26,39 @@ point::move(const glib_float distance, glib_float degrees) const{
 	return point(x+distance*cos(rad), y+distance*sin(rad));
 }
 
+// static point& smaller_x(const point& first, const point& second) {
+// 	if (first.x<second.x) {
+// 		return first;
+// 	} else {
+// 		return second;
+// 	}
+// }
+// 
+// static point& smaller_y(const point& first, const point& second) {
+// 	if (first.y<second.y) {
+// 		return first;
+// 	} else {
+// 		return second;
+// 	}
+// }
+// 
+// static point& bigger_x(const point& first, const point& second) {
+// 	if (first.x>=second.x) {
+// 		return first;
+// 	} else {
+// 		return second;
+// 	}
+// }
+// 
+// static point& bigger_y(const point& first, const point& second) {
+// 	if (first.y>=second.y) {
+// 		return first;
+// 	} else {
+// 		return second;
+// 	}
+// }
+
+
 point
 point::operator+(const point& other) const{
 	return point(x+other.x, y+other.y);
@@ -56,6 +89,11 @@ point::operator*(const double n) const {
 	return point(x*n, y*n);
 }
 
+point
+point::trunc() const {
+	return point(static_cast<glib_int>(x), static_cast<glib_int>(y));
+}
+
 point& 
 point::operator=(const point& other) {
 	x=other.x;
@@ -65,12 +103,12 @@ point::operator=(const point& other) {
 
 bool 
 point::operator==(const point& other) const {
-	return (__abs2(x - other.x)<0.01 && __abs2(y - other.y)<0.01);
+	return (__abs(x - other.x)<0.01 && __abs(y - other.y)<0.01);
 }
 
 bool 
 point::operator!=(const point& other) const {
-	return (__abs2(x - other.x)>=0.01 || __abs2(y - other.y)>=0.01);
+	return (__abs(x - other.x)>=0.01 || __abs(y - other.y)>=0.01);
 }
 
 // bool 

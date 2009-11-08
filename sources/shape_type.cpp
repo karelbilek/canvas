@@ -54,7 +54,9 @@ shape_type::all_curve_arrays() const {
 	list<moved_arrays> arrays;
 	for(list<curve*>::const_iterator i = _curves.begin(); i!=_curves.end(); ++i) {
 		list<moved_arrays> to_add = (**i).get_arrays();
+
 		arrays.splice(arrays.end(), to_add); 
 	}
+	
 	return arrays;
 }

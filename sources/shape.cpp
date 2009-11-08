@@ -114,10 +114,10 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 				line = paint(&(okraj), min_y, max_y);
 				//result.add(().flatten_plane<RGBa>(_style._line_color, true));
 			} else {
-				glib_int thickness = static_cast<glib_int>((antialias?2:1)*(_style._line_size)+1);
+				glib_int thickness = static_cast<glib_int>((antialias?2:1)*(_style._line_size));
 				
 				if (!brushes.count(thickness)) {
-					shape_type b = disk(point(thickness,thickness), thickness/2);
+					shape_type b = disk(point(thickness,thickness), static_cast<glib_float>(thickness)/2);
 					plane<bool> p = paint(&b, 0, 2*thickness);
 					p._pivot_width = thickness;
 					p._pivot_height = thickness;
@@ -143,10 +143,11 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 	
 	
 	
-	if (_style._fill_is) {
+	if (_style._fill_is && _type._filled) {
 		result.add((paint(type_copy, min_y, max_y)).flatten_plane<RGBa>(_style._fill_color, true));
 		
 	}
+	
 	if (antialias) {
 		delete type_copy;
 	}
@@ -202,9 +203,19 @@ shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
 	
 	//borders.sort(compare_by_top);
 	
-	for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ++i) {
+	
+	
+	
+	
+	for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ) {
+		
+		
 		if (i->is_horizontal()) {
-			borders.erase(i); 
+			list<moved_arrays>::iterator j = i;
+			++i;
+			borders.erase(j); 
+		} else {
+			++i;
 		}
 	}
 	
@@ -223,6 +234,7 @@ shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
 		
 		for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ++i) {
 			i->_sorting_hint = y; //I got no better idea than this crap
+			res.add(i->to_plane());
 		} 
 		
 		borders.sort(shape::compare_by_row);
@@ -238,7 +250,7 @@ shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
 				paint_end = i->get_start(y);
 				if (paint_end > paint_start) {
 					res.add_more(paint_start, paint_end, y, true);
-				} else {
+				} else {					
 					res.add_more(paint_end, paint_start, y, true);
 				}
 			}

@@ -322,8 +322,8 @@ namespace glib {
 		if ((y >= _end_height) || (y < _start_height)) {
 			return;
 		}
-		if (end_x > start_x)
-			_intervals[y-_start_height].add_more(start_x, end_x-1, what);
+		if (end_x >= start_x)
+			_intervals[y-_start_height].add_more(start_x, end_x, what);
 			//opet, pri zadani blbosti se nestane nic
 	}
 

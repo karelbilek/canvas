@@ -12,6 +12,7 @@ circle::circle(point center, glib_float radius) :
 
 list<moved_arrays> 
 circle::get_arrays() {
+	
 
 	std::list<moved_arrays> res;
 	
@@ -23,6 +24,17 @@ circle::get_arrays() {
 		res.push_back(one);
 	}
 	else if (_radius <= 1) {
+		moved_arrays one(_center.y, _center.y+1);
+		
+		one.set(_center.x, _center.y);
+		one.set(_center.x+1, _center.y);
+		one.set(_center.x, _center.y+1);
+		one.set(_center.x+1, _center.y+1);
+
+		
+		res.push_back(one);
+	}
+	else if (_radius <= 1.5) {
 		moved_arrays small(_center.y-1, _center.y+1);
 		
 		small.set(_center.x, _center.y);
@@ -32,44 +44,69 @@ circle::get_arrays() {
 		small.set(_center.x, _center.y-1);
 		
 		res.push_back(small);
-	} else {
+	} 
+	else if (_radius<=2.5) {
+		moved_arrays left(_center.y-1, _center.y+1);
+		moved_arrays right(_center.y-1, _center.y+1);
+		
+		left.set(_center.x-1,_center.y-1);
+		left.set(_center.x-2,_center.y);
+		left.set(_center.x-2,_center.y+1);
+		left.set(_center.x-1,_center.y+2);
+		
+		right.set(_center.x,_center.y-1);
+		right.set(_center.x+1,_center.y);
+		right.set(_center.x+1,_center.y+1);
+		right.set(_center.x,_center.y+2);
+		res.push_back(left);
+		res.push_back(right);
+		
+	} 
+	else {
 	
 		glib_float lx = 0;
 		glib_float ly = _radius;
 		glib_float d = 1 - ly;
 	
-		moved_arrays left(_center.y-_radius, _center.y+_radius);
-		moved_arrays right(_center.y-_radius, _center.y+_radius);
+		moved_arrays left(_center.y-_radius, _center.y+_radius+1);
+		moved_arrays right(_center.y-_radius, _center.y+_radius+1);
 	
 	
 		paint_more(0,ly,left,right);
-		while (ly>lx) {
+		while (ly>=lx) {
 			if (d<0) {
 				d = d + 2*lx + 3;
 			} else {
 				d = d + 2*(lx-ly) + 5;
 				--ly;
 			}
+			
 			++lx;
+			
 			paint_more(lx,ly,left,right);
 		} //^^ algoritmus ze slidu :)
 		
 		res.push_back(left);
 		res.push_back(right);
+		
 	}
+
+	
 	return res;
 }
 
 
 void 
-circle::paint_more(glib_float x, glib_float y, moved_arrays& left, moved_arrays& right){
-	left.set(_center.x-x, _center.y+y);
-	left.set(_center.x-y, _center.y+x);
+circle::paint_more(glib_float fx, glib_float fy, moved_arrays& left, moved_arrays& right){
+	glib_int x = static_cast<glib_int>(fx+0.5);
+	glib_int y = static_cast<glib_int>(fy+0.5);
+	left.set(_center.x-x, _center.y+y+1);
+	left.set(_center.x-y, _center.y+x+1);
 	left.set(_center.x-x, _center.y-y);
 	left.set(_center.x-y, _center.y-x);
 	
-	right.set(_center.x+x, _center.y+y);
-	right.set(_center.x+y, _center.y+x);
+	right.set(_center.x+x, _center.y+y+1);
+	right.set(_center.x+y, _center.y+x+1);
 	right.set(_center.x+x, _center.y-y);
 	right.set(_center.x+y, _center.y-x);
 }

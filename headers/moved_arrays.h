@@ -2,6 +2,7 @@
 #define MIARRAYS_INC
 
 #include "types.h"
+#include "plane.h"
 #include <vector>
 
 namespace glib {
@@ -30,15 +31,17 @@ namespace glib {
 		moved_arrays(glib_float start, glib_float end);
 		
 		//moved_arrays(const moved_arrays& other);
-		//~moved_arrays();
 		
 		//moved_arrays& operator=(const moved_arrays& other);
 		
 		glib_int get_start(const glib_int y) const;
 		glib_int get_end(const glib_int y) const;
 		
+		plane<bool> to_plane() const;
+		
 		void set(const glib_int x, const glib_int y);
 		void set(const glib_float x, const glib_float y);
+		void set(const double x, const double y);
 		
 		bool is_set(const glib_int y) const;
 		bool is_near(const glib_int x, const glib_int y) const;

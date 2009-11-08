@@ -48,6 +48,7 @@ moved_arrays::get_end(const glib_int y) const {
 
 void
 moved_arrays::set(const glib_int x, const glib_int y) {
+	
 	const glib_int my_y = y - _min_y;
 	
 	if ((y < _min_y) || (y > _max_y)) {
@@ -88,7 +89,25 @@ moved_arrays::set(const glib_int x, const glib_int y) {
 
 void
 moved_arrays::set(const glib_float x, const glib_float y) {
-	set(static_cast<glib_int>(x), static_cast<glib_int>(y));
+	
+	set(static_cast<glib_int>(x+0.5), static_cast<glib_int>(y+0.5));
+}
+
+void
+moved_arrays::set(const double x, const double y) {
+	set(static_cast<glib_int>(x+0.5), static_cast<glib_int>(y+0.5));
+}
+
+plane<bool> 
+moved_arrays::to_plane() const {
+	plane<bool> res(_min_nonempty_y,_max_nonempty_y+1);
+	for (glib_int y = _min_nonempty_y; y<=_max_nonempty_y;++y) {
+		if (_is_set[y - _min_y]) {
+			res.add_more(_starts[y-_min_y], _ends[y-_min_y],y,true);
+		}
+	}
+	return res;
+	
 }
 
 bool

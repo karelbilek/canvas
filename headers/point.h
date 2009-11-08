@@ -3,7 +3,7 @@
 #include "types.h"
 
 namespace glib {
-
+	
 	class point {
 		/*
 		 * Nescetnekrat pouzivana trida na uchovavani bodu. Bod = 2 souradnice s glib_float pointem (ano, glib_float pointem)
@@ -38,8 +38,11 @@ namespace glib {
 		point operator*(const int n) const;
 		point operator*(const double n) const;
 			//Vynasob dalsim cislem (vzdy ale jenom cislem!)
-
-
+			
+			
+		
+		point trunc() const;
+		
 		point& operator=(const point& other);
 			//prirazeni
 		
@@ -56,6 +59,10 @@ namespace glib {
 		point distance_from(const point& other) const;
 			//vzdalenost od dalsiho bodu
 	};
+	// static point& smaller_x(const point& first, const point& second);
+	// static point& smaller_y(const point& first, const point& second);
+	// static point& bigger_x(const point& first, const point& second);
+	// static point& bigger_y(const point& first, const point& second);
 
 //	typedef std::vector<pix> pixs;
 
