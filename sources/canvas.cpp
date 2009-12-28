@@ -58,10 +58,7 @@ canvas::get_plane()  {
 	RGBa full(0,0,0,255);
 	
 	small quoc = (_antialias?2:1);
-	plane<RGBa> all_plane(0, quoc*_height);
-	//nejdriv si vse pridam do plane (je to rychle)
-	//az pak si to prehodim do rasteru
-	
+	plane<RGBa> all_plane(0, quoc*_height);	
 	
 	
 	plane<bool> painted_so_far(0,quoc*_height,0);
