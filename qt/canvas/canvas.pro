@@ -9,7 +9,9 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp\
+
+include(../../include.pri)
 
 HEADERS  += mainwindow.h
 
