@@ -52,6 +52,8 @@ moved_arrays::set(const glib_int x, const glib_int y) {
 	const glib_int my_y = y - _min_y;
 	
 	if ((y < _min_y) || (y > _max_y)) {
+		std::cout <<"chyba lol chci na "<<y<<"a _min_y je "<<_min_y<<"a _max_y je "<<_max_y<<" lol\n";
+		
 		throw 1;
 	}
 	if (_first) {

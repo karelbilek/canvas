@@ -16,6 +16,7 @@ circle::get_arrays() {
 
 	std::list<moved_arrays> res;
 	
+		//specialni pripady beru extra
 	if (_radius <= 0.5) {
 		
 		moved_arrays one(_center.y, _center.y);
@@ -63,7 +64,7 @@ circle::get_arrays() {
 		
 	} 
 	else {
-	
+		//nespecialni pripad
 		glib_float lx = 0;
 		glib_float ly = _radius;
 		glib_float d = 1 - ly;
@@ -118,7 +119,7 @@ circle::get_min_y() const {
 
 glib_int 
 circle::get_max_y() const {
-	return static_cast<glib_int>(_center.y + _radius+1);
+	return static_cast<glib_int>(_center.y + _radius+2);
 }
 
 
@@ -129,11 +130,12 @@ circle::get_min_x() const {
 
 glib_int 
 circle::get_max_x() const {
-	return static_cast<glib_int>(_center.x + _radius+1);
+	return static_cast<glib_int>(_center.x + _radius+2);
 }
 
 shape_type
 circle::get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) const{
+	//nakresli se jako dva soustredne kruhy
 	circle* circle_in= new circle(_center, _radius-(thickness/2));
 	circle* circle_out= new circle(_center, _radius+(thickness/2));
 	list<curve*> res;

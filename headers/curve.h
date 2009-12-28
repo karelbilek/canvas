@@ -9,12 +9,45 @@ namespace glib{
 	
 	
 	class curve {
-
+			//abstraktni cara
+			//co umi "nakreslit" sama sebe, jak normalne, tak nekdy s tloustkou
+			//trochu vic o tom, co to vlastne vraci:
+				//
+				// kazda cara se sklada ze "segmentu", pro ktere vsechny plati, ze nejsou
+				// dva plne useky na y ose vedle sebe
+				// tj. tohle :
+				/*
+						-
+						 -
+						  --------
+								  -----
+				*/
+				// povoleno je
+				//tohle 
+				/*
+						-
+						 ------    -------
+				*/
+				// povoleno neni (v ramci "segmentu").
+				// tyhle segmenty jsou ve skutecnosti reprezentovany dvema poli - zacatky a konce
+				// vice v moved_arrays.h
+				// 
+				// nektere cary umi nakreslit samy sebe
+				// kdyz umi, nevrati to jako segmenty, ale jako shape!
+				// proc? abych napriklad mohl jednoduse (z hlediska kodu) vratit tlustou "rovnou caru" jako 
+				// 4uhelnik, a ten uz zase umim nakreslit jinak
+				//
+				// (pokud se nakreslit neumi, musi vracet have_thick_line nulu a canvas je tluste nakresli sam)
+				//
+				// poznamka: potomci tehle tridy by si napr. NEMELI ty pole generovat uz v konstruktorech
+				// jelikoz to get_arrays() je volano jenom, pokud je kreslit potreba
 	public:
 		
 		virtual std::list<moved_arrays> get_arrays() = 0;
+				//dej mi segmenty
 
 		virtual bool have_thick_line()=0;
+				//umis tloustku?
 		virtual shape_type get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) const = 0;
 				//cara s tloustkou
 				
@@ -22,32 +55,19 @@ namespace glib{
 		virtual glib_int get_max_y() const = 0;
 		virtual glib_int get_min_x() const = 0;
 		virtual glib_int get_max_x() const = 0;
+				//vraci leva/prava/horni/dolni maxima
 		
 		
 		
 		virtual curve* clone() const=0;
+				//dej mi svoji kopii
 		virtual curve* clone_double() const=0;
-	
+				//dej mi svoji kopii, dvakrat vetsi
+				
 		virtual ~curve() {};
 				//pro jistotu :)
 
 	};
-
-	// namespace curve_help {
-
-		// bool compare1(const curve& h1, const curve& h2);
-				// jedno z porovnani, slouzici k serazeni k vyplnovani
-				// v tomhle pripade tak, abych mohl jit po shora radkach zleva doprava a narazel na zacatky v danem poradi
-
-		// typedef std::list<curve*> p_curves;
-		// p_curves list_sort_copy(p_curves pc);
-				// vezme list car, zkopiruje je (tj. new!) do dalsiho listu car, seradi je
-
-		// bool p_compare(curve* a, curve* b);
-		// bool p_compare1(const curve* a, const curve* b);
-		//		pomocne - abych mohl radit i pointery na cary
-
-	// }
 
 }
 

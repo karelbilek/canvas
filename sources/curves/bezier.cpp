@@ -11,17 +11,21 @@ bezier::bezier(point a, point b, point c, point d):
 }
 
 
-
 list<moved_arrays> 
 bezier::get_arrays() {
 	//zdroj algoritmu - http://www.niksula.cs.hut.fi/~hkankaan/Homepages/bezierfast.html
+	//(C) Hannu Kankaanpää
+	
 	glib_int min_y = get_min_y();
 	glib_int max_y = get_max_y();
 	
 	glib_uint steps = __maximum((max_y - min_y), (get_max_x()-get_min_x()))*5;
+			//!!!!!!ta 5ka je umele dodana konstanta
+			//mozna by to slo zvetsit/zmensit? ale me se to zda OK
 	
 	list<moved_arrays> res;
 	moved_arrays ma(min_y, max_y);
+			//tohle je samozrejme "navic" nez v tom algoritmu nahore
 	
 	bool up; //jestli zrovna BK jede smerem up
 	bool first = true; //1 jen na zacatku
@@ -32,7 +36,7 @@ bezier::get_arrays() {
 	glib_float temp = t * t;
 	
 			//silene derivace.... 
-			//priznam se, ze tomu algoritmu az tak nerozumim, ale funguje :)
+			
 	f = _a;
 	fd = (_b - _a) * 3 * t;
 	fdd_per_2 = (_a - _b * 2 + _c) * 3 * temp;
@@ -92,20 +96,21 @@ bezier::get_arrays() {
 
 glib_int 
 bezier::get_min_x() const {
-	return static_cast<glib_int>(__minimum(_a.x, __minimum(_b.x, __minimum(_c.x, _d.x))));
+	return static_cast<glib_int>(__minimum4(_a.x,_b.x,_c.x, _d.x));
+	//(b<((c<d)?(c):(d)))?(b):((c<d)?(c):(d))
 }
 
 glib_int 
 bezier::get_max_x() const{
-	return static_cast<glib_int>(__maximum(_a.x, __maximum(_b.x, __maximum(_c.x, _d.x))));
+	return static_cast<glib_int>(__maximum4(_a.x, _b.x, _c.x, _d.x)+2);
 }
 
 glib_int 
 bezier::get_min_y() const {
-	return static_cast<glib_int>(__minimum(_a.y, __minimum(_b.y, __minimum(_c.y, _d.y))));
+	return static_cast<glib_int>(__minimum4(_a.y,_b.y, _c.y, _d.y));
 }
 
 glib_int
 bezier::get_max_y() const{
-	return static_cast<glib_int> (__maximum(_a.y, __maximum(_b.y, __maximum(_c.y, _d.y))));
+	return static_cast<glib_int> (__maximum4(_a.y, _b.y, _c.y, _d.y)+2);
 }

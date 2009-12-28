@@ -7,21 +7,16 @@
 
 namespace glib{
 	class line:public curve {
+		//usecka z bodu A do bodu B
 	private:
-	
-		
-		bool _width_bigger;
-		bool _switched;
-		
+			
 		point _a;
 		point _b;
-		bool _increasing;
 		
 		
 	public:
 		
-		point get_first() const;
-		point get_second() const;
+			//vrati prvni
 		
 		line(point a, point b);
 		

@@ -7,10 +7,12 @@
 
 namespace glib{
 	class circle:public curve {
-	private:
-	
-		void paint_more(glib_float x, glib_float y, moved_arrays& left, moved_arrays& right);
+		//circle, with given center and radius
 		
+	private:
+		void paint_more(glib_float x, glib_float y, moved_arrays& left, moved_arrays& right);
+			//function for faster painting - paint about eight pixels at once, 4 to every segment
+			
 		point _center;
 		glib_float _radius;
 		

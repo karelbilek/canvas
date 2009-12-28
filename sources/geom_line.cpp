@@ -27,23 +27,38 @@ geom_line::intersection(const geom_line& another)const {
 	//ay2 = ja.b.y
 	//ay1 = ja.a.y
 	//ax1 atd
+	
+	
+	
+	std::cout<<"! pocitam intersection mezi dannou:"<<a.x<<","<<a.y<<";;"<<b.x<<","<<b.y<<"a "<<another.a.x<<","<<another.a.y<<";;"<<another.b.x<<","<<another.b.y<<".\n";
 	if (__abs(b.y - a.y)<0.1) {
 		
 		glib_float another_dxy = (another.b.x - another.a.x)/(another.b.y - another.a.y);
 		glib_float diff = b.y - another.b.y;
+		std::cout<<"a vysel mi metodou 1 "<<another.b.x + diff*another_dxy<<", "<<another.b.y + diff<<"!\n=========\n";
 		return point(another.b.x + diff*another_dxy, another.b.y + diff);
 		
 	} else if (__abs(another.b.y - another.a.y)<0.1) {
 		
 		glib_float me_dxy = (b.x - a.x)/(b.y - a.y);
 		glib_float diff = another.b.y - b.y;
+		std::cout<<"a vysel mi metodou 2 "<<b.x + diff*me_dxy<<", "<<b.y + diff<<"!\n=========\n";
 		return point(b.x + diff*me_dxy, b.y + diff);
 		
 	} else {
 		
 		glib_float me_dxy = (b.x - a.x)/(b.y - a.y);
 		glib_float another_dxy = (another.b.x - another.a.x)/(another.b.y - another.a.y);
+		std::cout<<"another_dxy vychazi "<<another_dxy<<"\n";
+		std::cout<<"another_dxy*(b.y - another.b.y) vychazi "<<another_dxy*(b.y - another.b.y)<<"\n";
+		std::cout<<"(another_dxy*(b.y - another.b.y) - (b.x - another.b.x)) vychazi" << (another_dxy*(b.y - another.b.y) - (b.x - another.b.x)) << "\n";
+		std::cout<<"(me_dxy - another_dxy) vychazi "<<(me_dxy - another_dxy)<<"\n";
+		
 		glib_float h = (another_dxy*(b.y - another.b.y) - (b.x - another.b.x))/(me_dxy - another_dxy);
+		std::cout<<"h vychazi "<<h<<"\n";
+		
+		std::cout<<"a vysel mi metodou 3 "<<b.x + h*me_dxy<<", "<<b.y + h<<"!\n=========\n";
+		
 		return point(b.x + h*me_dxy, b.y + h);
 		
 	}

@@ -6,6 +6,10 @@
 
 namespace glib{
 	class bezier:public curve {
+		//(kubicka) bezierova krivka, dana 4mi body
+		//vice http://en.wikipedia.org/wiki/Bézier_curve#Cubic_B.C3.A9zier_curves
+		//
+		//virtualni metody viz curve.h
 	private:
 		point _a;
 		point _b;

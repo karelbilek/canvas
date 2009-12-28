@@ -5,24 +5,30 @@
 using namespace glib;
 using namespace std;
 
-line::line(point a, point b) :
-  _width_bigger( __abs(a.x-b.x) > __abs(a.y-b.y) ),
-  _switched(_width_bigger?(b.x>a.x):(b.y>a.y)),
-  _a( _switched ? a.trunc() : b.trunc()) ,
-  _b( _switched ? b.trunc() : a.trunc() ),
-  _increasing( _width_bigger ? ((_b.y-_a.y)>0) : ((_b.x-_a.x)>0)){
+line::line(point a, point b) : 
+  _a(a),
+  _b(b) {
 }
-
 
 
 list<moved_arrays>
 line::get_arrays() {
 	//algoritmus nekde odsud http://cgg.ms.mff.cuni.cz/~pepca/, zrovna to nebezi
 	
-	moved_arrays res(__minimum(_a.y,_b.y),__maximum(_a.y, _b.y));
+	bool width_bigger = (__abs(_a.x-_b.x) > __abs(_a.y-_b.y));
 	
-	glib_int lower_size = static_cast<glib_int>(_width_bigger?__abs(_a.y-_b.y):__abs(_a.x-_b.x));
-	glib_int bigger_size = static_cast<glib_int>(_width_bigger?__abs(_a.x-_b.x):__abs(_a.y-_b.y));
+	bool switch_points = ((width_bigger)?(_b.x>_a.x):(_b.y>_a.y));
+	
+	point begin_p = (switch_points)?(_a.trunc()):(_b.trunc());
+	point end_p = (switch_points)?(_b.trunc()):(_a.trunc());
+	
+	bool increasing = (width_bigger ? ((end_p.y-begin_p.y)>0) : ((end_p.x-begin_p.x)>0));
+	
+	moved_arrays res(__minimum(begin_p.y,end_p.y),__maximum(begin_p.y, end_p.y));
+	
+	glib_int lower_size = static_cast<glib_int>(width_bigger?__abs(begin_p.y-end_p.y):__abs(begin_p.x-end_p.x));
+	
+	glib_int bigger_size = static_cast<glib_int>(width_bigger?__abs(begin_p.x-end_p.x):__abs(begin_p.y-end_p.y));
 	
 	
 	glib_int D = 2*lower_size - bigger_size;
@@ -30,11 +36,11 @@ line::get_arrays() {
 	glib_int inc1 = 2*(lower_size - bigger_size);
 	
 	
-	point moving = _a;
+	point moving = begin_p;
 	res.set(moving.x, moving.y);
 	
-	glib_float& moving_bigger = _width_bigger?moving.x:moving.y;
-	glib_float& moving_lower = _width_bigger?moving.y:moving.x;
+	glib_float& moving_bigger = width_bigger?moving.x:moving.y;
+	glib_float& moving_lower = width_bigger?moving.y:moving.x;
 	
 
 	
@@ -43,12 +49,12 @@ line::get_arrays() {
 			D+=inc0;
 		} else {
 			D+=inc1;
-			moving_lower += _increasing?(1):(-1);
+			moving_lower += increasing?(1):(-1);
 		}
 		++moving_bigger;
 		res.set(moving.x, moving.y);
 	}
-	res.set(_b.x, _b.y);
+	res.set(end_p.x, end_p.y);
 	
 	list<moved_arrays> res2;
 	res2.push_back(res);
@@ -57,21 +63,12 @@ line::get_arrays() {
 	
 }
 
-point 
-line::get_first() const {
-	return _switched?_b:_a;
-}
-
-point 
-line::get_second() const {
-	return _switched?_a:_b;
-}
 
 glib_int line::get_min_y() const {return __minimum(_a.y,_b.y);}
-glib_int line::get_max_y() const {return __maximum(_a.y,_b.y);}
+glib_int line::get_max_y() const {return __maximum(_a.y,_b.y)+2;}
 
 glib_int line::get_min_x() const {return __minimum(_a.x,_b.x);}
-glib_int line::get_max_x() const {return __maximum(_a.x,_b.x);}
+glib_int line::get_max_x() const {return __maximum(_a.x,_b.x)+2;}
 
 shape_type 
 line::get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) const{
@@ -81,22 +78,24 @@ line::get_thick_line(const glib_float thickness, const curve* const previous, co
 	point d;
 	
 	if (const line* previous_line = dynamic_cast<const line*>(previous)) {
-		geom_line res = (geom_line(get_first(),get_second())).parallel_intersection(geom_line(previous_line->get_first(), previous_line->get_second()),thickness/2);
+		geom_line res = (geom_line(_a,_b)).parallel_intersection(geom_line(previous_line->_a, previous_line->_b),thickness/2);
 		//prvni vrati VLEVO, pak VPRAVO
 		a=res.a;
 		b=res.b;
 	} else {
-		geom_line this_gl = geom_line(get_first(), get_second());
+		geom_line this_gl = geom_line(_a, _b);
 		a = this_gl.right_angle_a(1,thickness/2);
 		b = this_gl.right_angle_a(0,thickness/2);
 	}
 	
 	if (const line* next_line = dynamic_cast<const line*>(next)) {
-		geom_line res = (geom_line(get_first(),get_second())).parallel_intersection(geom_line(next_line->get_first(), next_line->get_second()),thickness/2);
+		std::cout<<"WELCOME TO THE maSChiENEEEEEE\n========\n";
+		geom_line res = (geom_line(_a,_b)).parallel_intersection(geom_line(next_line->_a, next_line->_b),thickness/2);
+		std::cout<<"zde vznika c jako intersection paralelu usecky, dane body _a:"<<_a.x<<","<<_a.y<<" a _b:"<<_b.x<<","<<_b.y<<"; a dalsi usecka je dana body _a:"<<(next_line->_a).x<<","<<(next_line->_a).y<<" a _b:"<<(next_line->_b).x<<","<<(next_line->_b).y<<" s tloustkou "<<thickness/2<<", resp. jako jeden z bodu.\n=====\n";
 		c = res.a;
 		d = res.b;
 	} else {
-		geom_line this_gl = geom_line(get_first(), get_second());
+		geom_line this_gl = geom_line(_a, _b);
 		d = this_gl.right_angle_b(1,thickness/2);
 		c = this_gl.right_angle_b(0,thickness/2);
 	}

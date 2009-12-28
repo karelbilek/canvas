@@ -19,6 +19,11 @@
 
 #define __minimum(_a,_b) (((_a)<(_b))?(_a):(_b))
 #define __maximum(_a,_b) (((_a)>(_b))?(_a):(_b))
+#define __minimum4(_a,_b,_c,_d) (((_a)<(_b))?(((_c)<(_d))?(__minimum((_a),(_c))):(__minimum((_a),(_d)))):(((_c)<(_d))?(__minimum((_b),(_c))):(__minimum((_b),(_d)))))
+
+#define __maximum4(_a,_b,_c,_d) (((_a)>(_b))?(((_c)>(_d))?(__maximum((_a),(_c))):(__maximum((_a),(_d)))):(((_c)>(_d))?(__maximum((_b),(_c))):(__maximum((_b),(_d)))))
+
+
 #define __abs(a) (((a)>0)?((a)):(-(a)))
 
 	//tyhle makra se straaaasne hodi
