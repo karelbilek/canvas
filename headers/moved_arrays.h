@@ -41,7 +41,7 @@ namespace glib {
 		
 		void set(const glib_int x, const glib_int y);
 		void set(const glib_float x, const glib_float y);
-		void set(const double x, const double y);
+		//void set(const double x, const double y);
 		
 		bool is_set(const glib_int y) const;
 		bool is_near(const glib_int x, const glib_int y) const;

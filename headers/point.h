@@ -18,7 +18,7 @@ namespace glib {
 		point(glib_float new_x, glib_float new_y);
 		point(glib_int new_x, glib_int new_y);
 		point(int _x, int _y); 
-		point(double _x, double _y);
+		//point(double _x, double _y);
 		
 		point();
 			//(0,0)
@@ -36,7 +36,7 @@ namespace glib {
 		point operator*(const glib_float n) const;
 		point operator*(const glib_int n) const;	
 		point operator*(const int n) const;
-		point operator*(const double n) const;
+		//point operator*(const double n) const;
 			//Vynasob dalsim cislem (vzdy ale jenom cislem!)
 			
 			

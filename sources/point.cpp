@@ -8,7 +8,7 @@ point::point(glib_float new_x, glib_float new_y):x(new_x),y(new_y) {}
 point::point(glib_int new_x, glib_int new_y):x(new_x),y(new_y) {}
 point::point(int new_x, int new_y):x(new_x),y(new_y) {}
 
-point::point(double new_x, double new_y):x(static_cast<glib_float>(new_x)),y(static_cast<glib_float>(new_y)) {}
+//point::point(double new_x, double new_y):x(static_cast<glib_float>(new_x)),y(static_cast<glib_float>(new_y)) {}
 
 point::point():x(0), y(0) { }
 
@@ -83,11 +83,11 @@ point
 point::operator*(const int n) const {
 	return point(x*n, y*n);
 }
-
+/*
 point 
 point::operator*(const double n) const {
 	return point(x*n, y*n);
-}
+}*/
 
 point
 point::trunc() const {

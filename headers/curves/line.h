@@ -16,6 +16,9 @@ namespace glib{
 		
 	public:
 		
+		bool width_bigger() const;
+		bool switch_points() const;
+		
 			//vrati prvni
 		
 		line(point a, point b);

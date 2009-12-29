@@ -20,7 +20,7 @@ polygon::polygon(const point& a, const point& b, const point&c):shape_type(1,1) 
 }
 		
 polygon::polygon(const point& a, const point& b, const point& c, const point& d):shape_type(1,1) {
-	std::cout<<"Hola hej! vytvarim polygon a="<<a.x<<","<<a.y<<";; b="<<b.x<<","<<b.y<<";;; c="<<c.x<<","<<c.y<<";;;d="<<d.x<<","<<d.y<<"!\n";
+	
 	_curves.push_back(new line(a,b));
 	_curves.push_back(new line(b,c));
 	_curves.push_back(new line(c,d));

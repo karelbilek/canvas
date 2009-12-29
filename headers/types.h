@@ -10,7 +10,7 @@
  #include <vector>
 #include <map>
 #include <string>
-#include <iostream>
+//#include <iostream>
 #include <list>
 
 #define __PI (4*atan(1))
@@ -39,7 +39,7 @@ namespace glib {
 	typedef unsigned long glib_uint;
 	typedef long glib_int; 
 	typedef unsigned char glib_component;
-	typedef float glib_float;
+	typedef double glib_float;
 
 }	
 	

@@ -74,7 +74,6 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 	plane<RGBa> result(min_y, max_y);
 	//------kraje
 	
-	int shit=0;
 	if (_style._line_size != 0) {
 		for (i=begin;i!=end; ++i) {
 		//for (int a = 0;a<1; ++i,++a) {	
@@ -108,8 +107,8 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 					next = *j;
 				}
 			
-				if (shit==0) {shape_type okraj = (**i).get_thick_line((antialias?2:1)*_style._line_size, previous, next);
-				line = paint(&(okraj), min_y, max_y);}
+				shape_type okraj = (**i).get_thick_line((antialias?2:1)*_style._line_size, previous, next);
+				line = paint(&(okraj), min_y, max_y);
 				//result.add(().flatten_plane<RGBa>(_style._line_color, true));
 			} else {
 				glib_int thickness = static_cast<glib_int>((antialias?2:1)*(_style._line_size));
@@ -135,7 +134,7 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 					}
 				}
 			}
-			if (shit++==0) result.add(line.flatten_plane<RGBa>(_style._line_color, true)); 
+			result.add(line.flatten_plane<RGBa>(_style._line_color, true)); 
 		}
 	}
 	
