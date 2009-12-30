@@ -59,35 +59,8 @@ namespace glib {
 		point distance_from(const point& other) const;
 			//vzdalenost od dalsiho bodu
 	};
-	// static point& smaller_x(const point& first, const point& second);
-	// static point& smaller_y(const point& first, const point& second);
-	// static point& bigger_x(const point& first, const point& second);
-	// static point& bigger_y(const point& first, const point& second);
-
-//	typedef std::vector<pix> pixs;
-
+	
 }
 
-// namespace glib {
-// 	
-// 	struct curve_def {
-// 		//pomocna struktura - definuje libovolnou curve, at uz line nebo bezier
-// 		pix _a;
-// 		pix _b;
-// 		pix _c;
-// 		pix _d;
-// 		bool _is_bezier;
-// 		pix start() const;
-// 		
-// 		pix end() const;
-// 		
-// 		curve_def(const pix& a, const pix& b, const pix& c, const pix& d);
-// 		//bezier
-// 		curve_def(const pix& a, const pix& b);
-// 		//line
-// 	};
-// 	
-// 	typedef std::vector<curve_def> curve_defs;
-// }
 
 #endif

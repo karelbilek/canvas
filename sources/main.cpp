@@ -24,7 +24,7 @@ int main () {
 	novy.push_back(style2, glib::disk(glib::point(20,100), 20));
 	//novy.push_front(style2, glib::polygon(glib::point(303.897,23.19763), glib::point(295.964,17.02906), glib::point(94.261,359.759), glib::point(105.753,359.933)));
 	
-		novy.push_front(style2, glib::polygon(glib::point(800,700), glib::point(800,800), glib::point(700,800), glib::point(525,525)));
+		novy.push_front(style2, glib::polygon(glib::point(800,700), glib::point(800,800), glib::point(700,800), glib::point(520,520)));
 		//525 - nelame
 		//524 - lame
 	

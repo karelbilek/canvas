@@ -29,7 +29,8 @@ namespace glib {
 		 * Pokud T nema definovanou funkci soucet, je to blbe, asi se ten kod nezkompiluje.
 		 * Stejne jako je potreba, aby na T bylo definovano == a taky constructor().
 		 *
-		 * ten BVS zatim NENI vyvazovany, a jelikoz tohle zabira v canvasu stejne minimum casu, asi nikdy nebude.
+		 * ten BVS zatim NENI vyvazovany, a jelikoz tohle zabira v canvasu stejne minimum casu, asi nikdy 
+		 * nebude.
 		 */
 	public:
 		typedef std::list<interval_content<T> > contents;

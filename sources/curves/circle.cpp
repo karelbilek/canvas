@@ -12,7 +12,8 @@ circle::circle(point center, glib_float radius) :
 
 list<moved_arrays> 
 circle::get_arrays() {
-	//algoritmus nekde odsud http://cgg.ms.mff.cuni.cz/~pepca/, zrovna to nebezi
+	//algoritmus odsud http://cgg.mff.cuni.cz/~pepca/lectures/npgr003.html
+	//autor algoritmu Josef Pelikan
 
 	std::list<moved_arrays> res;
 	

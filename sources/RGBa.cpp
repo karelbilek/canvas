@@ -78,9 +78,6 @@ RGBa RGBa::operator+(const RGBa& other) const {
 		//preteceni
 	};
 	
-	// glib_float other_f = (glib_float)other._alpha / (glib_float)res_alpha;
-	// glib_float this_f = 1 - other_f;
-	//obraceny smysl scitani barev
 	
 	
 	glib_float this_f = (glib_float)_alpha / (glib_float)res_alpha;

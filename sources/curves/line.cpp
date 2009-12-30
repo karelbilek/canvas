@@ -13,8 +13,9 @@ line::line(point a, point b) :
 
 list<moved_arrays>
 line::get_arrays() {
-	//algoritmus nekde odsud http://cgg.ms.mff.cuni.cz/~pepca/, zrovna to nebezi
-	
+	//algoritmus odsud http://cgg.mff.cuni.cz/~pepca/lectures/npgr003.html
+	//autor algoritmu Josef Pelikan
+		
 		//kreslim vzdycky podel delsiho rozmeru, a od mensiho cisla k vetsimu
 	bool is_width_bigger = (__abs(_a.x-_b.x) > __abs(_a.y-_b.y));
 	bool is_switch_points = ((is_width_bigger)?(_b.x>_a.x):(_b.y>_a.y));
@@ -27,10 +28,14 @@ line::get_arrays() {
 				//zveda se ten druhy rozmer nebo klesa?
 	bool increasing = (is_width_bigger ? ((end_p.y-begin_p.y)>0) : ((end_p.x-begin_p.x)>0));
 	
+				//vysledky
 	moved_arrays res(__minimum(begin_p.y,end_p.y),__maximum(begin_p.y, end_p.y));
 	
+	
+				//ta mensi velikost
 	glib_int lower_size = static_cast<glib_int>(is_width_bigger?__abs(begin_p.y-end_p.y):__abs(begin_p.x-end_p.x));
 	
+				//ta vetsi velikost
 	glib_int bigger_size = static_cast<glib_int>(is_width_bigger?__abs(begin_p.x-end_p.x):__abs(begin_p.y-end_p.y));
 	
 	
@@ -38,10 +43,12 @@ line::get_arrays() {
 	glib_int inc0 = 2*lower_size;
 	glib_int inc1 = 2*(lower_size - bigger_size);
 	
-	
+			//timhle se sunu
 	point moving = begin_p;
 	res.set(moving.x, moving.y);
 	
+	
+			//tohle sou reference, tj staci zvysovat nebo snizovat je a meni se to i v moving
 	glib_float& moving_bigger = is_width_bigger?moving.x:moving.y;
 	glib_float& moving_lower = is_width_bigger?moving.y:moving.x;
 	
@@ -81,12 +88,13 @@ line::get_thick_line(const glib_float thickness, const curve* const previous, co
 	point d;
 	
 	geom_line my_geom_line =(geom_line(_a,_b));
-	
+		
+		//je predchozi vubec cara?
 	if (const line* previous_line = dynamic_cast<const line*>(previous)) {
 		
 		geom_line previous_geom_line = (geom_line(previous_line->_a, previous_line->_b));
 		
-		geom_line res = previous_geom_line.thick_cover(my_geom_line, thickness/2,true);
+		geom_line res = previous_geom_line.thick_cover(my_geom_line, thickness/2, false);
 
 		b=res.a;
 		a=res.b;
@@ -99,7 +107,7 @@ line::get_thick_line(const glib_float thickness, const curve* const previous, co
 	
 		geom_line next_geom_line = (geom_line(next_line->_a, next_line->_b));
 		
-		geom_line res = my_geom_line.thick_cover(next_geom_line, thickness/2,false);
+		geom_line res = my_geom_line.thick_cover(next_geom_line, thickness/2, true);
 	
 		c = res.a;
 		d = res.b;

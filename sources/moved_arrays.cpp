@@ -55,16 +55,10 @@ moved_arrays::set(const glib_int x, const glib_int y) {
 		throw 1;
 	}
 	if (_first) {
-		//_min_x = (_max_x = x);
 		_min_nonempty_y = (_max_nonempty_y = y);
 		_first = false;
 	} else {
-		// if (x < _min_x) {
-		// 	_min_x = x;
-		// }
-		// if (x > _max_x) {
-		// 	_max_x = x;
-		// }
+
 		if (y < _min_nonempty_y) {
 			_min_nonempty_y = y;
 		}
@@ -86,13 +80,6 @@ moved_arrays::set(const glib_int x, const glib_int y) {
 		_ends[my_y] = x;
 	}
 }
-/*
-void
-moved_arrays::set(const glib_float x, const glib_float y) {
-	set(static_cast<glib_int>(x), static_cast<glib_int>(y));
-	
-	//set(static_cast<glib_int>(x+0.5), static_cast<glib_int>(y+0.5));
-}*/
 
 void
 moved_arrays::set(const double x, const double y) {
@@ -138,9 +125,5 @@ moved_arrays::is_horizontal() const {
 	return (_min_nonempty_y==_max_nonempty_y);
 }
 
-//glib_int moved_arrays::get_min_x() const {return _min_x;}
-//glib_int moved_arrays::get_max_x() const {return _max_x;}
-//glib_int moved_arrays::get_min_y() const {return _min_y;}
-//glib_int moved_arrays::get_max_y() const {return _max_y;}
 glib_int moved_arrays::get_min_nonempty_y() const {return _min_nonempty_y;}
 glib_int moved_arrays::get_max_nonempty_y() const {return _max_nonempty_y;}

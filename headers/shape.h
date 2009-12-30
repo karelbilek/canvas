@@ -8,6 +8,21 @@
 #include <map>
 
 namespace glib {
+	/*
+	* Se shape to nakonec vypada takhle:
+	*
+	* instance shape_type je napriklad "polygon s temito body: ...."
+	* tj. nic nevi o tom, co ma za barvy, a umi se jenom zkopirovat nebo 2x zvetsit
+	* a hlavně umí vrátit svoje curves a jejich segmenty
+	* (tj. celý svůj "dokonalý" popis a popis čar)
+	* ty čáry pak umí říct shape_type, co popisuje jejich tloušťku (nebo neumí, ale to tolik neva)
+	* 
+	* shape_style je prostě pouze styl (tj. tloušťka čáry, barva čáry, plnosti a tak)
+	*
+	* shape tohle spojuje, má atributy _style a _type
+	* a podle typu a barvy vrací plochu s RGBa
+	*/
+	
 	
 	struct shape_style {
 		
@@ -24,16 +39,15 @@ namespace glib {
 	class shape {
 	private:
 		
+			//aby se pokazde, kdyz mam tloustku velikosti N, nemusel znova generovat krouzek
 		static std::map<glib_int, plane<bool> > brushes;
 		
 		shape_style _style;
 		shape_type _type;
 		
 
-		static plane<bool> paint(const shape_type* const type, glib_int min_y, glib_int max_y);
-				//neni const, protoze meni sorting hint		
+		static plane<bool> paint(const shape_type* const type, glib_int min_y, glib_int max_y) ;
 		
-		//static bool compare_by_top(const moved_arrays& a, const moved_arrays& b);
 		static bool compare_by_row(const moved_arrays& a, const moved_arrays& b);
 		
 	public:

@@ -23,11 +23,6 @@ geom_line::parallel(const bool left, const glib_float distance) const {
 point
 geom_line::intersection(const geom_line& another)const {
 	
-	//a jsem ja, y je ten druhy
-	//ay2 = ja.b.y
-	//ay1 = ja.a.y
-	//ax1 atd
-	
 	
 	
 	if (__abs(b.y - a.y)<0.1) {
@@ -67,10 +62,14 @@ geom_line::reverted() const{
 
 glib_float 
 geom_line::count_rev_angle(const geom_line another) const{
+
 	glib_float first = another.reverted().angle_from_x();
-	std::cout<<"first je "<<first<<"\n";
+
 	glib_float second = angle_from_x();
+
+
 	glib_float res = first-second;
+
 	if (__abs(res)>180) {
 		glib_float res2=360-__abs(res);
 		if (res>0){res=-res2;} else {res=res2;}
@@ -116,9 +115,10 @@ geom_line::thick_cover(const geom_line& another, const glib_float distance, bool
 	point right_intersection;
 	
 	if (__abs(angle)<25){
+			//useknute
 		left_intersection = my_left_parallel.intersection(another_right_parallel);
 		right_intersection = my_right_parallel.intersection(another_left_parallel);
-		if (second_hint) {
+		if (!second_hint) {
 			return geom_line(right_intersection, left_intersection);
 		}
 	} else {
@@ -167,29 +167,7 @@ geom_line::right_angle_b(bool clockwise, const glib_float length) const {
 	} else {
 		res= geom_line(b, point(b.x + my_height, b.y - my_width));
 	}
-	point respoint = res.normalised(length).b;
-	return respoint;
-	
-	/*
-	
-	
-	80
-	---------
-10	|\
-	|		\
-		   10
-		 |---
-	 80	 |  /
-		 |
-		 |
-		 |
-		 |/
-	
-	
-	
-	
-	
-	*/
+	return res.normalised(length).b;
 	
 }
 

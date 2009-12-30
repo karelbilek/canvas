@@ -20,7 +20,6 @@ shape_style(glib_int line_size, const RGBa& line_color, bool fill_is, const RGBa
   _fill_is(fill_is),
   _fill_color(fill_color) {}
 
-//--------------------------------FIRST IMPORTANT THING IN DECADE
 
 
 plane<RGBa> 
@@ -28,7 +27,7 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 	
 	shape_type* type_copy = &_type; //kvuli antialiasu :/
 	if (antialias) {
-		type_copy = type_copy->clone_double(); //pozor, tady alokuju novy
+		type_copy = type_copy->clone_double(); //pozor, tady alokuju novy, MUSI dole byt to delete!
 	}
 	
 	std::list<curve*>::iterator i = type_copy->_curves.begin();
@@ -38,7 +37,7 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 	std::list<curve*>::iterator begin = type_copy->_curves.begin();
 	std::list<curve*>::iterator end = type_copy->_curves.end();
 	
-	
+	//-----------------------------------------------hledani minima z curves
 	glib_int min_x = (**i).get_min_x();
 	glib_int max_x = (**i).get_max_x();
 	glib_int min_y = (**i).get_min_y();
@@ -51,44 +50,44 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 		max_y = __maximum((**i).get_max_y(), max_y);
 	}
 	
+	//------------------------------------------------pridam tloustku cary
 	min_x = min_x - 3.2*_style._line_size;
 	max_x = max_x + 3.2*_style._line_size;
 	min_y = min_y - 3.2*_style._line_size;
 	max_y = max_y + 3.2*_style._line_size;
-			//tohle se muze zdat moc, ale co ono tohle vlastne je?
-			// tohle je odhad, ktery je tu proto, aby se to nemuselo vypocitavat/kreslit, kdyz
-			// uz je to "pokryte" necim jinym. pricemz k vypocitani velikosti okraje uz je potreba
-			// nekdy netrivialni pocitani.
-			// a tech 2* je "horni" odhad, pricemz se muze stat, ze to bude jeste vic, kdyz bude uhel
-			// mezi 2ma rovnymi carami opravdu maly, ale na to kaslu, to by to pak nemelo vubec zadny smysl 
-	
+
+	//------------------------------------------------porovnam, jestli nahodou neni cely canvas omezujici
 	max_y = __minimum(max_y, width);
 	max_x = __minimum(max_x, height);
 	
 	min_y = __maximum(min_y, 0);
 	max_y = __maximum(max_y, 0);
 	
-	//for (glib_int y=min_y; )
+	//------------------------------------------------co kdyz vubec nemusim kreslit?
 	if (painted_so_far.includes_square(min_x, min_y, max_x, max_y)) {
 		done = false;
 		return plane<RGBa>();	
 	}
 	done=true;
 	
-	//----- ma to cenu kreslit.
+
+	//------------------------------------------------jdu kreslit!!!!!
 	
 	plane<RGBa> result(min_y, max_y);
-	//------kraje
 	
+	//------------------------------------------------jdu na okraje, ale jenom, kdyz jsou
 	if (_style._line_size != 0) {
+		
 		for (i=begin;i!=end; ++i) {
-		//for (int a = 0;a<1; ++i,++a) {	
+	//------------------------------------------------jdu na konretni caru
+		
 			plane<bool> line(min_y, max_y);
 			
 			if ((**i).have_thick_line() && _style._line_size > 3) {
+	//------------------------------------------------jdu na caru, co se umi sama nakreslit
 				curve* previous;
 				curve* next;
-		
+							//care musim rict predchazejici....
 				if (i==begin) {
 					if (type_copy->_joined_ends) {
 						previous = *one_before_end;
@@ -100,7 +99,7 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 					--j;
 					previous = *j;
 				}
-		
+							//i nasledujici, aby se sama nakreslila
 				if (i==one_before_end) {
 					if (type_copy->_joined_ends) {
 						next = *begin;
@@ -113,17 +112,25 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 					next = *j;
 				}
 			
+						//vezmu teda shape_type okraje a pripadne ho nakreslim
 				shape_type okraj = (**i).get_thick_line((antialias?2:1)*_style._line_size, previous, next);
 				line = paint(&(okraj), min_y, max_y);
-				//result.add(().flatten_plane<RGBa>(_style._line_color, true));
+				
 			} else {
+	//------------------------------------------------jdu na caru, co se neumi sama nakreslit
+	
 				glib_int thickness = static_cast<glib_int>((antialias?2:1)*(_style._line_size));
 				
+				
 				if (!brushes.count(thickness)) {
+						//pokud neni vygenerovan krouzek, vygeneruj ho!
+						
 					shape_type b = disk(point(thickness,thickness), static_cast<glib_float>(thickness)/2);
 					plane<bool> p = paint(&b, 0, 2*thickness);
+					
 					p._pivot_width = thickness;
 					p._pivot_height = thickness;
+							
 					brushes.insert(pair<glib_int,plane<bool> >(thickness, p));
 				}
 				
@@ -133,6 +140,8 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 				for (list<moved_arrays>::iterator i=borders.begin(); i!=borders.end(); ++i) {
 					for (glib_int y = i->get_min_nonempty_y(); y<=i->get_max_nonempty_y(); ++y) {
 						for (glib_int x = i->get_start(y); x<=i->get_end(y); ++x) {
+							
+								//cely to zamaluj!
 							plane<bool> m = p.move(x,y);
 							m.add(x,y,1);
 							line.add(m);
@@ -159,29 +168,6 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 
 
 }
-// bool 
-// shape::compare_by_top(const moved_arrays& a, const moved_arrays& b) {
-// 	if (a.is_horizontal()) return false;
-// 	if (b.is_horizontal()) return true;
-//     //vsechny vodorovne pujdou na konec, nelibi se mi
-// 
-// 	glib_int ay = a.get_min_nonempty_y();
-// 	glib_int by = b.get_min_nonempty_y();
-// 	
-// 	if (ay < by) return true;
-// 	if (ay > by) return false;
-// 	
-// 	
-// 	glib_int ax = a.get_start(ay);
-// 	glib_int bx = b.get_start(by);
-// 	
-// 	if (ax < bx) return true;
-// 	if (ax > bx) return false;
-// 	
-// 	
-// 	return false;
-// }
-
 
 bool 
 shape::compare_by_row(const moved_arrays& a, const moved_arrays& b) {
@@ -195,7 +181,7 @@ shape::compare_by_row(const moved_arrays& a, const moved_arrays& b) {
 	
 
 	return (a.get_end(a._sorting_hint) < b.get_start(b._sorting_hint));
-		//reflexivita? WHO CARES!! WEEEEE
+		//reflexivita? WHO CARES :)
 }
 
 plane<bool>
@@ -204,15 +190,11 @@ shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
 	//to min_y neni pres referenci ale kopii, protoze ho budu menit
 	list<moved_arrays> borders = type->all_curve_arrays();
 	
-	//borders.sort(compare_by_top);
-	
-	
-	
-	
+
 	
 	for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ) {
 		
-		
+			//horizontalni me moc nezajimaji
 		if (i->is_horizontal()) {
 			list<moved_arrays>::iterator j = i;
 			++i;
@@ -222,6 +204,7 @@ shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
 		}
 	}
 	
+		//extremni pripad
 	if (min_y==0 && max_y==0) {
 		list<moved_arrays>::iterator i = borders.begin();
 		min_y = i->get_min_nonempty_y();
@@ -239,15 +222,14 @@ shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
 	}
 	
 	for (glib_int y = min_y; y < max_y; ++y) {
-		
-		// if (y>=383 && y <= 388) {
-		// 	std::cout << "radek "<<y<<": reporting in!\n";
-		// }
+		//uplne puvodni algoritmus odsud http://cgg.mff.cuni.cz/~pepca/lectures/npgr003.html
+		//autor Josef Pelikan
+		//mnou notne upraveno
 		
 		for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ++i) {
-			i->_sorting_hint = y; //I got no better idea than this crap
+			i->_sorting_hint = y; //I got no better idea than this
 		} 
-		
+								  //.....because of this
 		borders.sort(shape::compare_by_row);
 		
 		glib_int paint_start = 0;

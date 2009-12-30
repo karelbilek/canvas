@@ -1,5 +1,6 @@
 #include "shape_type.h"
-
+//vypada mozna inteligentne, ale jelikoz veskera funkcionalita je stejne prenasena na 
+//krivky, necham bez komentare
 
 using namespace glib;
 using namespace std;
