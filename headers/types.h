@@ -7,15 +7,16 @@
 #include <utility>
 // 
 // 
- #include <vector>
+#include <vector>
 #include <map>
+#include <cmath>
 #include <string>
-//#include <iostream>
+#include <iostream>
 #include <list>
 
-#define __PI (4*atan(1))
-#define __DEG2RAD(_co) (static_cast<glib_float>(((_co)/180)*__PI))
-#define __RAD2DEG(_co) (static_cast<glib_float>(((_co)/__PI)*180))
+#define __PI (static_cast<glib::glib_float>(4*atan(1)))
+#define __DEG2RAD(_co) (static_cast<glib::glib_float>((((glib::glib_float)_co)/180.0)*__PI))
+#define __RAD2DEG(_co) (static_cast<glib::glib_float>((((glib::glib_float)_co)/__PI)*180.0))
 
 #define __minimum(_a,_b) (((_a)<(_b))?(_a):(_b))
 #define __maximum(_a,_b) (((_a)>(_b))?(_a):(_b))
@@ -26,7 +27,6 @@
 
 #define __abs(a) (((a)>0)?((a)):(-(a)))
 
-	//tyhle makra se straaaasne hodi
 
 
 	//jeden pokus o zaokrouhlovani - nakonec mi prislo nejlepsi to jednoduse truncnout
@@ -40,6 +40,11 @@ namespace glib {
 	typedef long glib_int; 
 	typedef unsigned char glib_component;
 	typedef double glib_float;
+	
+	/*int __abs(const int& a);
+	float __abs(const float& a);
+	double __abs(const double& a);
+	char __abs(const char& a);*/
 
 }	
 	

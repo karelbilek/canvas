@@ -52,7 +52,6 @@ geom_line::intersection(const geom_line& another)const {
 		glib_float another_c = another.a.x-another_k*(another.a.y);
 		
 		glib_float y=(another_c-c)/(k-another_k);
-		if (__abs(k - another_k)<0.1) {throw 1;}
 		glib_float x=k*y+c;
 		
 		return point(x,y);
@@ -61,17 +60,74 @@ geom_line::intersection(const geom_line& another)const {
 	
 }
 
+geom_line 
+geom_line::reverted() const{
+	return geom_line(b,a);
+}
+
+glib_float 
+geom_line::count_rev_angle(const geom_line another) const{
+	glib_float first = another.reverted().angle_from_x();
+	std::cout<<"first je "<<first<<"\n";
+	glib_float second = angle_from_x();
+	glib_float res = first-second;
+	if (__abs(res)>180) {
+		glib_float res2=360-__abs(res);
+		if (res>0){res=-res2;} else {res=res2;}
+	}
+	return res;
+}
+
+glib_float 
+geom_line::angle_from_x() const{
+	if (__abs(a.x-b.x)<0.1) {
+		return (a.y<b.y)?(270):(90);
+	}
+	
+	if (__abs(a.y-b.y)<0.1) {
+		return (a.x<b.x)?(0):(180);
+	}
+	
+		//ty Y jsou "obracene", protoze Y je v souradicich na druhou stranu nez X
+	glib_float res;
+	if (b.x > a.x) {
+		
+		res=__RAD2DEG(atan((a.y-b.y) / (b.x-a.x)));
+	} else {
+		res = 180-__RAD2DEG(atan((b.y-a.y) / (b.x-a.x)));
+	}
+	while (res<0) res+=360;
+	while (res>360) res-=360;
+	return res;
+}
+
 geom_line
-geom_line::parallel_intersection(const geom_line& another, const glib_float distance) const{
+geom_line::thick_cover(const geom_line& another, const glib_float distance, bool second_hint) const{
 	geom_line my_right_parallel = parallel(false, distance);
 	geom_line another_right_parallel = another.parallel(false,distance);
-	point first_intersection = my_right_parallel.intersection(another_right_parallel);
+	
 	
 	geom_line my_left_parallel =  parallel(true, distance);
 	geom_line another_left_parallel = another.parallel(true,distance);
-	point second_intersection = my_left_parallel.intersection(another_left_parallel);
 	
-	return geom_line(first_intersection, second_intersection);
+	glib_float angle = count_rev_angle(another);
+	
+	point left_intersection;
+	point right_intersection;
+	
+	if (__abs(angle)<25){
+		left_intersection = my_left_parallel.intersection(another_right_parallel);
+		right_intersection = my_right_parallel.intersection(another_left_parallel);
+		if (second_hint) {
+			return geom_line(right_intersection, left_intersection);
+		}
+	} else {
+		left_intersection = my_left_parallel.intersection(another_left_parallel);
+		right_intersection = my_right_parallel.intersection(another_right_parallel);
+	}
+
+	
+	return geom_line(left_intersection, right_intersection);
 }
 
 geom_line 

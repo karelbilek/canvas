@@ -6,31 +6,25 @@ using namespace glib;
 using namespace std;
 
 line::line(point a, point b) : 
-  _a(a.trunc()),
-  _b(b.trunc()) {
+  _a(a),
+  _b(b) {
 }
 
-bool
-line::width_bigger() const {
-	return (__abs(_a.x-_b.x) > __abs(_a.y-_b.y));
-}
-
-bool
-line::switch_points() const {
-	return ((width_bigger())?(_b.x>_a.x):(_b.y>_a.y));
-}
 
 list<moved_arrays>
 line::get_arrays() {
 	//algoritmus nekde odsud http://cgg.ms.mff.cuni.cz/~pepca/, zrovna to nebezi
 	
-	bool is_width_bigger = width_bigger();
+		//kreslim vzdycky podel delsiho rozmeru, a od mensiho cisla k vetsimu
+	bool is_width_bigger = (__abs(_a.x-_b.x) > __abs(_a.y-_b.y));
+	bool is_switch_points = ((is_width_bigger)?(_b.x>_a.x):(_b.y>_a.y));
 	
-	bool is_switch_points = switch_points();
 	
+			//kde zacinam a koncim
 	point begin_p = (is_switch_points)?(_a.trunc()):(_b.trunc());
 	point end_p = (is_switch_points)?(_b.trunc()):(_a.trunc());
 	
+				//zveda se ten druhy rozmer nebo klesa?
 	bool increasing = (is_width_bigger ? ((end_p.y-begin_p.y)>0) : ((end_p.x-begin_p.x)>0));
 	
 	moved_arrays res(__minimum(begin_p.y,end_p.y),__maximum(begin_p.y, end_p.y));
@@ -86,36 +80,32 @@ line::get_thick_line(const glib_float thickness, const curve* const previous, co
 	point c;
 	point d;
 	
-	geom_line my_geom_line = /*(switch_points())?(geom_line(_b,_a)):*/(geom_line(_a,_b));
+	geom_line my_geom_line =(geom_line(_a,_b));
 	
 	if (const line* previous_line = dynamic_cast<const line*>(previous)) {
 		
-		geom_line previous_geom_line = /*(previous_line->switch_points())?(geom_line(previous_line->_b, previous_line->_a)):*/(geom_line(previous_line->_a, previous_line->_b));
+		geom_line previous_geom_line = (geom_line(previous_line->_a, previous_line->_b));
 		
-		geom_line res = my_geom_line.parallel_intersection(previous_geom_line, thickness/2);
-		//prvni vrati VLEVO, pak VPRAVO
+		geom_line res = previous_geom_line.thick_cover(my_geom_line, thickness/2,true);
+
 		b=res.a;
 		a=res.b;
 	} else {
-		geom_line this_gl = geom_line(_a, _b);
-		a = this_gl.right_angle_a(1,thickness/2);
-		b = this_gl.right_angle_a(0,thickness/2);
+		a = my_geom_line.right_angle_a(1,thickness/2);
+		b = my_geom_line.right_angle_a(0,thickness/2);
 	}
 	
 	if (const line* next_line = dynamic_cast<const line*>(next)) {
 	
-		geom_line next_geom_line = /*(next_line->switch_points())?(geom_line(next_line->_b, next_line->_a)):*/(geom_line(next_line->_a, next_line->_b));
+		geom_line next_geom_line = (geom_line(next_line->_a, next_line->_b));
 		
-		geom_line res = my_geom_line.parallel_intersection(next_geom_line, thickness/2);
+		geom_line res = my_geom_line.thick_cover(next_geom_line, thickness/2,false);
 	
-	
-	//	std::cout<<"zde vznika c jako intersection paralelu usecky, dane body _a:"<<_a.x<<","<<_a.y<<" a _b:"<<_b.x<<","<<_b.y<<"; a dalsi usecka je dana body _a:"<<(next_line->_a).x<<","<<(next_line->_a).y<<" a _b:"<<(next_line->_b).x<<","<<(next_line->_b).y<<" s tloustkou "<<thickness/2<<", resp. jako jeden z bodu.\n=====\n";
 		c = res.a;
 		d = res.b;
 	} else {
-		geom_line this_gl = geom_line(_a, _b);
-		d = this_gl.right_angle_b(1,thickness/2);
-		c = this_gl.right_angle_b(0,thickness/2);
+		c = my_geom_line.right_angle_b(1,thickness/2);
+		d = my_geom_line.right_angle_b(0,thickness/2);
 	}
 	
 	return polygon(a,b,c,d);

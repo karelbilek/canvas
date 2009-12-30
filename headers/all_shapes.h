@@ -9,7 +9,7 @@
 
 namespace glib {
 	
-		//all the known shape_types in the universe
+		//všechny známé shape
 	class disk:public shape_type {
 	public:
 		disk(const point& center, const glib_float radius);

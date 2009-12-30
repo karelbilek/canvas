@@ -51,10 +51,10 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 		max_y = __maximum((**i).get_max_y(), max_y);
 	}
 	
-	min_x = min_x - 50*_style._line_size;
-	max_x = max_x + 50*_style._line_size;
-	min_y = min_y - 50*_style._line_size;
-	max_y = max_y + 50*_style._line_size;
+	min_x = min_x - 3.2*_style._line_size;
+	max_x = max_x + 3.2*_style._line_size;
+	min_y = min_y - 3.2*_style._line_size;
+	max_y = max_y + 3.2*_style._line_size;
 			//tohle se muze zdat moc, ale co ono tohle vlastne je?
 			// tohle je odhad, ktery je tu proto, aby se to nemuselo vypocitavat/kreslit, kdyz
 			// uz je to "pokryte" necim jinym. pricemz k vypocitani velikosti okraje uz je potreba

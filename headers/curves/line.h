@@ -16,15 +16,10 @@ namespace glib{
 		
 	public:
 		
-		bool width_bigger() const;
-		bool switch_points() const;
-		
-			//vrati prvni
-		
 		line(point a, point b);
 		
 		virtual std::list<moved_arrays> get_arrays();
-
+		
 		virtual shape_type get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) const;
 
 		virtual glib_int get_min_y() const;

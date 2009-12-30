@@ -6,6 +6,8 @@
 
 namespace glib {
 	class canvas {
+			//canvas je "hlavni" trida
+			//na tu se umistuji shapes, ona jim pak rika "kreslete se!"
 	public:
 		typedef plane<RGBa>::T_list colors_row;	//list struktur (barva, zacatek, konec) z plane
 	private:
