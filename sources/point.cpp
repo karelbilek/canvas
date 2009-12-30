@@ -1,11 +1,11 @@
 #include "point.h"
 #include <cmath>
 
-using namespace glib;
+using namespace canlib;
 
 //-------------------------CONSTRUCTORS
-point::point(glib_float new_x, glib_float new_y):x(new_x),y(new_y) {}
-point::point(glib_int new_x, glib_int new_y):x(new_x),y(new_y) {}
+point::point(canlib_float new_x, canlib_float new_y):x(new_x),y(new_y) {}
+point::point(canlib_int new_x, canlib_int new_y):x(new_x),y(new_y) {}
 point::point(int new_x, int new_y):x(new_x),y(new_y) {}
 
 
@@ -13,7 +13,7 @@ point::point():x(0), y(0) { }
 
 //-------------------------OTHER
 point
-point::move(const glib_float distance, glib_float degrees) const{
+point::move(const canlib_float distance, canlib_float degrees) const{
 	while (degrees<0) {
 		degrees+=360;
 	}
@@ -21,7 +21,7 @@ point::move(const glib_float distance, glib_float degrees) const{
 		degrees-=360;
 	}	//modulo, ale na cislech, kde mi to c++ nedovoli
 	
-	glib_float rad = __DEG2RAD(degrees);
+	canlib_float rad = __DEG2RAD(degrees);
 	return point(x+distance*cos(rad), y+distance*sin(rad));
 }
 
@@ -38,12 +38,12 @@ point::operator-(const point& other) const {
 }
 
 point 
-point::operator*(const glib_float n) const {
+point::operator*(const canlib_float n) const {
 	return point(x*n, y*n);
 }
 
 point 
-point::operator*(const glib_int n) const {
+point::operator*(const canlib_int n) const {
 	return point(x*n, y*n);
 }
 
@@ -53,7 +53,7 @@ point::operator*(const int n) const {
 }
 point
 point::trunc() const {
-	return point(static_cast<glib_int>(x), static_cast<glib_int>(y));
+	return point(static_cast<canlib_int>(x), static_cast<canlib_int>(y));
 }
 
 point& 

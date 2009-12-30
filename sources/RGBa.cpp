@@ -1,6 +1,6 @@
 #include "RGBa.h"
 
-using namespace glib;
+using namespace canlib;
 
 //-----------------------CONSTRUCTORS
 RGBa::RGBa(const basic_colors color):_red(0),_green(0),_blue(0),_alpha(0){
@@ -28,13 +28,13 @@ RGBa::RGBa(const basic_colors color):_red(0),_green(0),_blue(0),_alpha(0){
 
 RGBa::RGBa() : _red(0), _green(0),_blue(0),_alpha(0) {}
 
-RGBa::RGBa(const glib_component r, const glib_component g, const glib_component b) : _red(r), _green(g),_blue(b),_alpha(255)   {}
+RGBa::RGBa(const canlib_component r, const canlib_component g, const canlib_component b) : _red(r), _green(g),_blue(b),_alpha(255)   {}
 
-RGBa::RGBa(const glib_component r, const glib_component g, const glib_component b, const glib_component a) : _red(r), _green(g),_blue(b),_alpha(a)  {}
+RGBa::RGBa(const canlib_component r, const canlib_component g, const canlib_component b, const canlib_component a) : _red(r), _green(g),_blue(b),_alpha(a)  {}
 
 
 //--------------------------GETTERS
-void RGBa::get_colors(glib_component *p_red, glib_component *p_green, glib_component *p_blue, glib_component *p_alpha) const {
+void RGBa::get_colors(canlib_component *p_red, canlib_component *p_green, canlib_component *p_blue, canlib_component *p_alpha) const {
 	
 	*p_red = _red;
 	*p_green = _green;
@@ -43,15 +43,15 @@ void RGBa::get_colors(glib_component *p_red, glib_component *p_green, glib_compo
 }
 
 //----------------------------SETTERS
-void RGBa::set_red(const glib_component red) {
+void RGBa::set_red(const canlib_component red) {
 	_red = red;
 }
 
-void RGBa::set_green(const glib_component green) {
+void RGBa::set_green(const canlib_component green) {
 	_green = green;
 }
 
-void RGBa::set_blue(const glib_component blue) {
+void RGBa::set_blue(const canlib_component blue) {
 	_blue = blue;
 }
 
@@ -80,19 +80,19 @@ RGBa RGBa::operator+(const RGBa& other) const {
 	
 	
 	
-	glib_float this_f = (glib_float)_alpha / (glib_float)res_alpha;
-	glib_float other_f = 1 - this_f;
+	canlib_float this_f = (canlib_float)_alpha / (canlib_float)res_alpha;
+	canlib_float other_f = 1 - this_f;
 	
 	
-	glib_component res_red = static_cast<glib_component>(this_f * _red + other_f * other._red);
-	glib_component res_green = static_cast<glib_component>(this_f * _green + other_f * other._green);
-	glib_component res_blue = static_cast<glib_component>(this_f * _blue + other_f * other._blue);
+	canlib_component res_red = static_cast<canlib_component>(this_f * _red + other_f * other._red);
+	canlib_component res_green = static_cast<canlib_component>(this_f * _green + other_f * other._green);
+	canlib_component res_blue = static_cast<canlib_component>(this_f * _blue + other_f * other._blue);
 
 	return RGBa(res_red, res_green, res_blue, res_alpha); 
 }
 
-RGBa RGBa::operator* (const glib_float quoc) const {
-	glib_component res_alpha = static_cast<glib_component>(_alpha*quoc);
+RGBa RGBa::operator* (const canlib_float quoc) const {
+	canlib_component res_alpha = static_cast<canlib_component>(_alpha*quoc);
 	RGBa res = *this;
 	res._alpha = res_alpha;
 	return res;

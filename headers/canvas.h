@@ -4,7 +4,7 @@
 #include "matrix.h"
 #include "shape.h"
 
-namespace glib {
+namespace canlib {
 	class canvas {
 			//canvas je "hlavni" trida
 			//na tu se umistuji shapes, ona jim pak rika "kreslete se!"
@@ -13,8 +13,8 @@ namespace glib {
 	private:
 		
 		bool _antialias; //je zapnuty antialias?
-		glib_int _height;
-		glib_int _width; //sirka/vyska
+		canlib_int _height;
+		canlib_int _width; //sirka/vyska
 		                
 		RGBa _background; 
 		
@@ -30,7 +30,7 @@ namespace glib {
 		~canvas();
 						//smaz canvas
 		
-		matrix<glib_component> get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos); 
+		matrix<canlib_component> get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos); 
 						//vrat matrix s temahle pozicema
 						//NENI const, viz niz
 						

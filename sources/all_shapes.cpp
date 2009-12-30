@@ -1,11 +1,11 @@
 #include "all_shapes.h"
-using namespace glib;
+using namespace canlib;
 
-disk::disk(const point& center, const glib_float radius): shape_type(1,1) {
+disk::disk(const point& center, const canlib_float radius): shape_type(1,1) {
 	_curves.push_back(new circle(center, radius));
 }
 	
-segment::segment(const glib_float ax, const glib_float ay, const glib_float bx, const glib_float by): shape_type(0,0) {
+segment::segment(const canlib_float ax, const canlib_float ay, const canlib_float bx, const canlib_float by): shape_type(0,0) {
 	_curves.push_back(new line(point(ax,ay),point(bx,by)));
 } 
 	

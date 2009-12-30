@@ -2,21 +2,21 @@
 #define POINT_INC
 #include "types.h"
 
-namespace glib {
+namespace canlib {
 	
 	class point {
 		/*
-		 * Nescetnekrat pouzivana trida na uchovavani bodu. Bod = 2 souradnice s glib_float pointem (ano, glib_float pointem)
+		 * Nescetnekrat pouzivana trida na uchovavani bodu. Bod = 2 souradnice s canlib_float pointem (ano, canlib_float pointem)
 		 * proc FP? protoze od jednotlivych bodu se napr. pocitaji kolmice a podobne - se zaokrouhlovanim na cela cisla je problem
 		 *
 		 * Umi zakladni operace, pozor, == netestuje UPLNOU rovnost, ale v ramci tolerance 0.01 nebo tak neco, ono 
 		 * presne porovnavani FP stejne nema moc smysl
 		 */
 	public:
-		glib_float x;
-		glib_float y;
-		point(glib_float new_x, glib_float new_y);
-		point(glib_int new_x, glib_int new_y);
+		canlib_float x;
+		canlib_float y;
+		point(canlib_float new_x, canlib_float new_y);
+		point(canlib_int new_x, canlib_int new_y);
 		point(int _x, int _y); 
 		//point(double _x, double _y);
 		
@@ -24,7 +24,7 @@ namespace glib {
 			//(0,0)
 		
 		
-		point move(const glib_float distance, glib_float degrees) const;
+		point move(const canlib_float distance, canlib_float degrees) const;
 			//posune pixel o nejakou vzdalenost po nejakem uhlu
 		
 		point operator+(const point& other) const;
@@ -33,8 +33,8 @@ namespace glib {
 		point operator-(const point& other) const;
 			//totez jen s odcitanim
 		
-		point operator*(const glib_float n) const;
-		point operator*(const glib_int n) const;	
+		point operator*(const canlib_float n) const;
+		point operator*(const canlib_int n) const;	
 		point operator*(const int n) const;
 		//point operator*(const double n) const;
 			//Vynasob dalsim cislem (vzdy ale jenom cislem!)

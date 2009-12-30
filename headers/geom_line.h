@@ -4,7 +4,7 @@
 #include "point.h"
 
 
-namespace glib {
+namespace canlib {
 	struct geom_line {
 		//pomocna trida, co reprezentuje "cistou" usecku
 		//neni to u line, protoze puvodne bylo dost oddelene, co delaly
@@ -20,21 +20,21 @@ namespace glib {
 			//vypocita uhel, pokud ale predpokladam, ze
 			// b=another.a,
 			// to znamena ze vlastne pocitam uhel od obracene orientovane usecky
-		glib_float count_rev_angle(const geom_line another) const;
+		canlib_float count_rev_angle(const geom_line another) const;
 		
 			//uhel od horizontaly
-		glib_float angle_from_x() const;
+		canlib_float angle_from_x() const;
 		
 			//zkrati/prodlouzi to velikost na length
-		geom_line normalised(const glib_float length) const;
+		geom_line normalised(const canlib_float length) const;
 		
 			//udela pravy uhel
-		point right_angle_a(const bool clockwise, const glib_float length) const;
-		point right_angle_b(const bool clockwise, const glib_float length) const;
+		point right_angle_a(const bool clockwise, const canlib_float length) const;
+		point right_angle_b(const bool clockwise, const canlib_float length) const;
 		
 			//udela rovnobezku, vzdalenou distance ode mne
 			//vlevo / vpravo
-		geom_line parallel(const bool left, const glib_float distance) const;
+		geom_line parallel(const bool left, const canlib_float distance) const;
 	
 			//prusecik s jinou useckou (muze, a casto je mimo)
 		point intersection(const geom_line& another) const;
@@ -45,7 +45,7 @@ namespace glib {
 			//usecce, ale i na te sousedni. Tahle je spocita a vrati.
 			//second_hint je proto, ze pokud je uhel svirany temi useckami moc maly,
 			//udela se ten obal trochu jinak, kde potrebuju v jednom pripade prehodit poradi bodu
-		geom_line thick_cover(const geom_line& another, const glib_float distance, bool second_hind) const;
+		geom_line thick_cover(const geom_line& another, const canlib_float distance, bool second_hind) const;
 	};
 	
 }

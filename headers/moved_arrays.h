@@ -5,7 +5,7 @@
 #include "plane.h"
 #include <vector>
 
-namespace glib {
+namespace canlib {
 	class moved_arrays {
 		/*
 		 * Trida na uchovavani segmentu car.
@@ -17,44 +17,44 @@ namespace glib {
 		
 		bool _first;
 		
-		glib_int _min_nonempty_y;
-		glib_int _max_nonempty_y;
+		canlib_int _min_nonempty_y;
+		canlib_int _max_nonempty_y;
 		
 	
-		glib_int _min_y;
-		glib_int _max_y;
+		canlib_int _min_y;
+		canlib_int _max_y;
 		
-		std::vector<glib_int> _starts;
-		std::vector<glib_int> _ends;
+		std::vector<canlib_int> _starts;
+		std::vector<canlib_int> _ends;
 		std::vector<bool> _is_set;
 		
 	public:
-		glib_int _sorting_hint; 
+		canlib_int _sorting_hint; 
 			//HACK - obcas chci seradit comparatorem vsechny segmenty
 			//ale podle toho, jak jsou na urcite RADCE
 			//a komparatoru NEMUZU dat argument
 			//tak ho nastavim tady... rikam, hack
 		
-		moved_arrays(glib_int start, glib_int end);
-		moved_arrays(glib_float start, glib_float end);
+		moved_arrays(canlib_int start, canlib_int end);
+		moved_arrays(canlib_float start, canlib_float end);
 		
 		
-		glib_int get_start(const glib_int y) const;
-		glib_int get_end(const glib_int y) const;
+		canlib_int get_start(const canlib_int y) const;
+		canlib_int get_end(const canlib_int y) const;
 		
 		plane<bool> to_plane() const;
 		
-		void set(const glib_int x, const glib_int y);
-		void set(const glib_float x, const glib_float y);
+		void set(const canlib_int x, const canlib_int y);
+		void set(const canlib_float x, const canlib_float y);
 		
-		bool is_set(const glib_int y) const;
-		bool is_near(const glib_int x, const glib_int y) const;
+		bool is_set(const canlib_int y) const;
+		bool is_near(const canlib_int x, const canlib_int y) const;
 		
 		bool is_horizontal() const;
 		
 		
-		glib_int get_min_nonempty_y() const;
-		glib_int get_max_nonempty_y() const;
+		canlib_int get_min_nonempty_y() const;
+		canlib_int get_max_nonempty_y() const;
 		
 	};
 }

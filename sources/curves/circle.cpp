@@ -1,10 +1,10 @@
 #include "curves/circle.h"
 #include "shape.h"
 
-using namespace glib;
+using namespace canlib;
 using namespace std;
 
-circle::circle(point center, glib_float radius) :
+circle::circle(point center, canlib_float radius) :
   _center(center),
   _radius(radius) {
 }
@@ -66,9 +66,9 @@ circle::get_arrays() {
 	} 
 	else {
 		//nespecialni pripad
-		glib_float lx = 0;
-		glib_float ly = _radius;
-		glib_float d = 1 - ly;
+		canlib_float lx = 0;
+		canlib_float ly = _radius;
+		canlib_float d = 1 - ly;
 	
 		moved_arrays left(_center.y-_radius, _center.y+_radius+1);
 		moved_arrays right(_center.y-_radius, _center.y+_radius+1);
@@ -99,9 +99,9 @@ circle::get_arrays() {
 
 
 void 
-circle::paint_more(glib_float fx, glib_float fy, moved_arrays& left, moved_arrays& right){
-	glib_int x = static_cast<glib_int>(fx+0.5);
-	glib_int y = static_cast<glib_int>(fy+0.5);
+circle::paint_more(canlib_float fx, canlib_float fy, moved_arrays& left, moved_arrays& right){
+	canlib_int x = static_cast<canlib_int>(fx+0.5);
+	canlib_int y = static_cast<canlib_int>(fy+0.5);
 	left.set(_center.x-x, _center.y+y+1);
 	left.set(_center.x-y, _center.y+x+1);
 	left.set(_center.x-x, _center.y-y);
@@ -113,29 +113,29 @@ circle::paint_more(glib_float fx, glib_float fy, moved_arrays& left, moved_array
 	right.set(_center.x+y, _center.y-x);
 }
 
-glib_int 
+canlib_int 
 circle::get_min_y() const {
-	return static_cast<glib_int>(_center.y - _radius);
+	return static_cast<canlib_int>(_center.y - _radius);
 }
 
-glib_int 
+canlib_int 
 circle::get_max_y() const {
-	return static_cast<glib_int>(_center.y + _radius+2);
+	return static_cast<canlib_int>(_center.y + _radius+2);
 }
 
 
-glib_int 
+canlib_int 
 circle::get_min_x() const {
-	return static_cast<glib_int>(_center.x - _radius);
+	return static_cast<canlib_int>(_center.x - _radius);
 }
 
-glib_int 
+canlib_int 
 circle::get_max_x() const {
-	return static_cast<glib_int>(_center.x + _radius+2);
+	return static_cast<canlib_int>(_center.x + _radius+2);
 }
 
 shape_type
-circle::get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) const{
+circle::get_thick_line(const canlib_float thickness, const curve* const previous, const curve* const next) const{
 	//nakresli se jako dva soustredne kruhy
 	circle* circle_in= new circle(_center, _radius-(thickness/2));
 	circle* circle_out= new circle(_center, _radius+(thickness/2));

@@ -1,6 +1,6 @@
 #include "curves/bezier.h"
 
-using namespace glib;
+using namespace canlib;
 using namespace std;
 
 bezier::bezier(point a, point b, point c, point d):
@@ -16,10 +16,10 @@ bezier::get_arrays() {
 	//zdroj algoritmu - http://www.niksula.cs.hut.fi/~hkankaan/Homepages/bezierfast.html
 	//(C) Hannu Kankaanpää
 	
-	glib_int min_y = get_min_y();
-	glib_int max_y = get_max_y();
+	canlib_int min_y = get_min_y();
+	canlib_int max_y = get_max_y();
 	
-	glib_uint steps = __maximum((max_y - min_y), (get_max_x()-get_min_x()))*5;
+	canlib_uint steps = __maximum((max_y - min_y), (get_max_x()-get_min_x()))*5;
 			//!!!!!!ta 5ka je umele dodana konstanta
 			//mozna by to slo zvetsit/zmensit? ale me se to zda OK
 	
@@ -32,8 +32,8 @@ bezier::get_arrays() {
 	
 	point f;
 	point fd, fdd, fddd, fdd_per_2, fddd_per_2, fddd_per_6;
-	glib_float t = static_cast<glib_float>(1.0 / steps);
-	glib_float temp = t * t;
+	canlib_float t = static_cast<canlib_float>(1.0 / steps);
+	canlib_float temp = t * t;
 	
 			//silene derivace.... 
 			
@@ -46,7 +46,7 @@ bezier::get_arrays() {
 	fdd = fdd_per_2 + fdd_per_2;
 	fddd_per_6 = fddd_per_2 * (1.0 / 3);
 	
-	for (glib_uint i=0; i < steps; ++i) {
+	for (canlib_uint i=0; i < steps; ++i) {
 		ma.set(f.x,f.y);
 		
 		if (first) {
@@ -94,23 +94,23 @@ bezier::get_arrays() {
 }
 
 
-glib_int 
+canlib_int 
 bezier::get_min_x() const {
-	return static_cast<glib_int>(__minimum4(_a.x,_b.x,_c.x, _d.x));
+	return static_cast<canlib_int>(__minimum4(_a.x,_b.x,_c.x, _d.x));
 	//(b<((c<d)?(c):(d)))?(b):((c<d)?(c):(d))
 }
 
-glib_int 
+canlib_int 
 bezier::get_max_x() const{
-	return static_cast<glib_int>(__maximum4(_a.x, _b.x, _c.x, _d.x)+2);
+	return static_cast<canlib_int>(__maximum4(_a.x, _b.x, _c.x, _d.x)+2);
 }
 
-glib_int 
+canlib_int 
 bezier::get_min_y() const {
-	return static_cast<glib_int>(__minimum4(_a.y,_b.y, _c.y, _d.y));
+	return static_cast<canlib_int>(__minimum4(_a.y,_b.y, _c.y, _d.y));
 }
 
-glib_int
+canlib_int
 bezier::get_max_y() const{
-	return static_cast<glib_int> (__maximum4(_a.y, _b.y, _c.y, _d.y)+2);
+	return static_cast<canlib_int> (__maximum4(_a.y, _b.y, _c.y, _d.y)+2);
 }

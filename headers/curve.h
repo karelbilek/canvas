@@ -5,7 +5,7 @@
 #include "shape_type.h"
 #include <list>
 
-namespace glib{
+namespace canlib{
 	
 	
 	class curve {
@@ -48,13 +48,13 @@ namespace glib{
 
 		virtual bool have_thick_line()=0;
 				//umis tloustku?
-		virtual shape_type get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) const = 0;
+		virtual shape_type get_thick_line(const canlib_float thickness, const curve* const previous, const curve* const next) const = 0;
 				//cara s tloustkou
 				
-		virtual glib_int get_min_y() const = 0;
-		virtual glib_int get_max_y() const = 0;
-		virtual glib_int get_min_x() const = 0;
-		virtual glib_int get_max_x() const = 0;
+		virtual canlib_int get_min_y() const = 0;
+		virtual canlib_int get_max_y() const = 0;
+		virtual canlib_int get_min_x() const = 0;
+		virtual canlib_int get_max_x() const = 0;
 				//vraci leva/prava/horni/dolni maxima
 		
 		

@@ -3,14 +3,14 @@
 
 #include "types.h"
 
-namespace glib {
+namespace canlib {
 	
 	template <class T>
 	struct interval_content {
 		T _cont;
-		glib_int _start;
-		glib_int _end;
-		interval_content(const T& cont, glib_int start, glib_int end): _cont(cont), _start(start), _end(end){}
+		canlib_int _start;
+		canlib_int _end;
+		interval_content(const T& cont, canlib_int start, canlib_int end): _cont(cont), _start(start), _end(end){}
 	};
 
 
@@ -38,9 +38,9 @@ namespace glib {
 	protected:
 		
 		
-		glib_int _start;
+		canlib_int _start;
 			//Zacatek intervalu
-		glib_int _end; 
+		canlib_int _end; 
 			//Konec intervalu - vcetne!!! 
 		
 		T _content;
@@ -64,10 +64,10 @@ namespace glib {
 
 	public:
 		
-		glib_int most_left() const;
-		glib_int most_right() const;
-		glib_int get_start() const;
-		glib_int get_end() const;
+		canlib_int most_left() const;
+		canlib_int most_right() const;
+		canlib_int get_start() const;
+		canlib_int get_end() const;
 		
 		const interval<T> get_left() const;
 		const interval<T> get_right() const;
@@ -79,10 +79,10 @@ namespace glib {
 		bool has_right() const;
 		bool is_empty() const;
 		
-		bool includes(const glib_int from, const glib_int to) const;
+		bool includes(const canlib_int from, const canlib_int to) const;
 		
 		
-		interval (const glib_int start, const glib_int end, const T& content);
+		interval (const canlib_int start, const canlib_int end, const T& content);
 			//"klasicky" konstruktor
 		interval (const interval<T>& other);
 			//zkopiruje z dalsiho nodu
@@ -91,11 +91,11 @@ namespace glib {
 		interval ();
 			//prazdny
 		
-		T get(glib_int where) const;
+		T get(canlib_int where) const;
 			//najde danou pozici - pokud ne, da T()
 		
 		
-		void move(glib_int sirka);
+		void move(canlib_int sirka);
 			//posune sebe i synky o sirka doLEVA
 		
 		~interval();
@@ -108,10 +108,10 @@ namespace glib {
 		contents get_all() const;
 			//vrati obsahy vsech svych deti, *vcetne* sebe
 		
-		void add_more(const glib_int start, const glib_int end, const T& what);
+		void add_more(const canlib_int start, const canlib_int end, const T& what);
 			//prida novy interval - pokud se s nicim nekryje. Pokud ano, vse se upravi.
 		
-		void add_one(const glib_int where, const T& what);
+		void add_one(const canlib_int where, const T& what);
 			//Prida jeden "bod" - napr. mam interval 4-8, pridam 3, interval se zmeni na 3-8.
 			//Tady je videt to mysleni "po pixelech" - ano, je to diskretni :)
 		
@@ -130,7 +130,7 @@ namespace glib {
 	
 	template<class T>
 	bool 
-	interval<T>::includes(const glib_int from, const glib_int to) const {
+	interval<T>::includes(const canlib_int from, const canlib_int to) const {
 		//paradoxne, to co jde primo "na me" ignoruju
 		
 		if (from < _start) {
@@ -168,7 +168,7 @@ namespace glib {
 	}
 
 	template<class T>
-	interval<T>::interval (const glib_int start, const glib_int end, const T& content): 
+	interval<T>::interval (const canlib_int start, const canlib_int end, const T& content): 
 	  _start(start), 
 	  _end(__maximum(end,start)),
 	  _content(content),
@@ -316,7 +316,7 @@ namespace glib {
 	
 	template<class T>
 	void 
-	interval<T>::move(glib_int sirka) {
+	interval<T>::move(canlib_int sirka) {
 		if (!_empty) {
 			if (_left!=NULL) {
 				_left->move(sirka);
@@ -333,7 +333,7 @@ namespace glib {
 	
 	template<class T>
 	void 
-	interval<T>::add_more(const glib_int start, const glib_int end, const T& what) {
+	interval<T>::add_more(const canlib_int start, const canlib_int end, const T& what) {
 		
 		
 		
@@ -347,7 +347,7 @@ namespace glib {
 		} else {
 			if (start < _start) {
 				
-				glib_int smaller = __minimum (_start-1, end);
+				canlib_int smaller = __minimum (_start-1, end);
 					//Chceme vlozit neco, co zacina driv
 					//Uvazuju ale jenom to, co "nekouka" pripadne prese mne - to pak poresim.
 					//Pokud je situace takhle:
@@ -374,7 +374,7 @@ namespace glib {
 			if (end > _end) {
 				//totez v bledemodrem
 				
-				glib_int bigger = __maximum(_end+1, start);
+				canlib_int bigger = __maximum(_end+1, start);
 				if (_right == NULL) {
 					
 					_right = new interval<T> (bigger, end, what);
@@ -399,7 +399,7 @@ namespace glib {
 					//sloucit s necim, co uz je vlevo
 					
 				
-				glib_int b = _start;
+				canlib_int b = _start;
 				_start = end + 1;
 				add_more(b, end, _content + what);
 		
@@ -409,7 +409,7 @@ namespace glib {
 				//           ---------
 				
 
-				glib_int e = _end;
+				canlib_int e = _end;
 				_end = start - 1;
 				add_more(start, e, _content + what);
 				
@@ -422,8 +422,8 @@ namespace glib {
 					//3 kousky
 					
 				
-				glib_int old_end = _end;
-				glib_int old_start = _start;
+				canlib_int old_end = _end;
+				canlib_int old_start = _start;
 				T old_content = _content;
 				
 				_start = start;
@@ -443,7 +443,7 @@ namespace glib {
 	
 	template<class T>
 	void 
-	interval<T>::add_one(const glib_int where, const T& what) {
+	interval<T>::add_one(const canlib_int where, const T& what) {
 		
 		if (_empty) {
 			_empty= false;
@@ -479,7 +479,7 @@ namespace glib {
 		
 			} else if (where > _start && where < _end) {
 					//Strkam nekam doprostred
-				glib_int end = _end;
+				canlib_int end = _end;
 				_end = where - 1;
 					//nejdriv se posunu pred to,
 				add_one(where, _content + what);
@@ -513,7 +513,7 @@ namespace glib {
 	
 	template<class T>
 	T 
-	interval<T>::get(glib::glib_int where) const {
+	interval<T>::get(canlib::canlib_int where) const {
 		//fakt trivialni rekurze
 		
 		if (_empty) {
@@ -540,7 +540,7 @@ namespace glib {
 		}
 	}
 	
-	template<class T> glib_int
+	template<class T> canlib_int
 	interval<T>::most_left() const {
 
 		if (_empty) {
@@ -553,7 +553,7 @@ namespace glib {
 	
 	}
 	
-	template<class T> glib_int
+	template<class T> canlib_int
 	interval<T>::get_start() const {
 		return _start;
 	}
@@ -584,13 +584,13 @@ namespace glib {
 	}
 	
 	
-	template<class T> glib_int
+	template<class T> canlib_int
 	interval<T>::get_end() const {
 		return _end;
 	}
 	
 
-	template<class T> glib::glib_int
+	template<class T> canlib::canlib_int
 	interval<T>::most_right() const {
 		if (_empty) {
 			return 0;

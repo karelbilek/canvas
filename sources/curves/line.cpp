@@ -2,7 +2,7 @@
 #include "all_shapes.h"
 #include "geom_line.h"
 
-using namespace glib;
+using namespace canlib;
 using namespace std;
 
 line::line(point a, point b) : 
@@ -33,15 +33,15 @@ line::get_arrays() {
 	
 	
 				//ta mensi velikost
-	glib_int lower_size = static_cast<glib_int>(is_width_bigger?__abs(begin_p.y-end_p.y):__abs(begin_p.x-end_p.x));
+	canlib_int lower_size = static_cast<canlib_int>(is_width_bigger?__abs(begin_p.y-end_p.y):__abs(begin_p.x-end_p.x));
 	
 				//ta vetsi velikost
-	glib_int bigger_size = static_cast<glib_int>(is_width_bigger?__abs(begin_p.x-end_p.x):__abs(begin_p.y-end_p.y));
+	canlib_int bigger_size = static_cast<canlib_int>(is_width_bigger?__abs(begin_p.x-end_p.x):__abs(begin_p.y-end_p.y));
 	
 	
-	glib_int D = 2*lower_size - bigger_size;
-	glib_int inc0 = 2*lower_size;
-	glib_int inc1 = 2*(lower_size - bigger_size);
+	canlib_int D = 2*lower_size - bigger_size;
+	canlib_int inc0 = 2*lower_size;
+	canlib_int inc1 = 2*(lower_size - bigger_size);
 	
 			//timhle se sunu
 	point moving = begin_p;
@@ -49,12 +49,12 @@ line::get_arrays() {
 	
 	
 			//tohle sou reference, tj staci zvysovat nebo snizovat je a meni se to i v moving
-	glib_float& moving_bigger = is_width_bigger?moving.x:moving.y;
-	glib_float& moving_lower = is_width_bigger?moving.y:moving.x;
+	canlib_float& moving_bigger = is_width_bigger?moving.x:moving.y;
+	canlib_float& moving_lower = is_width_bigger?moving.y:moving.x;
 	
 
 	
-	for (glib_int i = 0; i < bigger_size; ++i) {
+	for (canlib_int i = 0; i < bigger_size; ++i) {
 		if (D<=0){
 			D+=inc0;
 		} else {
@@ -74,14 +74,14 @@ line::get_arrays() {
 }
 
 
-glib_int line::get_min_y() const {return __minimum(_a.y,_b.y)-5;}
-glib_int line::get_max_y() const {return __maximum(_a.y,_b.y)+2;}
+canlib_int line::get_min_y() const {return __minimum(_a.y,_b.y)-5;}
+canlib_int line::get_max_y() const {return __maximum(_a.y,_b.y)+2;}
 
-glib_int line::get_min_x() const {return __minimum(_a.x,_b.x)-5;}
-glib_int line::get_max_x() const {return __maximum(_a.x,_b.x)+2;}
+canlib_int line::get_min_x() const {return __minimum(_a.x,_b.x)-5;}
+canlib_int line::get_max_x() const {return __maximum(_a.x,_b.x)+2;}
 
 shape_type 
-line::get_thick_line(const glib_float thickness, const curve* const previous, const curve* const next) const{
+line::get_thick_line(const canlib_float thickness, const curve* const previous, const curve* const next) const{
 	point a;
 	point b;
 	point c;

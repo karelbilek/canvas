@@ -3,10 +3,10 @@
 #include "point.h"
 #include "all_shapes.h"
 
-using namespace glib;
+using namespace canlib;
 using namespace std;
 
-map<glib_int, plane<bool> > glib::shape::brushes;
+map<canlib_int, plane<bool> > canlib::shape::brushes;
 
 shape::
 shape(const shape_style& style, const shape_type& type):
@@ -14,7 +14,7 @@ shape(const shape_style& style, const shape_type& type):
   _type(type){}
 
 shape_style::
-shape_style(glib_int line_size, const RGBa& line_color, bool fill_is, const RGBa& fill_color):
+shape_style(canlib_int line_size, const RGBa& line_color, bool fill_is, const RGBa& fill_color):
   _line_size(line_size),
   _line_color(line_color),
   _fill_is(fill_is),
@@ -23,7 +23,7 @@ shape_style(glib_int line_size, const RGBa& line_color, bool fill_is, const RGBa
 
 
 plane<RGBa> 
-shape::get_pixels(const glib_int height, const glib_int width, const bool antialias, const plane<bool>& painted_so_far, bool& done) {
+shape::get_pixels(const canlib_int height, const canlib_int width, const bool antialias, const plane<bool>& painted_so_far, bool& done) {
 	
 	shape_type* type_copy = &_type; //kvuli antialiasu :/
 	if (antialias) {
@@ -38,10 +38,10 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 	std::list<curve*>::iterator end = type_copy->_curves.end();
 	
 	//-----------------------------------------------hledani minima z curves
-	glib_int min_x = (**i).get_min_x();
-	glib_int max_x = (**i).get_max_x();
-	glib_int min_y = (**i).get_min_y();
-	glib_int max_y = (**i).get_max_y();
+	canlib_int min_x = (**i).get_min_x();
+	canlib_int max_x = (**i).get_max_x();
+	canlib_int min_y = (**i).get_min_y();
+	canlib_int max_y = (**i).get_max_y();
 
 	for (++i;i!=end; ++i) {
 		min_x = __minimum((**i).get_min_x(), min_x);
@@ -119,27 +119,27 @@ shape::get_pixels(const glib_int height, const glib_int width, const bool antial
 			} else {
 	//------------------------------------------------jdu na caru, co se neumi sama nakreslit
 	
-				glib_int thickness = static_cast<glib_int>((antialias?2:1)*(_style._line_size));
+				canlib_int thickness = static_cast<canlib_int>((antialias?2:1)*(_style._line_size));
 				
 				
 				if (!brushes.count(thickness)) {
 						//pokud neni vygenerovan krouzek, vygeneruj ho!
 						
-					shape_type b = disk(point(thickness,thickness), static_cast<glib_float>(thickness)/2);
+					shape_type b = disk(point(thickness,thickness), static_cast<canlib_float>(thickness)/2);
 					plane<bool> p = paint(&b, 0, 2*thickness);
 					
 					p._pivot_width = thickness;
 					p._pivot_height = thickness;
 							
-					brushes.insert(pair<glib_int,plane<bool> >(thickness, p));
+					brushes.insert(pair<canlib_int,plane<bool> >(thickness, p));
 				}
 				
 				plane<bool> p = brushes[thickness];
 				list<moved_arrays> borders = type_copy->all_curve_arrays();
 				
 				for (list<moved_arrays>::iterator i=borders.begin(); i!=borders.end(); ++i) {
-					for (glib_int y = i->get_min_nonempty_y(); y<=i->get_max_nonempty_y(); ++y) {
-						for (glib_int x = i->get_start(y); x<=i->get_end(y); ++x) {
+					for (canlib_int y = i->get_min_nonempty_y(); y<=i->get_max_nonempty_y(); ++y) {
+						for (canlib_int x = i->get_start(y); x<=i->get_end(y); ++x) {
 							
 								//cely to zamaluj!
 							plane<bool> m = p.move(x,y);
@@ -185,7 +185,7 @@ shape::compare_by_row(const moved_arrays& a, const moved_arrays& b) {
 }
 
 plane<bool>
-shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
+shape::paint(const shape_type* const type, canlib_int min_y, canlib_int max_y){
 	
 	//to min_y neni pres referenci ale kopii, protoze ho budu menit
 	list<moved_arrays> borders = type->all_curve_arrays();
@@ -221,7 +221,7 @@ shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
 		res.add(i->to_plane());
 	}
 	
-	for (glib_int y = min_y; y < max_y; ++y) {
+	for (canlib_int y = min_y; y < max_y; ++y) {
 		//uplne puvodni algoritmus odsud http://cgg.mff.cuni.cz/~pepca/lectures/npgr003.html
 		//autor Josef Pelikan
 		//mnou notne upraveno
@@ -232,8 +232,8 @@ shape::paint(const shape_type* const type, glib_int min_y, glib_int max_y){
 								  //.....because of this
 		borders.sort(shape::compare_by_row);
 		
-		glib_int paint_start = 0;
-		glib_int paint_end = 0;
+		canlib_int paint_start = 0;
+		canlib_int paint_end = 0;
 		bool paint_part = false;
 		
 		bool previous_was_ending=false;
