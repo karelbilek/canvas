@@ -1,7 +1,7 @@
 #include "canvas.h"
 
 using namespace std;
-using namespace canlib;
+using namespace libcan;
 
 //-----------------------------CONSTRUCTORS
 
@@ -26,18 +26,18 @@ canvas::~canvas() {
 
 //-----------------------------------GETTERS
 
-matrix<canlib_component> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) {
+matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) {
 	small quoc = (_antialias?2:1);
 	
 	plane<RGBa> all_plane = get_plane();
-	matrix<canlib_component> all_matrix(quoc*_width,quoc*_height,4);
+	matrix<libcan_component> all_matrix(quoc*_width,quoc*_height,4);
 	
-	for (canlib_int y = 0; y < quoc*_height; ++y) {
+	for (libcan_int y = 0; y < quoc*_height; ++y) {
 		
 		colors_row row = all_plane.get_row(y);
 		for (colors_row::iterator i = row.begin(); i != row.end(); ++i) {
 			
-			canlib_component color[4];
+			libcan_component color[4];
 			i->_cont.get_colors (color+red_pos, color+green_pos, color+blue_pos, color+alpha_pos);
 			
 			all_matrix.set_more(__maximum(i->_start,0), i->_end, y, color);

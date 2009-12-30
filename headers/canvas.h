@@ -4,7 +4,7 @@
 #include "matrix.h"
 #include "shape.h"
 
-namespace canlib {
+namespace libcan {
 	class canvas {
 			//canvas je "hlavni" trida
 			//na tu se umistuji shapes, ona jim pak rika "kreslete se!"
@@ -13,8 +13,8 @@ namespace canlib {
 	private:
 		
 		bool _antialias; //je zapnuty antialias?
-		canlib_int _height;
-		canlib_int _width; //sirka/vyska
+		libcan_int _height;
+		libcan_int _width; //sirka/vyska
 		                
 		RGBa _background; 
 		
@@ -30,7 +30,7 @@ namespace canlib {
 		~canvas();
 						//smaz canvas
 		
-		matrix<canlib_component> get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos); 
+		matrix<libcan_component> get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos); 
 						//vrat matrix s temahle pozicema
 						//NENI const, viz niz
 						

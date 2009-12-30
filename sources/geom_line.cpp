@@ -2,7 +2,7 @@
 #include <math.h>
 
 
-using namespace canlib;
+using namespace libcan;
 //using namespace std;
 
 geom_line::geom_line(const point& my_a, const point& my_b):
@@ -16,7 +16,7 @@ geom_line::geom_line():
 }
 
 geom_line
-geom_line::parallel(const bool left, const canlib_float distance) const {
+geom_line::parallel(const bool left, const libcan_float distance) const {
 	return geom_line(right_angle_a(left, distance), right_angle_b(!left,distance));
 }
 
@@ -27,27 +27,27 @@ geom_line::intersection(const geom_line& another)const {
 	
 	if (__abs(b.y - a.y)<0.1) {
 		
-		canlib_float another_dxy = (another.b.x - another.a.x)/(another.b.y - another.a.y);
-		canlib_float diff = b.y - another.b.y;
+		libcan_float another_dxy = (another.b.x - another.a.x)/(another.b.y - another.a.y);
+		libcan_float diff = b.y - another.b.y;
 		return point(another.b.x + diff*another_dxy, another.b.y + diff);
 		
 	} else if (__abs(another.b.y - another.a.y)<0.1) {
 		
-		canlib_float me_dxy = (b.x - a.x)/(b.y - a.y);
-		canlib_float diff = another.b.y - b.y;
+		libcan_float me_dxy = (b.x - a.x)/(b.y - a.y);
+		libcan_float diff = another.b.y - b.y;
 		return point(b.x + diff*me_dxy, b.y + diff);
 		
 	} else {
 		
 		//vezmu si caru jako funkci podle y, f(y)=ky+c
 		
-		canlib_float k = (b.x-a.x)/(b.y-a.y);
-		canlib_float c = a.x-k*(a.y);
-		canlib_float another_k = (another.b.x-another.a.x)/(another.b.y-another.a.y);
-		canlib_float another_c = another.a.x-another_k*(another.a.y);
+		libcan_float k = (b.x-a.x)/(b.y-a.y);
+		libcan_float c = a.x-k*(a.y);
+		libcan_float another_k = (another.b.x-another.a.x)/(another.b.y-another.a.y);
+		libcan_float another_c = another.a.x-another_k*(another.a.y);
 		
-		canlib_float y=(another_c-c)/(k-another_k);
-		canlib_float x=k*y+c;
+		libcan_float y=(another_c-c)/(k-another_k);
+		libcan_float x=k*y+c;
 		
 		return point(x,y);
 		
@@ -60,24 +60,24 @@ geom_line::reverted() const{
 	return geom_line(b,a);
 }
 
-canlib_float 
+libcan_float 
 geom_line::count_rev_angle(const geom_line another) const{
 
-	canlib_float first = another.reverted().angle_from_x();
+	libcan_float first = another.reverted().angle_from_x();
 
-	canlib_float second = angle_from_x();
+	libcan_float second = angle_from_x();
 
 
-	canlib_float res = first-second;
+	libcan_float res = first-second;
 
 	if (__abs(res)>180) {
-		canlib_float res2=360-__abs(res);
+		libcan_float res2=360-__abs(res);
 		if (res>0){res=-res2;} else {res=res2;}
 	}
 	return res;
 }
 
-canlib_float 
+libcan_float 
 geom_line::angle_from_x() const{
 	if (__abs(a.x-b.x)<0.1) {
 		return (a.y<b.y)?(270):(90);
@@ -88,7 +88,7 @@ geom_line::angle_from_x() const{
 	}
 	
 		//ty Y jsou "obracene", protoze Y je v souradicich na druhou stranu nez X
-	canlib_float res;
+	libcan_float res;
 	if (b.x > a.x) {
 		
 		res=__RAD2DEG(atan((a.y-b.y) / (b.x-a.x)));
@@ -101,7 +101,7 @@ geom_line::angle_from_x() const{
 }
 
 geom_line
-geom_line::thick_cover(const geom_line& another, const canlib_float distance, bool second_hint) const{
+geom_line::thick_cover(const geom_line& another, const libcan_float distance, bool second_hint) const{
 	geom_line my_right_parallel = parallel(false, distance);
 	geom_line another_right_parallel = another.parallel(false,distance);
 	
@@ -109,7 +109,7 @@ geom_line::thick_cover(const geom_line& another, const canlib_float distance, bo
 	geom_line my_left_parallel =  parallel(true, distance);
 	geom_line another_left_parallel = another.parallel(true,distance);
 	
-	canlib_float angle = count_rev_angle(another);
+	libcan_float angle = count_rev_angle(another);
 	
 	point left_intersection;
 	point right_intersection;
@@ -131,21 +131,21 @@ geom_line::thick_cover(const geom_line& another, const canlib_float distance, bo
 }
 
 geom_line 
-geom_line::normalised(const canlib_float length) const {
-	canlib_float my_width = (b.x-a.x);
-	canlib_float my_height = (b.y-a.y);
+geom_line::normalised(const libcan_float length) const {
+	libcan_float my_width = (b.x-a.x);
+	libcan_float my_height = (b.y-a.y);
 	
-	canlib_float my_length = static_cast<canlib_float>( sqrt(static_cast<double>(my_width*my_width + my_height*my_height)));
+	libcan_float my_length = static_cast<libcan_float>( sqrt(static_cast<double>(my_width*my_width + my_height*my_height)));
 	
-	canlib_float quoc = (length/my_length);
+	libcan_float quoc = (length/my_length);
 	
 	return geom_line(a, point(a.x+quoc*my_width, a.y+quoc*my_height));
 }
 
 point
-geom_line::right_angle_a(bool clockwise, const canlib_float length) const {
-	canlib_float my_width = b.x - a.x;
-	canlib_float my_height = b.y - a.y;
+geom_line::right_angle_a(bool clockwise, const libcan_float length) const {
+	libcan_float my_width = b.x - a.x;
+	libcan_float my_height = b.y - a.y;
 	geom_line res;
 	if (!clockwise) {
 		res= geom_line(a, point(a.x-my_height, a.y + my_width));
@@ -157,9 +157,9 @@ geom_line::right_angle_a(bool clockwise, const canlib_float length) const {
 
 
 point
-geom_line::right_angle_b(bool clockwise, const canlib_float length) const {
-	canlib_float my_width = b.x - a.x;
-	canlib_float my_height = b.y - a.y;
+geom_line::right_angle_b(bool clockwise, const libcan_float length) const {
+	libcan_float my_width = b.x - a.x;
+	libcan_float my_height = b.y - a.y;
 	geom_line res;
 	
 	if (clockwise) {

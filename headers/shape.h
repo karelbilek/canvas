@@ -7,7 +7,7 @@
 #include <list>
 #include <map>
 
-namespace canlib {
+namespace libcan {
 	/*
 	* Se shape to nakonec vypada takhle:
 	*
@@ -26,13 +26,13 @@ namespace canlib {
 	
 	struct shape_style {
 		
-		canlib_int _line_size;
+		libcan_int _line_size;
 		RGBa _line_color;
 		bool _fill_is; 
 		RGBa _fill_color; 
 		
 		
-		shape_style(canlib_int line_size=1, const RGBa& line_color=RGBa(0,0,0), bool fill_is=false, const RGBa& fill_color=RGBa(0,0,0));
+		shape_style(libcan_int line_size=1, const RGBa& line_color=RGBa(0,0,0), bool fill_is=false, const RGBa& fill_color=RGBa(0,0,0));
 	};
 
 
@@ -40,20 +40,20 @@ namespace canlib {
 	private:
 		
 			//aby se pokazde, kdyz mam tloustku velikosti N, nemusel znova generovat krouzek
-		static std::map<canlib_int, plane<bool> > brushes;
+		static std::map<libcan_int, plane<bool> > brushes;
 		
 		shape_style _style;
 		shape_type _type;
 		
 
-		static plane<bool> paint(const shape_type* const type, canlib_int min_y, canlib_int max_y) ;
+		static plane<bool> paint(const shape_type* const type, libcan_int min_y, libcan_int max_y) ;
 		
 		static bool compare_by_row(const moved_arrays& a, const moved_arrays& b);
 		
 	public:
 		shape(const shape_style& style, const shape_type& type);
 			
-		plane<RGBa> get_pixels(const canlib_int height, const canlib_int width, const bool antialias, const plane<bool>& painted_so_far, bool& done);
+		plane<RGBa> get_pixels(const libcan_int height, const libcan_int width, const bool antialias, const plane<bool>& painted_so_far, bool& done);
 
 	};
 }

@@ -1,9 +1,10 @@
 #include "png_paint.h"
 #include <png.h>
+#include <string>
 
-using namespace canlib;
+using namespace libcan;
 
-void canlib::png_paint(const std::string& path, canvas& my_canvas) {
+void libcan::png_paint(const std::string& path, canvas& my_canvas) {
 											//neni const - kresli se az s prikazem "vrat mi rastr"
 	
 	
@@ -13,7 +14,7 @@ void canlib::png_paint(const std::string& path, canvas& my_canvas) {
 	//http://zarb.org/~gc/html/libpng.html
 	//http://www.root.cz/clanky/jak-vytvorit-rastrovy-obrazek-v-jazyce-c/
 	
-	matrix<canlib_component> rast = my_canvas.get_matrix(0,1,2,3);
+	matrix<libcan_component> rast = my_canvas.get_matrix(0,1,2,3);
 	
 	png_structp my_png_ptr = NULL;
 	png_infop my_info_ptr = NULL; 

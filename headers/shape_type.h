@@ -4,7 +4,7 @@
 #include <list>
 #include "moved_arrays.h"
 
-namespace canlib {
+namespace libcan {
 	class curve;
 	
 	struct shape_type {

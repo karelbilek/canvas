@@ -1,17 +1,18 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2009-12-28T01:31:19
+# Project created by QtCreator 2009-12-30T22:31:01
 #
 #-------------------------------------------------
 
-TARGET = canvas
+TARGET = qt
 TEMPLATE = app
 
+INCLUDEPATH += ../../headers/
+
+LIBS += -L../../ -lcan
 
 SOURCES += main.cpp\
-        mainwindow.cpp\
-
-include(../../include.pri)
+        mainwindow.cpp
 
 HEADERS  += mainwindow.h
 

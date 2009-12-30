@@ -3,8 +3,7 @@
 
 #include "canvas.h"
 
-namespace canlib {
-		/*konkretni pouziti canvasu (nebude v knihovni verzi)*/
+namespace libcan {
 	void png_paint(const std::string& path, canvas& my_canvas);
 	
 }

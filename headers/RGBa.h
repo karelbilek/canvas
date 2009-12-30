@@ -4,7 +4,7 @@
 #include "types.h"
 #include <map>
 
-namespace canlib{
+namespace libcan{
 	
 	enum basic_colors{
 		Red,
@@ -21,34 +21,34 @@ namespace canlib{
 	class RGBa {
 		/*
 		 * Trida na reprezentaci barev.
-		 * Ve skutecnosti ulozeno jako POLE (!) ctyr hodnot canlib_component,
-		 * canlib_component = 0...255
+		 * Ve skutecnosti ulozeno jako POLE (!) ctyr hodnot libcan_component,
+		 * libcan_component = 0...255
 		 * 
 		 * Pole proto, ze to teoreticky urychluje pristup k barvam, kdyz to pak kladu do PNG
 		 * (ta rychlost stejne neni nijak extra velka, ale v jednu chvili vyvoje jsem chtel zrychlit jakkoliv cokoliv)
 		 */
 	private:
-		canlib_component _red;
-		canlib_component _green;
-		canlib_component _blue;
-		canlib_component _alpha;
+		libcan_component _red;
+		libcan_component _green;
+		libcan_component _blue;
+		libcan_component _alpha;
 		
 	public:
 		
-		void set_red(const canlib_component red);
-		void set_green(const canlib_component green);
-		void set_blue(const canlib_component blue);
-		void get_colors(canlib_component* p_red, canlib_component* p_green, canlib_component* p_blue, canlib_component* p_alpha) const;
+		void set_red(const libcan_component red);
+		void set_green(const libcan_component green);
+		void set_blue(const libcan_component blue);
+		void get_colors(libcan_component* p_red, libcan_component* p_green, libcan_component* p_blue, libcan_component* p_alpha) const;
 		
 		RGBa(const basic_colors color);
 		
 		RGBa();
 		//0/0/0/0, myslim (s 0 alphou je stejne vsechno naprd)
 		
-		RGBa(const canlib_component r, const canlib_component g, const canlib_component b);
+		RGBa(const libcan_component r, const libcan_component g, const libcan_component b);
 		//alpha = 255, ne 0 :)
 		
-		RGBa(const canlib_component r, const canlib_component g, const canlib_component b, const canlib_component a);
+		RGBa(const libcan_component r, const libcan_component g, const libcan_component b, const libcan_component a);
 		
 		RGBa operator+(const RGBa& other) const;
 		//secte dve barvy, ale na zaklade "vahy" alphy
@@ -57,7 +57,7 @@ namespace canlib{
 		bool operator==(const RGBa& other) const;
 		bool operator>=(const RGBa& other) const;
 		
-		RGBa operator*(const canlib_float quoc) const;
+		RGBa operator*(const libcan_float quoc) const;
 		//vynasobeni nejakym cislem
 		
 		

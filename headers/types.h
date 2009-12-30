@@ -10,9 +10,9 @@
 #include <cmath>
 #include <list>
 
-#define __PI (static_cast<canlib::canlib_float>(4*atan(1)))
-#define __DEG2RAD(_co) (static_cast<canlib::canlib_float>((((canlib::canlib_float)_co)/180.0)*__PI))
-#define __RAD2DEG(_co) (static_cast<canlib::canlib_float>((((canlib::canlib_float)_co)/__PI)*180.0))
+#define __PI (static_cast<libcan::libcan_float>(4*atan(1)))
+#define __DEG2RAD(_co) (static_cast<libcan::libcan_float>((((libcan::libcan_float)_co)/180.0)*__PI))
+#define __RAD2DEG(_co) (static_cast<libcan::libcan_float>((((libcan::libcan_float)_co)/__PI)*180.0))
 
 #define __minimum(_a,_b) (((_a)<(_b))?(_a):(_b))
 #define __maximum(_a,_b) (((_a)>(_b))?(_a):(_b))
@@ -26,22 +26,22 @@
 
 
 
-namespace canlib {
+namespace libcan {
 	
 	typedef unsigned char small;
-	typedef unsigned long canlib_uint;
-	typedef long canlib_int; 
-	typedef unsigned char canlib_component;
-	typedef double canlib_float;
+	typedef unsigned long libcan_uint;
+	typedef long libcan_int; 
+	typedef unsigned char libcan_component;
+	typedef double libcan_float;
 	
 
 
 }	
 	
-#define canlib_INT_MAX LONG_MAX
-#define canlib_float_to_int(_fx) (((_fx)<0)?(((_fx) == static_cast<canlib_int>(_fx))?(static_cast<canlib_int>(_fx)):(static_cast<canlib_int>(_fx)-1)):(static_cast<canlib_int>(_fx)))
+#define libcan_INT_MAX LONG_MAX
+#define libcan_float_to_int(_fx) (((_fx)<0)?(((_fx) == static_cast<libcan_int>(_fx))?(static_cast<libcan_int>(_fx)):(static_cast<libcan_int>(_fx)-1)):(static_cast<libcan_int>(_fx)))
 	//truncnuti, ale u zapornych jeste zmensi o 1 (tvary muzou jit i do "nekreslene" casti plochy)
 
-#define __ceiling(___float) ((((___float) - canlib_int((___float)))>0)?(canlib_int(___float)+1):(canlib_int(___float)))
+#define __ceiling(___float) ((((___float) - libcan_int((___float)))>0)?(libcan_int(___float)+1):(libcan_int(___float)))
 
 #endif

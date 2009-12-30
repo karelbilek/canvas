@@ -5,7 +5,7 @@
 #include "shape_type.h"
 #include <list>
 
-namespace canlib{
+namespace libcan{
 	
 	
 	class curve {
@@ -46,15 +46,15 @@ namespace canlib{
 		virtual std::list<moved_arrays> get_arrays() = 0;
 				//dej mi segmenty
 
-		virtual bool have_thick_line()=0;
+		virtual bool have_thick_line() const=0;
 				//umis tloustku?
-		virtual shape_type get_thick_line(const canlib_float thickness, const curve* const previous, const curve* const next) const = 0;
+		virtual shape_type get_thick_line(const libcan_float thickness, const curve* const previous, const curve* const next) const = 0;
 				//cara s tloustkou
 				
-		virtual canlib_int get_min_y() const = 0;
-		virtual canlib_int get_max_y() const = 0;
-		virtual canlib_int get_min_x() const = 0;
-		virtual canlib_int get_max_x() const = 0;
+		virtual libcan_int get_min_y() const = 0;
+		virtual libcan_int get_max_y() const = 0;
+		virtual libcan_int get_min_x() const = 0;
+		virtual libcan_int get_max_x() const = 0;
 				//vraci leva/prava/horni/dolni maxima
 		
 		

@@ -1,6 +1,6 @@
 #include "curves/bezier.h"
 
-using namespace canlib;
+using namespace libcan;
 using namespace std;
 
 bezier::bezier(point a, point b, point c, point d):
@@ -10,16 +10,28 @@ bezier::bezier(point a, point b, point c, point d):
   _d(d) {
 }
 
+bezier* 
+bezier::clone() const {bezier* n= new bezier(_a,_b,_c,_d);return n;}
+
+bezier* 
+bezier::clone_double() const {bezier* n= new bezier(_a*2,_b*2,_c*2,_d*2);return n;}
+
+bool 
+bezier::have_thick_line() const {return 0;}
+
+
+shape_type 
+bezier::get_thick_line(const libcan_float thickness, const curve* const previous, const curve* const next) const {throw 1;}
 
 list<moved_arrays> 
 bezier::get_arrays() {
 	//zdroj algoritmu - http://www.niksula.cs.hut.fi/~hkankaan/Homepages/bezierfast.html
 	//(C) Hannu Kankaanpää
 	
-	canlib_int min_y = get_min_y();
-	canlib_int max_y = get_max_y();
+	libcan_int min_y = get_min_y();
+	libcan_int max_y = get_max_y();
 	
-	canlib_uint steps = __maximum((max_y - min_y), (get_max_x()-get_min_x()))*5;
+	libcan_uint steps = __maximum((max_y - min_y), (get_max_x()-get_min_x()))*5;
 			//!!!!!!ta 5ka je umele dodana konstanta
 			//mozna by to slo zvetsit/zmensit? ale me se to zda OK
 	
@@ -32,8 +44,8 @@ bezier::get_arrays() {
 	
 	point f;
 	point fd, fdd, fddd, fdd_per_2, fddd_per_2, fddd_per_6;
-	canlib_float t = static_cast<canlib_float>(1.0 / steps);
-	canlib_float temp = t * t;
+	libcan_float t = static_cast<libcan_float>(1.0 / steps);
+	libcan_float temp = t * t;
 	
 			//silene derivace.... 
 			
@@ -46,7 +58,7 @@ bezier::get_arrays() {
 	fdd = fdd_per_2 + fdd_per_2;
 	fddd_per_6 = fddd_per_2 * (1.0 / 3);
 	
-	for (canlib_uint i=0; i < steps; ++i) {
+	for (libcan_uint i=0; i < steps; ++i) {
 		ma.set(f.x,f.y);
 		
 		if (first) {
@@ -94,23 +106,23 @@ bezier::get_arrays() {
 }
 
 
-canlib_int 
+libcan_int 
 bezier::get_min_x() const {
-	return static_cast<canlib_int>(__minimum4(_a.x,_b.x,_c.x, _d.x));
+	return static_cast<libcan_int>(__minimum4(_a.x,_b.x,_c.x, _d.x));
 	//(b<((c<d)?(c):(d)))?(b):((c<d)?(c):(d))
 }
 
-canlib_int 
+libcan_int 
 bezier::get_max_x() const{
-	return static_cast<canlib_int>(__maximum4(_a.x, _b.x, _c.x, _d.x)+2);
+	return static_cast<libcan_int>(__maximum4(_a.x, _b.x, _c.x, _d.x)+2);
 }
 
-canlib_int 
+libcan_int 
 bezier::get_min_y() const {
-	return static_cast<canlib_int>(__minimum4(_a.y,_b.y, _c.y, _d.y));
+	return static_cast<libcan_int>(__minimum4(_a.y,_b.y, _c.y, _d.y));
 }
 
-canlib_int
+libcan_int
 bezier::get_max_y() const{
-	return static_cast<canlib_int> (__maximum4(_a.y, _b.y, _c.y, _d.y)+2);
+	return static_cast<libcan_int> (__maximum4(_a.y, _b.y, _c.y, _d.y)+2);
 }

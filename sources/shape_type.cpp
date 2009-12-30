@@ -2,7 +2,7 @@
 //vypada mozna inteligentne, ale jelikoz veskera funkcionalita je stejne prenasena na 
 //krivky, necham bez komentare
 
-using namespace canlib;
+using namespace libcan;
 using namespace std;
 
 shape_type::

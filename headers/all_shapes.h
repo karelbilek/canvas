@@ -7,17 +7,17 @@
 #include "curves/bezier.h"
 #include <vector>
 
-namespace canlib {
+namespace libcan {
 	
 		//všechny známé shape
 	class disk:public shape_type {
 	public:
-		disk(const point& center, const canlib_float radius);
+		disk(const point& center, const libcan_float radius);
 	};
 	
 	class segment:public shape_type {
 	public:	
-		segment(const canlib_float ax, const canlib_float ay, const canlib_float bx, const canlib_float by);
+		segment(const libcan_float ax, const libcan_float ay, const libcan_float bx, const libcan_float by);
 	};
 	
 	class bezier_segment:public shape_type {

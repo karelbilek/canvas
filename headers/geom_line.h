@@ -4,7 +4,7 @@
 #include "point.h"
 
 
-namespace canlib {
+namespace libcan {
 	struct geom_line {
 		//pomocna trida, co reprezentuje "cistou" usecku
 		//neni to u line, protoze puvodne bylo dost oddelene, co delaly
@@ -20,21 +20,21 @@ namespace canlib {
 			//vypocita uhel, pokud ale predpokladam, ze
 			// b=another.a,
 			// to znamena ze vlastne pocitam uhel od obracene orientovane usecky
-		canlib_float count_rev_angle(const geom_line another) const;
+		libcan_float count_rev_angle(const geom_line another) const;
 		
 			//uhel od horizontaly
-		canlib_float angle_from_x() const;
+		libcan_float angle_from_x() const;
 		
 			//zkrati/prodlouzi to velikost na length
-		geom_line normalised(const canlib_float length) const;
+		geom_line normalised(const libcan_float length) const;
 		
 			//udela pravy uhel
-		point right_angle_a(const bool clockwise, const canlib_float length) const;
-		point right_angle_b(const bool clockwise, const canlib_float length) const;
+		point right_angle_a(const bool clockwise, const libcan_float length) const;
+		point right_angle_b(const bool clockwise, const libcan_float length) const;
 		
 			//udela rovnobezku, vzdalenou distance ode mne
 			//vlevo / vpravo
-		geom_line parallel(const bool left, const canlib_float distance) const;
+		geom_line parallel(const bool left, const libcan_float distance) const;
 	
 			//prusecik s jinou useckou (muze, a casto je mimo)
 		point intersection(const geom_line& another) const;
@@ -45,7 +45,7 @@ namespace canlib {
 			//usecce, ale i na te sousedni. Tahle je spocita a vrati.
 			//second_hint je proto, ze pokud je uhel svirany temi useckami moc maly,
 			//udela se ten obal trochu jinak, kde potrebuju v jednom pripade prehodit poradi bodu
-		geom_line thick_cover(const geom_line& another, const canlib_float distance, bool second_hind) const;
+		geom_line thick_cover(const geom_line& another, const libcan_float distance, bool second_hind) const;
 	};
 	
 }
