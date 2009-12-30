@@ -4,14 +4,10 @@
 
 #include <limits.h>
 
-#include <utility>
-// 
-// 
+
 #include <vector>
 #include <map>
 #include <cmath>
-#include <string>
-#include <iostream>
 #include <list>
 
 #define __PI (static_cast<canlib::canlib_float>(4*atan(1)))
@@ -29,9 +25,6 @@
 
 
 
-	//jeden pokus o zaokrouhlovani - nakonec mi prislo nejlepsi to jednoduse truncnout
-//#define floating_to_integer(__co) (((__co)>0)?((((__co) - floating_to_integer(__co)) <= 0.5)?(floating_to_integer(__co)):(floating_to_integer(__co)+1)):((((__co) - floating_to_integer(__co)) >= -0.5)?(floating_to_integer(__co)):(floating_to_integer(__co)+1)))
-
 
 namespace canlib {
 	
@@ -41,10 +34,7 @@ namespace canlib {
 	typedef unsigned char canlib_component;
 	typedef double canlib_float;
 	
-	/*int __abs(const int& a);
-	float __abs(const float& a);
-	double __abs(const double& a);
-	char __abs(const char& a);*/
+
 
 }	
 	
