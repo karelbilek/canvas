@@ -3,6 +3,9 @@
 
 #include "moved_arrays.h"
 #include "shape_type.h"
+#include "point.h"
+
+
 #include <list>
 
 namespace libcan{
@@ -56,6 +59,11 @@ namespace libcan{
 		virtual libcan_int get_min_x() const = 0;
 		virtual libcan_int get_max_x() const = 0;
 				//vraci leva/prava/horni/dolni maxima
+		
+		virtual void rotate(const point& center, const libcan_float angle)=0;
+		virtual void resize(const point& center, const libcan_float quoc)=0;
+		
+		virtual void move(const point& where)=0;
 		
 		
 		

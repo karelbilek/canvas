@@ -59,7 +59,18 @@ namespace libcan {
 		void push_front(const shape g, size_t pos);
 		void push_back(const shape g, size_t pos);
 		void remove_all();
-		shape get_object(size_t pos) const;
+		
+			//this is NOT const by DEFINITION
+			//this returns a reference to OBJECT, which I can manipulate
+			//and by manipulating it, I can change it DIRECTLY in the canvas
+		shape& get_object(size_t pos);
+		shape& get_front();
+		shape& get_back();
+		
+		void change_order(size_t from, size_t to);
+		
+		size_t count();
+		
 	};
 }
 

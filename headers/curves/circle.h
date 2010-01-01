@@ -3,6 +3,7 @@
 
 #include "curve.h"
 #include "point.h"
+#include "geom_line.h"
 #include <list>
 
 namespace libcan{
@@ -30,6 +31,12 @@ namespace libcan{
 		virtual circle* clone() const;
 		virtual circle* clone_double() const;
 		virtual bool have_thick_line()const;
+		
+		virtual void rotate(const point& center, const libcan_float angle);
+		virtual void resize(const point& center, const libcan_float quoc);
+		virtual void move(const point& where);
+		
+		
 	};
 }
 

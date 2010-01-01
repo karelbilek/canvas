@@ -30,6 +30,12 @@ namespace libcan{
 		virtual bezier* clone() const;
 		virtual bezier* clone_double() const;
 		virtual bool have_thick_line()const;
+		
+		virtual void rotate(const point& center, const libcan_float angle);
+		virtual void resize(const point& center, const libcan_float quoc);
+		virtual void move(const point& where);
+		
+		
 	};
 }
 

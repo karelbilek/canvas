@@ -3,6 +3,49 @@
 using namespace std;
 using namespace libcan;
 
+
+shape& 
+canvas::get_object(size_t pos) {
+	if (_shapes.size() <= pos) {
+		throw 1;
+	}
+	
+	list<shape>::iterator it = _shapes.begin();
+	for (size_t i = 0; i < pos; ++i, ++it) {}
+	
+	return *it;
+}
+
+shape& 
+canvas::get_front(){
+	list<shape>::iterator it = _shapes.begin();	
+	return *it;
+}
+
+shape& 
+canvas::get_back(){
+	list<shape>::iterator it = _shapes.end();
+	--it;
+	return *it;
+}
+
+size_t 
+canvas::count(){
+	return _shapes.size();
+}
+
+void 
+canvas::change_order(size_t from, size_t to){
+	list<shape>::iterator from_it = _shapes.begin();
+	for (int i=0; i<from; ++i,++from_it){}
+	
+	list<shape>::iterator to_it = _shapes.begin();
+	for (int i=0; i<to; ++i,++to_it){}
+	
+	_shapes.splice(to_it, _shapes, from_it);
+}
+
+
 //-----------------------------CONSTRUCTORS
 
 canvas::canvas(const size_t width, const size_t height, const RGBa& background, bool antialias) :

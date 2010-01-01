@@ -1,4 +1,5 @@
 #include "curves/bezier.h"
+#include "geom_line.h"
 
 using namespace libcan;
 using namespace std;
@@ -19,6 +20,31 @@ bezier::clone_double() const {bezier* n= new bezier(_a*2,_b*2,_c*2,_d*2);return 
 bool 
 bezier::have_thick_line() const {return 0;}
 
+void 
+bezier::rotate(const point& center, const libcan_float angle){
+	_a = geom_line(center, _a).rotate_fixed_a(angle).b;
+	_b = geom_line(center, _b).rotate_fixed_a(angle).b;
+	_c = geom_line(center, _c).rotate_fixed_a(angle).b;
+	_d = geom_line(center, _d).rotate_fixed_a(angle).b;
+	
+}
+
+void 
+bezier::resize(const point& center, const libcan_float quoc){
+	_a = geom_line(center, _a).resize(quoc).b;
+	_b = geom_line(center, _b).resize(quoc).b;
+	_c = geom_line(center, _c).resize(quoc).b;
+	_d = geom_line(center, _d).resize(quoc).b;
+}
+
+
+void 
+bezier::move(const point& where){
+	_a = geom_line(point(0,0), where).move_point(_a);
+	_b = geom_line(point(0,0), where).move_point(_b);
+	_c = geom_line(point(0,0), where).move_point(_c);
+	_d = geom_line(point(0,0), where).move_point(_d);
+}
 
 shape_type 
 bezier::get_thick_line(const libcan_float thickness, const curve* const previous, const curve* const next) const {throw 1;}

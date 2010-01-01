@@ -106,6 +106,28 @@ circle::get_arrays() {
 bool 
 circle::have_thick_line() const {return 1;}
 
+void 
+circle::rotate(const point& center, const libcan_float angle){
+	if (center!=_center) {
+		_center = geom_line(center, _center).rotate_fixed_a(angle).b;
+	}
+};
+		//rotating circle.... does exactly nothing.
+
+void 
+circle::resize(const point& center, const libcan_float quoc){
+	if (center!=_center) {
+		_center = geom_line(center, _center).resize(quoc).b;
+	}
+	
+	_radius = _radius*quoc;
+}
+
+void 
+circle::move(const point& where){
+	_center = geom_line(point(0,0), where).move_point(_center);
+}
+
 
 void 
 circle::paint_more(libcan_float fx, libcan_float fy, moved_arrays& left, moved_arrays& right){

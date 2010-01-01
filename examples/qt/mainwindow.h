@@ -42,6 +42,17 @@ private:
 
 
 private slots:
+    void on_actionZm_nit_triggered();
+    void on_pushButton_5_clicked();
+    void on_actionZ_konce_triggered();
+    void on_actionZe_za_tku_triggered();
+    void on_actionPosun_o_10_0_triggered();
+    void on_pushButton_4_clicked();
+    void on_pushButton_3_clicked();
+    void on_actionPodrobn_j_triggered();
+    void on_actionZv_t_vrchn_2x_triggered();
+    void on_actionZmen_i_vrchn_2x_triggered();
+    void on_actionOto_vrchn_o_30_triggered();
     void on_actionElipsu_triggered();
     void on_actionObd_ln_k_triggered();
     void on_pushButton_2_clicked();

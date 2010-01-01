@@ -165,9 +165,9 @@ geom_line::line_from_point_angle(const point& f, libcan_float angle, const libca
 	}
 	
 	if (angle>270 || angle < 90){
-		return (geom_line(f,point(f.x+10, f.y-10*tan(__DEG2RAD(angle)))).normalised(length));
+		return (geom_line(f,point(f.x+10.0, f.y-10.0*tan(__DEG2RAD(angle)))).normalised(length));
 	} else {
-		return (geom_line(f,point(f.x-10, f.y-10*tan(__DEG2RAD(180-angle)))).normalised(length));
+		return (geom_line(f,point(f.x-10.0, f.y-10.0*tan(__DEG2RAD(180-angle)))).normalised(length));
 	}
 	
 }
@@ -184,12 +184,21 @@ geom_line::length() const {
 geom_line 
 geom_line::normalised(const libcan_float new_length) const {
 
-	return enlarge(new_length/length());
+	return resize(new_length/length());
 }
 
 geom_line 
-geom_line::enlarge(libcan_float quoc) const{
+geom_line::resize(libcan_float quoc) const{
 	return geom_line(a, point(a.x+quoc*(b.x-a.x), a.y+quoc*(b.y-a.y)));
+}
+
+
+
+
+geom_line 
+geom_line::rotate_fixed_a(const libcan_float angle) const {
+	return line_from_rev_angle((180-angle)/2.0,length()*sin(__DEG2RAD(angle/2.0))*2.0);
+		//vypadá jako magie, ale stačí nakreslit na papír :)
 }
 
 geom_line 

@@ -18,9 +18,12 @@ namespace libcan {
 		
 		point move_point(const point& point) const;
 		
+		geom_line rotate_fixed_a(const libcan_float angle) const;
+		
 		geom_line line_from_rev_angle(const libcan_float angle, const libcan_float length) const;
 		
-		geom_line enlarge(libcan_float quoc) const;
+		geom_line resize(libcan_float quoc) const;
+	
 		
 			//proste jenom prehodi poradi .)
 		geom_line reverted() const; 

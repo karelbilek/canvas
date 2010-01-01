@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <iostream>
 #include <QMouseEvent>
 #include <QLayout>
 #include <QString>
@@ -17,15 +16,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     expected_type=waiting=waited=0;
-    std::cout<<"Startuju!\n";
-    std::cout.flush();
+
 
     c = canvas(800,800,RGBa(255,0,0),false);
     ui->setupUi(this);
     ui->vlastnosti->setVisible(false);
     ui->barvaCanvas->setVisible(false);
-     // std::cout<<"wat "<<wat<<"\n";
-      //std::cout.flush();
+    ui->transformace->setVisible(false);
+    ui->poradi->setVisible(false);
+
     ui->carA->setValue(carA=255);
     ui->carR->setValue(carR=0);
     ui->carG->setValue(carG=0);
@@ -38,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->carSir->setValue(carSir=10);
 
+
 }
 
 MainWindow::~MainWindow()
@@ -47,8 +47,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::paintEvent(QPaintEvent *)
 {
-    std::cout<<"Snazim se o repaint....\n";
-    std::cout.flush();
+
     QImage muj = qimage_from_canvas(c);//.toQImage();
     QPixmap muj2 = QPixmap::fromImage(muj);
     QPainter painter(this);
@@ -107,8 +106,7 @@ void MainWindow::paint_to_canvas() {
         type = elipse(points[2], points[1], points[0]);
         break;
     }
-    std::cout<<"novy.push_back(style, disk(point("<<points[1].x<<","<<points[1].y<<"), point("<<points[0].x<<","<<points[0].y<<")));\n";
-    std::cout.flush();
+
     c.push_front(style, type);
     repaint();
 }
@@ -510,4 +508,110 @@ void MainWindow::on_actionElipsu_triggered()
     waited=waiting=3;
     expected_type=7;
     change_status();
+}
+
+void MainWindow::on_actionOto_vrchn_o_30_triggered()
+{
+    if (c.count()){
+        shape& s = c.get_front();
+        s.rotate(30);
+        repaint();
+    }
+}
+
+void MainWindow::on_actionZmen_i_vrchn_2x_triggered()
+{
+    if (c.count()){
+        shape& s = c.get_front();
+        s.resize(0.5);
+        repaint();
+    }
+}
+
+void MainWindow::on_actionZv_t_vrchn_2x_triggered()
+{
+    if (c.count()){
+        shape& s = c.get_front();
+        s.resize(2);
+        repaint();
+    }
+}
+
+void MainWindow::on_actionPodrobn_j_triggered()
+{
+    ui->transformace->setVisible(true);
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    if (c.count()){
+        shape& s = c.get_front();
+        int posunX = ui->posunX->value();
+        int posunY = ui->posunY->value();
+        if (posunX || posunY) {
+
+            s.move(point(posunX, posunY));
+        }
+        if (ui->rotace->value()) {
+            s.rotate(ui->rotace->value());
+        }
+
+        if (ui->zvetseni->value()) {
+            s.resize(ui->zvetseni->value());
+        }
+
+        repaint();
+    }
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    ui->transformace->setVisible(false);
+}
+
+void MainWindow::on_actionPosun_o_10_0_triggered()
+{
+    if (c.count()){
+        shape& s = c.get_front();
+        s.move(point(10, 0));
+
+
+        repaint();
+    }
+}
+
+void MainWindow::on_actionZe_za_tku_triggered()
+{
+    if (c.count()){
+        c.pop_front();
+        repaint();
+    }
+}
+
+void MainWindow::on_actionZ_konce_triggered()
+{
+    if (c.count()){
+        c.pop_back();
+        repaint();
+    }
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    ui->poradi->setVisible(false);
+    c.change_order(ui->odkud->value()-1, ui->kam->value());
+    repaint();
+}
+
+void MainWindow::on_actionZm_nit_triggered()
+{
+    int i=c.count();
+    if (!i){
+        ui->status->setText(QString::fromUtf8("Nejde to, je málo objektů :-("));
+    } else {
+        ui->poradi->setVisible(true);
+        ui->odkud->setMaximum(i);
+        ui->kam->setMaximum(i);
+        ui->odkud->setMinimum(1);
+    }
 }

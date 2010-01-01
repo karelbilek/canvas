@@ -1,5 +1,4 @@
 #include "qimage_paint.h"
-#include <iostream>
 
 using namespace libcan;
 
@@ -9,8 +8,6 @@ QImage qimage_from_canvas(canvas& c) {
     int height = my_matrix.get_height();
     int width = my_matrix.get_width();
 
-    std::cout<<"height je "<<height<<"! \n";
-    std::cout.flush();
 
     QImage res(width, height, QImage::Format_ARGB32);
 

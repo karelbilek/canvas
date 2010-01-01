@@ -20,6 +20,23 @@ line::line(point a, point b) :
   _b(b) {
 }
 
+void
+line::rotate(const point& center, const libcan_float angle){
+	_a = geom_line(center,_a).rotate_fixed_a(angle).b;
+	_b = geom_line(center,_b).rotate_fixed_a(angle).b;
+}
+
+void 
+line::resize(const point& center, const libcan_float quoc){
+	_a = geom_line(center,_a).resize(quoc).b;
+	_b = geom_line(center,_b).resize(quoc).b;
+}
+
+void 
+line::move(const point& where){
+	_a = geom_line(point(0,0), where).move_point(_a);
+	_b = geom_line(point(0,0), where).move_point(_b);
+}
 
 list<moved_arrays>
 line::get_arrays() {

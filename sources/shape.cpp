@@ -5,7 +5,6 @@
 
 
 
-
 using namespace libcan;
 using namespace std;
 
@@ -22,6 +21,20 @@ shape_style(libcan_int line_size, const RGBa& line_color, const RGBa& fill_color
   _line_color(line_color),
   _fill_color(fill_color) {}
 
+void 
+shape::rotate(libcan_float angle){
+	_type.rotate(angle);
+}
+
+void 
+shape::resize(libcan_float quoc){
+	_type.resize(quoc);
+}
+
+void 
+shape::move(const point& where) {
+	_type.move(where);
+}
 
 
 plane<RGBa> 
@@ -40,30 +53,17 @@ shape::get_pixels(const libcan_int height, const libcan_int width, const bool an
 	std::list<curve*>::iterator end = type_copy->_curves.end();
 	
 	//-----------------------------------------------hledani minima z curves
-	libcan_int min_x = (**i).get_min_x();
-	libcan_int max_x = (**i).get_max_x();
-	libcan_int min_y = (**i).get_min_y();
-	libcan_int max_y = (**i).get_max_y();
-
-	for (++i;i!=end; ++i) {
-		min_x = __minimum((**i).get_min_x(), min_x);
-		max_x = __maximum((**i).get_max_x(), max_x);
-		min_y = __minimum((**i).get_min_y(), min_y);
-		max_y = __maximum((**i).get_max_y(), max_y);
-	}
+	
+	libcan_int min_x, max_x, min_y, max_y;
+	
+	type_copy->get_extremes(min_x,max_x,min_y,max_y);
 	
 	//------------------------------------------------pridam tloustku cary
-	min_x = min_x - 3.2*_style._line_size;
-	max_x = max_x + 3.2*_style._line_size;
-	min_y = min_y - 3.2*_style._line_size;
-	max_y = max_y + 3.2*_style._line_size;
+	min_x = __maximum(min_x - 3.2*_style._line_size, 0);
+	max_x = __minimum(max_x + 3.2*_style._line_size, height);
+	min_y = __maximum(min_y - 3.2*_style._line_size, 0);
+	max_y = __minimum(max_y + 3.2*_style._line_size, width);
 
-	//------------------------------------------------porovnam, jestli nahodou neni cely canvas omezujici
-	max_y = __minimum(max_y, width);
-	max_x = __minimum(max_x, height);
-	
-	min_y = __maximum(min_y, 0);
-	max_y = __maximum(max_y, 0);
 	
 	//------------------------------------------------co kdyz vubec nemusim kreslit?
 	if (painted_so_far.includes_square(min_x, min_y, max_x, max_y)) {

@@ -68,11 +68,11 @@ elipse::elipse(const point& s, const point& a, const point& v):shape_type(1,1){
 	point b = geom_line(a,s).right_angle_b(v);
 	geom_line another(s,b);
 	
-	point c = me.enlarge(2).b;
-	point d = another.enlarge(-1).b;
+	point c = me.resize(2).b;
+	point d = another.resize(-1).b;
 
-	geom_line another_half=another.enlarge(0.5);
-	geom_line me_half=me.enlarge(0.5);
+	geom_line another_half=another.resize(0.5);
+	geom_line me_half=me.resize(0.5);
 
 	point e = another_half.move_point(a);
 	point f = another_half.move_point(c);

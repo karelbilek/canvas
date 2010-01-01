@@ -184,7 +184,7 @@
    <widget class="QGroupBox" name="barvaCanvas">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>0</x>
       <y>20</y>
       <width>121</width>
       <height>221</height>
@@ -255,6 +255,154 @@
      </item>
      <item row="7" column="1">
       <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>OK</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QGroupBox" name="transformace">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>99</width>
+      <height>361</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>transformace</string>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="label_14">
+       <property name="text">
+        <string>posun X</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="posunX">
+       <property name="minimum">
+        <number>-800</number>
+       </property>
+       <property name="maximum">
+        <number>800</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>posun Y</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="posunY">
+       <property name="minimum">
+        <number>-800</number>
+       </property>
+       <property name="maximum">
+        <number>800</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_16">
+       <property name="text">
+        <string>rotace</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="rotace">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.500000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_17">
+       <property name="text">
+        <string>zvětšení</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="zvetseni">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="singleStep">
+        <double>0.500000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="text">
+        <string>OK</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_4">
+       <property name="text">
+        <string>Zavřít</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QGroupBox" name="poradi">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>30</y>
+      <width>110</width>
+      <height>194</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>pořadí</string>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_18">
+       <property name="text">
+        <string>přemístit z...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="odkud"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_19">
+       <property name="text">
+        <string>za</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="kam"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_5">
        <property name="text">
         <string>OK</string>
        </property>
@@ -349,9 +497,35 @@
     <addaction name="menuAntialias"/>
     <addaction name="actionBarva"/>
    </widget>
+   <widget class="QMenu" name="menuTransformace">
+    <property name="title">
+     <string>transformace</string>
+    </property>
+    <addaction name="actionOto_vrchn_o_30"/>
+    <addaction name="actionZmen_i_vrchn_2x"/>
+    <addaction name="actionZv_t_vrchn_2x"/>
+    <addaction name="actionPodrobn_j"/>
+    <addaction name="actionPosun_o_10_0"/>
+   </widget>
+   <widget class="QMenu" name="menuSmazat">
+    <property name="title">
+     <string>smazat</string>
+    </property>
+    <addaction name="actionZe_za_tku"/>
+    <addaction name="actionZ_konce"/>
+   </widget>
+   <widget class="QMenu" name="menuPo_ad">
+    <property name="title">
+     <string>pořadí</string>
+    </property>
+    <addaction name="actionZm_nit"/>
+   </widget>
    <addaction name="menuVLastnosti"/>
    <addaction name="menuKresli"/>
    <addaction name="menuCanvas"/>
+   <addaction name="menuTransformace"/>
+   <addaction name="menuSmazat"/>
+   <addaction name="menuPo_ad"/>
   </widget>
   <action name="actionZobraz">
    <property name="text">
@@ -541,6 +715,46 @@
   <action name="actionElipsu">
    <property name="text">
     <string>Elipsu</string>
+   </property>
+  </action>
+  <action name="actionOto_vrchn_o_30">
+   <property name="text">
+    <string>otoč vrchní o 30°</string>
+   </property>
+  </action>
+  <action name="actionZmen_i_vrchn_2x">
+   <property name="text">
+    <string>zmenši vrchní 2x</string>
+   </property>
+  </action>
+  <action name="actionZv_t_vrchn_2x">
+   <property name="text">
+    <string>zvětš vrchní 2x</string>
+   </property>
+  </action>
+  <action name="actionPodrobn_j">
+   <property name="text">
+    <string>Podrobnější...</string>
+   </property>
+  </action>
+  <action name="actionPosun_o_10_0">
+   <property name="text">
+    <string>posun o 10,0</string>
+   </property>
+  </action>
+  <action name="actionZe_za_tku">
+   <property name="text">
+    <string>ze začátku</string>
+   </property>
+  </action>
+  <action name="actionZ_konce">
+   <property name="text">
+    <string>z konce</string>
+   </property>
+  </action>
+  <action name="actionZm_nit">
+   <property name="text">
+    <string>změnit...</string>
    </property>
   </action>
  </widget>

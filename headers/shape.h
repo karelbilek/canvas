@@ -4,6 +4,7 @@
 #include "RGBa.h"
 #include "curve.h"
 #include "shape_type.h"
+#include "point.h"
 #include <list>
 #include <map>
 
@@ -53,6 +54,12 @@ namespace libcan {
 		shape(const shape_style& style, const shape_type& type);
 			
 		plane<RGBa> get_pixels(const libcan_int height, const libcan_int width, const bool antialias, const plane<bool>& painted_so_far, bool& done);
+		
+		void rotate(libcan_float angle);
+		void resize(libcan_float quoc);
+		void move(const point& where);
+		
+		
 
 	};
 }

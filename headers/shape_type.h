@@ -3,6 +3,7 @@
 
 #include <list>
 #include "moved_arrays.h"
+#include "point.h"
 
 namespace libcan {
 	class curve;
@@ -24,6 +25,14 @@ namespace libcan {
 		
 		shape_type();
 		
+		point center() const;
+		
+		void rotate(libcan_float angle);
+		void resize(libcan_float quoc);
+		void move(const point& where);
+		
+		
+		void get_extremes(libcan_int& min_x,libcan_int& max_x,libcan_int& min_y,libcan_int& max_y)const;
 		
 			//vraci rovnou segmenty (pro zjednoduseni)
 		std::list<moved_arrays> all_curve_arrays() const;
