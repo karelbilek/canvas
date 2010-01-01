@@ -22,8 +22,22 @@ shape_type(const shape_type& other) :
 	}
 }
 
+shape_type::
+shape_type() :
+  _curves(),
+  _filled(),
+  _joined_ends() {
+}
+
 shape_type& 
 shape_type::operator=(const shape_type& other) {
+	for (list<curve*>::iterator i = _curves.begin(); i!= _curves.end(); ++i) {
+		curve* point = *i;
+		delete point;
+	}
+	
+	_curves = list<curve*>();
+	
 	_filled = other._filled;
 	_joined_ends = other._joined_ends;
 	for (list<curve*>::const_iterator i = other._curves.begin(); i!= other._curves.end(); ++i) {

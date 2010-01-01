@@ -4,8 +4,6 @@ using namespace libcan;
 
 moved_arrays::moved_arrays(libcan_int min_y, libcan_int max_y)
   : _first(true),
-  //_min_x(0),
-  //_max_x(0),
   _min_nonempty_y(0),
   _max_nonempty_y(0),
   _min_y(min_y),
@@ -52,7 +50,8 @@ moved_arrays::set(const libcan_int x, const libcan_int y) {
 	const libcan_int my_y = y - _min_y;
 	
 	if ((y < _min_y) || (y > _max_y)) {
-		throw 1;
+		return;
+		//throw 1;
 	}
 	if (_first) {
 		_min_nonempty_y = (_max_nonempty_y = y);

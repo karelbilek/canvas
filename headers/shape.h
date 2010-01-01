@@ -28,11 +28,10 @@ namespace libcan {
 		
 		libcan_int _line_size;
 		RGBa _line_color;
-		bool _fill_is; 
 		RGBa _fill_color; 
 		
 		
-		shape_style(libcan_int line_size=1, const RGBa& line_color=RGBa(0,0,0), bool fill_is=false, const RGBa& fill_color=RGBa(0,0,0));
+		shape_style(libcan_int line_size=1, const RGBa& line_color=RGBa(0,0,0), const RGBa& fill_color=RGBa(0,0,0));
 	};
 
 

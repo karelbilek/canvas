@@ -3,9 +3,9 @@
 
 #include "types.h" //kvuli libcan_int
 
-#define is_legal(_x,_y,_kolik) (((_x) < _width) && ((_y) < _height) && ((_x) >= 0) && ((_y) >= 0) && ((_kolik) < _element_width))
+#define __m_is_legal(_x,_y,_kolik) (((_x) < _width) && ((_y) < _height) && ((_x) >= 0) && ((_y) >= 0) && ((_kolik) < _element_width))
 	//jestli je cislo v ramci mezi
-#define position(_x,_y,_kolik) ((_y) * _width * _element_width + (_x) * _element_width + (_kolik))
+#define __m_position(_x,_y,_kolik) ((_y) * _width * _element_width + (_x) * _element_width + (_kolik))
 
 namespace libcan {
 	
@@ -119,8 +119,8 @@ libcan::matrix<T>::get_all() {
 
 template<class T>
 T libcan::matrix<T>::get(const libcan_int x, const libcan_int y, const small element) const {	
-	if (is_legal(x,y, element)) {
-		return _array[position(x,y,element)];
+	if (__m_is_legal(x,y, element)) {
+		return _array[__m_position(x,y,element)];
 	} else {
 		
 		//pokud sahnu mimo, program nespadne, ale hodi defaultni T
@@ -150,8 +150,8 @@ template<class T>
 void 
 libcan::matrix<T>::set(const libcan_int x, const libcan_int y, const small element, const T& what) {
 	
-	if (is_legal(x,y,element)) {
-		_array[position(x,y,element)] = what;
+	if (__m_is_legal(x,y,element)) {
+		_array[__m_position(x,y,element)] = what;
 	}
 }
 
@@ -179,9 +179,9 @@ void
 libcan::matrix<T>::set_more(const libcan_int start_x, const libcan_int end_x, const libcan_int y, const T* what) {
 
 	for (libcan_int x = start_x; x <= end_x; ++x) { 
-		if (is_legal(x,y,0)) {
+		if (__m_is_legal(x,y,0)) {
 			for (libcan_int elem = 0; elem < _element_width; ++elem) {
-				_array[position(x,y,elem)] = what[elem];
+				_array[__m_position(x,y,elem)] = what[elem];
 				
 				//pocitam s tim, ze mi nikdo nepodstrci prilis kratke pole, jinak tam strcim nejakou nahodnou hodnotu nebo pretecu
 				//diky what[kolik]
@@ -199,10 +199,10 @@ libcan::matrix<T> libcan::matrix<T>::half() {
 	for (libcan_int x = 0; x < _width/2; ++x) {
 		for (libcan_int y = 0; y < _width/2; ++y) {
 			for (libcan_int i = 0; i<_element_width; ++i) {
-				T a = _array[position(x*2, y*2, i)];
-				T b = _array[position(x*2, y*2+1, i)];
-				T c = _array[position(x*2+1, y*2, i)];
-				T d = _array[position(x*2+1, y*2+1, i)];
+				T a = _array[__m_position(x*2, y*2, i)];
+				T b = _array[__m_position(x*2, y*2+1, i)];
+				T c = _array[__m_position(x*2+1, y*2, i)];
+				T d = _array[__m_position(x*2+1, y*2+1, i)];
 				T prum = (a+b+c+d)/4;
 				res.set(x,y,i,prum);
 			}

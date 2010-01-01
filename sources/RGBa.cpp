@@ -26,6 +26,11 @@ RGBa::RGBa(const basic_colors color):_red(0),_green(0),_blue(0),_alpha(0){
     }
 }
 
+bool
+RGBa::is_not_transparent() const{
+	return (_alpha!=0);
+}
+
 RGBa::RGBa() : _red(0), _green(0),_blue(0),_alpha(0) {}
 
 RGBa::RGBa(const libcan_component r, const libcan_component g, const libcan_component b) : _red(r), _green(g),_blue(b),_alpha(255)   {}

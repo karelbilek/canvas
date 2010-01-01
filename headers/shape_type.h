@@ -22,6 +22,9 @@ namespace libcan {
 		shape_type(const bool filled, const bool joined_ends, const std::list<curve*>& curves=std::list<curve*>());
 		shape_type(const shape_type& other);
 		
+		shape_type();
+		
+		
 			//vraci rovnou segmenty (pro zjednoduseni)
 		std::list<moved_arrays> all_curve_arrays() const;
 	

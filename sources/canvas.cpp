@@ -52,6 +52,20 @@ matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t g
 	}
 }
 
+void 
+canvas::set_antialias(const bool what) {
+	_antialias = what;
+}
+
+void 
+canvas::set_RGBa(const RGBa& what) {
+	_background = what;
+}
+
+void 
+canvas::get_colors(libcan_component* p_red, libcan_component* p_green, libcan_component* p_blue, libcan_component* p_alpha) const {
+	_background.get_colors(p_red, p_green, p_blue, p_alpha);
+}
 
 plane<RGBa> 
 canvas::get_plane()  {

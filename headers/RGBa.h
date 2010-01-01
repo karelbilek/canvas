@@ -35,6 +35,8 @@ namespace libcan{
 		
 	public:
 		
+		bool is_not_transparent() const;
+		
 		void set_red(const libcan_component red);
 		void set_green(const libcan_component green);
 		void set_blue(const libcan_component blue);

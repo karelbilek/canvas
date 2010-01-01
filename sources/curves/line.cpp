@@ -12,7 +12,7 @@ line*
 line::clone_double() const {line* n= new line(_a*2,_b*2);return n;}
 
 bool 
-line::have_thick_line() const {return 0;}
+line::have_thick_line() const {return 1;}
 
 
 line::line(point a, point b) : 

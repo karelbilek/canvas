@@ -131,43 +131,100 @@ geom_line::thick_cover(const geom_line& another, const libcan_float distance, bo
 }
 
 geom_line 
-geom_line::normalised(const libcan_float length) const {
+geom_line::line_from_rev_angle(const libcan_float angle, const libcan_float length) const {
+	libcan_float my_angle = angle_from_x();
+	
+	return line_from_point_angle(b, 180+my_angle+angle, length);
+	
+}
+
+libcan_float 
+geom_line::distance(const point& p) const {
+	return geom_line(p, intersection(right_angle(1,p,1))).length();
+}
+
+geom_line 
+geom_line::line_from_point_angle(const point& f, libcan_float angle, const libcan_float length) {
+	while (angle>360) {angle-=360;}
+	while (angle<0) {angle+=360;}
+	
+	if (__abs(angle-90)<0.1){
+		return geom_line(f, point(f.x, f.y-length));
+	}
+	
+	if (__abs(angle-180)<0.1){
+		return geom_line(f, point(f.x-length, f.y));
+	}
+	
+	if (__abs(angle-270)<0.1){
+		return geom_line(f, point(f.x, f.y+length));
+	}
+	
+	if (__abs(angle)<0.1){
+		return geom_line(f, point(f.x+length, f.y));
+	}
+	
+	if (angle>270 || angle < 90){
+		return (geom_line(f,point(f.x+10, f.y-10*tan(__DEG2RAD(angle)))).normalised(length));
+	} else {
+		return (geom_line(f,point(f.x-10, f.y-10*tan(__DEG2RAD(180-angle)))).normalised(length));
+	}
+	
+}
+
+libcan_float
+geom_line::length() const {
 	libcan_float my_width = (b.x-a.x);
 	libcan_float my_height = (b.y-a.y);
 	
 	libcan_float my_length = static_cast<libcan_float>( sqrt(static_cast<double>(my_width*my_width + my_height*my_height)));
-	
-	libcan_float quoc = (length/my_length);
-	
-	return geom_line(a, point(a.x+quoc*my_width, a.y+quoc*my_height));
+	return my_length;
 }
 
-point
-geom_line::right_angle_a(bool clockwise, const libcan_float length) const {
-	libcan_float my_width = b.x - a.x;
-	libcan_float my_height = b.y - a.y;
-	geom_line res;
-	if (!clockwise) {
-		res= geom_line(a, point(a.x-my_height, a.y + my_width));
-	} else {
-		res= geom_line(a, point(a.x + my_height, a.y - my_width));
-	}
-	return res.normalised(length).b;
+geom_line 
+geom_line::normalised(const libcan_float new_length) const {
+
+	return enlarge(new_length/length());
 }
 
+geom_line 
+geom_line::enlarge(libcan_float quoc) const{
+	return geom_line(a, point(a.x+quoc*(b.x-a.x), a.y+quoc*(b.y-a.y)));
+}
 
-point
-geom_line::right_angle_b(bool clockwise, const libcan_float length) const {
+geom_line 
+geom_line::right_angle(const bool clockwise, const point& start, const libcan_float length) const {
 	libcan_float my_width = b.x - a.x;
 	libcan_float my_height = b.y - a.y;
 	geom_line res;
 	
 	if (clockwise) {
-		res= geom_line(b, point(b.x-my_height, b.y + my_width));
+		res= geom_line(start, point(start.x-my_height, start.y + my_width));
 	} else {
-		res= geom_line(b, point(b.x + my_height, b.y - my_width));
+		res= geom_line(start, point(start.x + my_height, start.y - my_width));
 	}
-	return res.normalised(length).b;
-	
+	return res.normalised(length);
 }
 
+point
+geom_line::right_angle_a(bool clockwise, const libcan_float length) const {
+	return right_angle(!clockwise, a, length).b;
+}
+
+
+point
+geom_line::right_angle_b(bool clockwise, const libcan_float length) const {
+	return right_angle(clockwise, b, length).b;
+}
+
+point
+geom_line::right_angle_b(const point& c) const {
+	libcan_float angle = count_rev_angle(geom_line(b,c));
+	
+	return right_angle(angle>0, b, distance(c)).b;
+}
+
+point 
+geom_line::move_point(const point& p) const{
+	return point(p.x+(b.x-a.x), p.y+(b.y-a.y));
+}

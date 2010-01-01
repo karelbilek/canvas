@@ -3,6 +3,9 @@
 #include "point.h"
 #include "all_shapes.h"
 
+
+
+
 using namespace libcan;
 using namespace std;
 
@@ -14,10 +17,9 @@ shape(const shape_style& style, const shape_type& type):
   _type(type){}
 
 shape_style::
-shape_style(libcan_int line_size, const RGBa& line_color, bool fill_is, const RGBa& fill_color):
+shape_style(libcan_int line_size, const RGBa& line_color, const RGBa& fill_color):
   _line_size(line_size),
   _line_color(line_color),
-  _fill_is(fill_is),
   _fill_color(fill_color) {}
 
 
@@ -82,6 +84,7 @@ shape::get_pixels(const libcan_int height, const libcan_int width, const bool an
 	//------------------------------------------------jdu na konretni caru
 		
 			plane<bool> line(min_y, max_y);
+			
 			
 			if ((**i).have_thick_line() && _style._line_size > 3) {
 	//------------------------------------------------jdu na caru, co se umi sama nakreslit
@@ -155,7 +158,7 @@ shape::get_pixels(const libcan_int height, const libcan_int width, const bool an
 	
 	
 	
-	if (_style._fill_is && _type._filled) {
+	if (_style._fill_color.is_not_transparent() && _type._filled) {
 		result.add((paint(type_copy, min_y, max_y)).flatten_plane<RGBa>(_style._fill_color, true));
 		
 	}

@@ -14,6 +14,14 @@ namespace libcan {
 		geom_line(const point& my_a, const point& my_b);
 		geom_line();
 		
+		static geom_line line_from_point_angle(const point& first, libcan_float angle, const libcan_float length);
+		
+		point move_point(const point& point) const;
+		
+		geom_line line_from_rev_angle(const libcan_float angle, const libcan_float length) const;
+		
+		geom_line enlarge(libcan_float quoc) const;
+		
 			//proste jenom prehodi poradi .)
 		geom_line reverted() const; 
 		
@@ -25,12 +33,20 @@ namespace libcan {
 			//uhel od horizontaly
 		libcan_float angle_from_x() const;
 		
-			//zkrati/prodlouzi to velikost na length
-		geom_line normalised(const libcan_float length) const;
+			//delka
+		libcan_float length() const;
+		
+			//zkrati/prodlouzi to velikost na new_length
+		geom_line normalised(const libcan_float new_length) const;
 		
 			//udela pravy uhel
 		point right_angle_a(const bool clockwise, const libcan_float length) const;
 		point right_angle_b(const bool clockwise, const libcan_float length) const;
+		
+		point right_angle_b(const point& c) const;
+		
+		
+		geom_line right_angle(const bool clockwise, const point& start, const libcan_float length) const;
 		
 			//udela rovnobezku, vzdalenou distance ode mne
 			//vlevo / vpravo
@@ -46,6 +62,9 @@ namespace libcan {
 			//second_hint je proto, ze pokud je uhel svirany temi useckami moc maly,
 			//udela se ten obal trochu jinak, kde potrebuju v jednom pripade prehodit poradi bodu
 		geom_line thick_cover(const geom_line& another, const libcan_float distance, bool second_hind) const;
+		
+		libcan_float distance(const point& p) const;
+		
 	};
 	
 }

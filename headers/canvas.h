@@ -39,6 +39,11 @@ namespace libcan {
 						//NENI CONST
 						//sou to sice "gettery", ale az ty gettery rikaji potomkum "nakreslete se!"
 		
+		void get_colors(libcan_component* p_red, libcan_component* p_green, libcan_component* p_blue, libcan_component* p_alpha) const;
+		
+		void set_antialias(const bool what);
+		void set_RGBa(const RGBa& what);
+		
 		void remove(const size_t pos);
 						//smaz neco na x-te pozici
 						
