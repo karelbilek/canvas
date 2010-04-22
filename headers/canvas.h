@@ -30,11 +30,11 @@ namespace libcan {
 		~canvas();
 						//smaz canvas
 		
-		const matrix<libcan_component> get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos); 
+		matrix<libcan_component> get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) const; 
 						//vrat matrix s temahle pozicema
 						//NENI const, viz niz
 						
-		const plane<RGBa> get_plane();
+		plane<RGBa> get_plane() const;
 						//vrati plane nakresleny
 						//NENI CONST
 						//sou to sice "gettery", ale az ty gettery rikaji potomkum "nakreslete se!"

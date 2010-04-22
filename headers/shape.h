@@ -53,7 +53,7 @@ namespace libcan {
 	public:
 		shape(const shape_style& style, const shape_type& type);
 			
-		plane<RGBa> get_pixels(const libcan_int height, const libcan_int width, const bool antialias, const plane<bool>& where_not_paint, bool& done);
+		plane<RGBa> get_pixels(const libcan_int height, const libcan_int width, const bool antialias, const plane<bool>& where_not_paint, bool& done) const;
 		
 		void rotate(libcan_float angle);
 		void resize(libcan_float quoc);

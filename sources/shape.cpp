@@ -38,19 +38,19 @@ shape::move(const point& where) {
 
 
 plane<RGBa> 
-shape::get_pixels(const libcan_int height, const libcan_int width, const bool antialias, const plane<bool>& where_not_paint, bool& done) {
+shape::get_pixels(const libcan_int height, const libcan_int width, const bool antialias, const plane<bool>& where_not_paint, bool& done) const {
 	
-	shape_type* type_copy = &_type; //kvuli antialiasu :/
+	const shape_type* type_copy = &_type; //kvuli antialiasu :/
 	if (antialias) {
 		type_copy = type_copy->clone_double(); //pozor, tady alokuju novy, MUSI dole byt to delete!
 	}
 	
-	std::list<curve*>::iterator i = type_copy->_curves.begin();
+	std::list<curve*>::const_iterator i = type_copy->_curves.begin();
 	
-	std::list<curve*>::iterator one_before_end = type_copy->_curves.end();
+	std::list<curve*>::const_iterator one_before_end = type_copy->_curves.end();
 	--one_before_end;
-	std::list<curve*>::iterator begin = type_copy->_curves.begin();
-	std::list<curve*>::iterator end = type_copy->_curves.end();
+	std::list<curve*>::const_iterator begin = type_copy->_curves.begin();
+	std::list<curve*>::const_iterator end = type_copy->_curves.end();
 	
 	//-----------------------------------------------hledani minima z curves
 	
@@ -98,7 +98,7 @@ shape::get_pixels(const libcan_int height, const libcan_int width, const bool an
 						previous = NULL;
 					}
 				} else {
-					std::list<curve*>::iterator j = i;
+					std::list<curve*>::const_iterator j = i;
 					--j;
 					previous = *j;
 				}
@@ -110,7 +110,7 @@ shape::get_pixels(const libcan_int height, const libcan_int width, const bool an
 						next = NULL;
 					}
 				} else {
-					std::list<curve*>::iterator j = i;
+					std::list<curve*>::const_iterator j = i;
 					++j;
 					next = *j;
 				}

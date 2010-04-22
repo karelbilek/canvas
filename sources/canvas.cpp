@@ -69,7 +69,8 @@ canvas::~canvas() {
 
 //-----------------------------------GETTERS
 
-matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) {
+
+matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) const {
 	small quoc = (_antialias?2:1);
 	
 	plane<RGBa> all_plane = get_plane();
@@ -110,8 +111,8 @@ canvas::get_colors(libcan_component* p_red, libcan_component* p_green, libcan_co
 	_background.get_colors(p_red, p_green, p_blue, p_alpha);
 }
 
-plane<RGBa> 
-canvas::get_plane()  {
+ plane<RGBa> 
+canvas::get_plane() const  {
 	RGBa full(0,0,0,255);
 	
 	small quoc = (_antialias?2:1);
@@ -121,7 +122,7 @@ canvas::get_plane()  {
 	plane<bool> painted_so_far(0,quoc*_height,0);
 	bool done;
 	
-	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
+	for (list<shape>::const_iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		
 		
 		plane<RGBa> pixels = (*i).get_pixels(quoc*_height, quoc*_width, _antialias, painted_so_far, done);
