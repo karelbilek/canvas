@@ -38,7 +38,7 @@ shape::move(const point& where) {
 
 
 plane<RGBa> 
-shape::get_pixels(const libcan_int height, const libcan_int width, const bool antialias, const plane<bool>& painted_so_far, bool& done) {
+shape::get_pixels(const libcan_int height, const libcan_int width, const bool antialias, const plane<bool>& where_not_paint, bool& done) {
 	
 	shape_type* type_copy = &_type; //kvuli antialiasu :/
 	if (antialias) {
@@ -66,7 +66,7 @@ shape::get_pixels(const libcan_int height, const libcan_int width, const bool an
 
 	
 	//------------------------------------------------co kdyz vubec nemusim kreslit?
-	if (painted_so_far.includes_square(min_x, min_y, max_x, max_y)) {
+	if (where_not_paint.includes_square(min_x, min_y, max_x, max_y)) {
 		done = false;
 		return plane<RGBa>();	
 	}
