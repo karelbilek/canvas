@@ -117,16 +117,90 @@ namespace libcan {
 		
 		void add_another(const interval<T>& other);
 		
+		interval<T>* add_far_right(const interval<T>* other);
 		
 		
 		
 		interval<T>& operator=(const interval<T>& other);
 			//vrati kopii
-			
+		
+		interval<T>* negative(const T& what, const libcan_int min_x, const libcan_int max_x);
+		
 			
 		template <class U>
 		interval<U>* flatten_interval(const U& what, const T& min) const;
 	};
+	
+	template<class T>
+	interval<T>*
+	add_far_right(const interval<T>* other) {
+		if (_right==NULL) {
+			_right=other;
+			return this;
+		} else {
+			interval<T>* finding = this;
+			while (finding->_right->_right != NULL) {
+				finding = finding->_right;
+			}
+			interval<T>* new_head = finding->_right;
+			finding->_right = finding->_right->_left;
+			
+			new_head->_left = this;
+			new_head->_right = other;
+			return new_head;
+		}
+	}
+	
+	template<class T>
+	interval<T>* 
+	negative(const T& what, const libcan_int min_x, const libcan_int max_x) {
+		
+		if (_start <= min_x && _end >= max_x) {
+			return NULL;
+		} else if (_start <= min_x) {
+			
+			//jsem-li vlevo...
+			
+			libcan_int bigger_left = __maximum((_end+1), min_x);
+			if (_right == NULL) {
+				return new interval<T>(bigger_left, max_x, T);
+			} else {
+				return _right->(what, bigger_left, max_x);
+			}
+			
+		} else if (_end >= max_x) {
+			
+			//jsem-li vpravo
+			libcan_int smaller_right = __minimum(max_x, (_begin-1));
+			
+			if (_left == NULL) {
+				return new interval<T>(min_x, smaller_right, T);
+			} else {
+				return _left->(what, min_x, smaller_right);
+			}
+		} else {
+			//jsem-li vprostred..
+			libcan_int on_left = _begin - 1;
+			libcan_int on_right = _end + 1;
+			interval<T>* left_side = NULL;
+			if (_left!=NULL) {
+				left_side = _left->(what, min_x, on_left);
+			}
+			interval<T>* right_side = NULL;
+			if (_right!=NULL) {
+				right_side = _right->(what, on_right, max_x);
+			}
+			if (left_side == NULL) {
+				return right_side;
+			}
+			if (right_side == NULL) {
+				return left_side;
+			}
+			interval<T>* res = left_side->add_far_right(right_side);
+			res->check();
+			return res;
+		}
+	}
 	
 	template<class T>
 	bool 

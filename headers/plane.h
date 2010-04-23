@@ -111,6 +111,8 @@ namespace libcan {
 		plane<T>& operator=(const plane<T>& other);
 		
 		bool includes_square(const libcan_int min_x, const libcan_int min_y, const libcan_int max_x, const libcan_int max_y) const;
+		
+		plane<T> negative(const T& what, const libcan_int min_x, const libcan_int max_x);
 	};
 
 
@@ -378,6 +380,25 @@ namespace libcan {
 	}
 	
 	//----------------------------------------OTHER
+	
+	template <class T>
+	plane<T> 
+	plane<T>::negative(const T& what, const libcan_int min_x, const libcan_int max_x) {
+		plane<T> result(_start_height, _end_height, _pivot_width);
+		
+		int rs = __real_height;
+		for (int i=0; i<rs; ++i) {
+			interval<T>* p_int = (_intervals[i]).template negative<T>(what, min_x, max_x);
+			if (p_int!=NULL) {
+				result.set_whole_interval(i, *p_int);
+			}
+			delete p_int;
+		}
+		
+		return result;
+	}
+	
+	
 	template <class T> 
 	plane<T>
 	plane<T>::move(const libcan_int new_width, const libcan_int new_height) {
