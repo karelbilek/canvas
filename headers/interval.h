@@ -117,7 +117,7 @@ namespace libcan {
 		
 		void add_another(const interval<T>& other);
 		
-		interval<T>* add_far_right(const interval<T>* other);
+		interval<T>* add_far_right(interval<T>* other);
 		
 		
 		
@@ -133,7 +133,7 @@ namespace libcan {
 	
 	template<class T>
 	interval<T>*
-	add_far_right(const interval<T>* other) {
+	interval<T>::add_far_right(interval<T>* other) {
 		if (_right==NULL) {
 			_right=other;
 			return this;
@@ -153,7 +153,7 @@ namespace libcan {
 	
 	template<class T>
 	interval<T>* 
-	negative(const T& what, const libcan_int min_x, const libcan_int max_x) {
+	interval<T>::negative(const T& what, const libcan_int min_x, const libcan_int max_x) {
 		
 		if (_start <= min_x && _end >= max_x) {
 			return NULL;
@@ -163,32 +163,32 @@ namespace libcan {
 			
 			libcan_int bigger_left = __maximum((_end+1), min_x);
 			if (_right == NULL) {
-				return new interval<T>(bigger_left, max_x, T);
+				return new interval<T>(bigger_left, max_x, what);
 			} else {
-				return _right->(what, bigger_left, max_x);
+				return _right->negative(what, bigger_left, max_x);
 			}
 			
 		} else if (_end >= max_x) {
 			
 			//jsem-li vpravo
-			libcan_int smaller_right = __minimum(max_x, (_begin-1));
+			libcan_int smaller_right = __minimum(max_x, (_start-1));
 			
 			if (_left == NULL) {
-				return new interval<T>(min_x, smaller_right, T);
+				return new interval<T>(min_x, smaller_right, what);
 			} else {
-				return _left->(what, min_x, smaller_right);
+				return _left->negative(what, min_x, smaller_right);
 			}
 		} else {
 			//jsem-li vprostred..
-			libcan_int on_left = _begin - 1;
+			libcan_int on_left = _start - 1;
 			libcan_int on_right = _end + 1;
 			interval<T>* left_side = NULL;
 			if (_left!=NULL) {
-				left_side = _left->(what, min_x, on_left);
+				left_side = _left->negative(what, min_x, on_left);
 			}
 			interval<T>* right_side = NULL;
 			if (_right!=NULL) {
-				right_side = _right->(what, on_right, max_x);
+				right_side = _right->negative(what, on_right, max_x);
 			}
 			if (left_side == NULL) {
 				return right_side;

@@ -388,7 +388,7 @@ namespace libcan {
 		
 		int rs = __real_height;
 		for (int i=0; i<rs; ++i) {
-			interval<T>* p_int = (_intervals[i]).template negative<T>(what, min_x, max_x);
+			interval<T>* p_int = (_intervals[i]).negative(what, min_x, max_x);
 			if (p_int!=NULL) {
 				result.set_whole_interval(i, *p_int);
 			}

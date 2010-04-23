@@ -129,6 +129,7 @@ canvas::get_plane() const  {
 		if (done) {
 			all_plane.add(pixels);
 			painted_so_far.add(pixels.flatten_plane<bool>(1, full));
+			painted_so_far = painted_so_far.negative(1, 0, quoc*_height).negative(1, 0, quoc*_height);
 		}
 	}
 		//tohle je mozna antiintuitivni, ale kreslim zeshora dolu, tj. pozadi prictu jako posledni
