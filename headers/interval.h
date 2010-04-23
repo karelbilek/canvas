@@ -155,7 +155,7 @@ namespace libcan {
 	interval<T>* 
 	interval<T>::negative(const T& what, const libcan_int min_x, const libcan_int max_x) {
 		
-		if (_start <= min_x && _end >= max_x) {
+		if ((_start <= min_x) && (_end >= max_x)) {
 			return NULL;
 		} else if (_start <= min_x) {
 			
