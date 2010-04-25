@@ -1,5 +1,6 @@
 #include "canvas.h"
 
+
 using namespace std;
 using namespace libcan;
 
@@ -37,10 +38,10 @@ canvas::count(){
 void 
 canvas::change_order(size_t from, size_t to){
 	list<shape>::iterator from_it = _shapes.begin();
-	for (int i=0; i<from; ++i,++from_it){}
+	for (size_t i=0; i<from; ++i,++from_it){}
 	
 	list<shape>::iterator to_it = _shapes.begin();
-	for (int i=0; i<to; ++i,++to_it){}
+	for (size_t i=0; i<to; ++i,++to_it){}
 	
 	_shapes.splice(to_it, _shapes, from_it);
 }
@@ -65,7 +66,8 @@ canvas::canvas() :
   _height(1),
   _width(1),
   _background(),
-  _shapes() {}
+  _shapes(),
+  _saved_plane() {}
 
 //----------------------------------DESTRUCTORS
 canvas::~canvas() {
@@ -75,7 +77,7 @@ canvas::~canvas() {
 //-----------------------------------GETTERS
 
 
-matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) const {
+matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) {
 	small quoc = (_antialias?2:1);
 
 	
@@ -118,18 +120,33 @@ canvas::get_colors(libcan_component* p_red, libcan_component* p_green, libcan_co
 }
 
 plane<bool>
-canvas::what_to_paint() const {
+canvas::what_to_paint() {
 	small quoc = (_antialias?2:1);	
 	plane<bool> res(0, quoc*_height);
-	for (list<shape>::const_iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
-		res.add((*i).get_footprint(_antialias));
+	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
+		res.add((*i).get_footprint(_antialias, quoc*_height, quoc*_width));
 	}
 	return res;
 	
 }
 
+bool
+canvas::should_paint() const {
+	for (list<shape>::const_iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
+		if ((*i).is_changed()) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 plane<RGBa> 
-canvas::get_plane() const  {
+canvas::get_plane()  {
+
+	if (!should_paint() && !((_first_paint) || (_last_antialias!=_antialias))) {
+		return _saved_plane;
+	}
+	
 	RGBa full(0,0,0,255);
 	
 	small quoc = (_antialias?2:1);
@@ -137,34 +154,46 @@ canvas::get_plane() const  {
 	
 	plane<bool> not_to_paint(0, quoc*_height);
 	plane<bool> should_paint;
+	bool force;
 	if (!((_first_paint) || (_last_antialias!=_antialias))) {
+		
 		//neni to poprve, tj. ma smysl resit, co prekreslovat
 		should_paint = what_to_paint();
 		not_to_paint = should_paint.negative(1, 0, quoc*_width);
+		force = false;
+	} else {
+		force = true;
 	}
 	
 	//plane<bool> painted_so_far(0,quoc*_height,0);
 	
 	
-	for (list<shape>::const_iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
-		bool done;
+	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		
-		plane<RGBa> pixels = (*i).get_pixels(quoc*_height, quoc*_width, _antialias, not_to_paint, done);
-		if (done) {
-			all_plane.add(pixels);
-			not_to_paint.add(pixels.flatten_plane<bool>(1, full));
-		}
+		plane<RGBa> pixels = (*i).get_pixels(quoc*_height, quoc*_width, _antialias, not_to_paint, force);
+		
+		
+
+		all_plane.add(pixels);
+		not_to_paint.add(pixels.flatten_plane<bool>(1, full));
+
 	}
 		//tohle je mozna antiintuitivni, ale kreslim zeshora dolu, tj. pozadi prictu jako posledni
 	all_plane.add(plane<RGBa>(0, quoc*_height, 0, quoc*_width, _background));
 	
 	if (!((_first_paint) || (_last_antialias!=_antialias))) {
-		_saved_plane.selective_replace(all_plane, should_paint);
+		
+		/*plane<RGBa> blueshit(0,quoc*_height,0,quoc*_width, RGBa(0,0,terribleshit));
+		terribleshit -=30;*/
+		
+		_saved_plane.selective_replace(all_plane/*blueshit*/, should_paint);
 	} else {
 		_saved_plane = all_plane;
 	}
 	
-	return all_plane;
+	_last_antialias = _antialias;
+	_first_paint=false;
+	return _saved_plane;
 }
 
 

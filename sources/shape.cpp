@@ -5,7 +5,6 @@
 #include "RGBa.h"
 
 
-
 using namespace libcan;
 using namespace std;
 
@@ -14,7 +13,13 @@ map<libcan_int, plane<bool> > libcan::shape::brushes;
 shape::
 shape(const shape_style& style, const shape_type& type):
   _style(style),
-  _type(type){}
+  _type(type),
+  _pixels(),
+  _changed(0),
+  _painted(0),
+  _footprint_given(0),
+  _old_footprint(),
+  _new_footprint(){}
 
 shape_style::
 shape_style(libcan_int line_size, const RGBa& line_color, const RGBa& fill_color):
@@ -23,15 +28,15 @@ shape_style(libcan_int line_size, const RGBa& line_color, const RGBa& fill_color
   _fill_color(fill_color) {}
 
 shape_style& 
-shape::get_style(const bool& will_change) const {
+shape::get_style(const bool& will_change) {
 	if (will_change) {
-		initiate_change();
+		destroying_change();
 	}
 	return _style;
 }
 
 void
-shape::initiate_change() {
+shape::destroying_change() {
 	_old_footprint = _new_footprint;
 	_painted = false;
 	_changed = true;
@@ -39,42 +44,62 @@ shape::initiate_change() {
 
 void 
 shape::rotate(libcan_float angle){
-	initiate_change();
+	destroying_change();
 	_type.rotate(angle);
 }
 
 void 
 shape::resize(libcan_float quoc){
-	initiate_change();
+	destroying_change();
 	_type.resize(quoc);
 }
 
 void 
 shape::move(const point& where) {
-	initiate_change();
+	_old_footprint = _new_footprint;
+	_changed = true;
+	_painted = true;	
+	
+	_new_footprint = _old_footprint.move_relative(where.x, where.y);	
+	_pixels = _pixels.move_relative(where.x, where.y);
 	_type.move(where);
 }
 
-plane<bool> 
-shape::get_footprint(const bool& antialias) const {
-	if (_changed || !_painted) {
-		libcan_int min_x, max_x, min_y, max_y;
+bool
+shape::is_changed() const {
+	return (_changed || !_footprint_given);
+}
 
-		get_extremes(min_x,max_x,min_y,max_y, antialias);
-		
-		plane<bool> res(min_x, max_x, min_y, max_y);
-		if (_painted) {
+plane<bool> 
+shape::get_footprint(const bool& antialias, const libcan_int height, const libcan_int width)  {
+	plane<bool> res(0, height);
+	
+	if (!_footprint_given || _changed) {
+		_footprint_given = true;
+		if (_changed) {
+			_changed = false;
 			res.add(_old_footprint);
 		}
-		return res;
-	} else {
-		return _new_footprint;
+		
+		if (_painted) {
+			res.add(_new_footprint);
+		} else {
+			libcan_int min_x, max_x, min_y, max_y;
+			get_extremes(min_x,max_x,min_y,max_y, antialias, height, width);
+			plane<bool> ad(min_x, max_x, min_y, max_y, 1);
+			res.add(ad);
+		}
 	}
+	
+	
+
+	
+	return res;
 }
 
 void
-shape::get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& max_x, libcan_int& max_y, const bool& antialias) {
-	_type->get_extremes(min_x, max_x, min_y, max_y);
+shape::get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& min_y, libcan_int& max_y, const bool& antialias, const libcan_int height, const libcan_int width) const {
+	_type.get_extremes(min_x, max_x, min_y, max_y);
 	if (antialias) {
 		min_x *= 2;
 		max_x *= 2;
@@ -90,14 +115,13 @@ shape::get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& max_x, lib
 
 
 plane<RGBa> 
-shape::get_pixels(const libcan_int height, const libcan_int width, const bool& antialias, const plane<bool>& where_not_paint, bool& done) const {
+shape::get_pixels(const libcan_int height, const libcan_int width, const bool& antialias, const plane<bool>& where_not_paint, const bool& force) {
 	
-	if (_painted) {
+	if (_painted && !force) {
 		return _pixels;
 	} 
 	
 	_painted = true;
-	_changed = false;
 	
 	const shape_type* type_copy = &_type; //kvuli antialiasu :/
 	if (antialias) {
@@ -115,15 +139,16 @@ shape::get_pixels(const libcan_int height, const libcan_int width, const bool& a
 	
 	libcan_int min_x, max_x, min_y, max_y;
 	
-	get_extremes(min_x,max_x,min_y,max_y, antialias);
+	get_extremes(min_x,max_x,min_y,max_y, antialias, height, width);
 	
 	
 	//------------------------------------------------co kdyz vubec nemusim kreslit?
 	if (where_not_paint.includes_square(min_x, min_y, max_x, max_y)) {
-		done = false;
+		//RGBa blueshit(0,0,255);
+		//return where_not_paint.flatten_plane<RGBa>(blueshit, 1);
+		
 		return plane<RGBa>();	
 	}
-	done=true;
 	
 
 	//------------------------------------------------jdu kreslit!!!!!

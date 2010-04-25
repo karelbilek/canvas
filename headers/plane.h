@@ -2,10 +2,18 @@
 #define PL_INC
 
 #include "interval.h" //kazdy radek je interval
+#include <vector>
 
 #define __real_height (_end_height - _start_height)
 
 namespace libcan {
+	
+	struct info {
+		libcan_int min_x;
+		libcan_int max_x;
+		libcan_int y;
+	};
+	
 
 	template<class T>
 	class plane {
@@ -27,6 +35,7 @@ namespace libcan {
 		 */
 	public:
 		typedef interval<T>* T_intervals;
+		typedef std::list<interval_content<T> > int_cont;
 		
 	private:	
 		
@@ -71,6 +80,8 @@ namespace libcan {
 		libcan_int get_pivot_width() const {return _pivot_width;}
 		
 			//klasicke gettery
+			
+		std::vector<info> all_infos() const;
 		
 		libcan_int first_non_zero() const;
 		libcan_int last_non_zero() const;
@@ -84,6 +95,7 @@ namespace libcan {
 		libcan_int most_left() const;
 		libcan_int most_right() const;
 		
+		bool is_empty() const;
 		
 		T_list get_row(const libcan_int y) const;
 			//vrati konkretni radek v listu paru <T, rozsah>
@@ -100,7 +112,10 @@ namespace libcan {
 		void add_more(const libcan_int start_x, const libcan_int end_x, const libcan_int y, const T& what);
 			//nastavi na y radku vse od start_x do end_x na what (tj, prida interval, mozna neco upravi)
 		
-		plane<T> move(const libcan_int pivot_width, const libcan_int start_height);
+		plane<T> move_relative(const libcan_int x, const libcan_int y);
+		
+		
+		plane<T> move(const libcan_int pivot_width, const libcan_int pivot_height);
 			//posune cely plane, aby mel "novy" pivot_width a start_height
 			//pozor, sam se sebou neposune, ale posunty VRACI
 		
@@ -177,6 +192,39 @@ namespace libcan {
 	}
 	
 	//--------------------------------GETTERS
+	
+	
+	template <class T> 
+	std::vector<info>
+	plane<T>::all_infos() const {
+		
+		std::vector<info> res;
+		
+		for (libcan_int i = 0; i < __real_height; ++i) {
+			int_cont ob = _intervals[i].get_all();
+			typename int_cont::const_iterator iter;
+			for (iter=ob.begin() ; iter != ob.end(); ++iter ) {
+				info newinfo;
+				newinfo.y = i + _start_height;
+				newinfo.min_x = iter->_start;
+				newinfo.max_x = iter->_end;
+				res.push_back(newinfo);
+			}
+		}
+		return res;
+	}
+	
+	template <class T> 
+	bool
+	plane<T>::is_empty() const {
+		for (libcan_int i = 0; i < __real_height; ++i) {
+			if (! _intervals[i].is_empty()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	template <class T> 
 	libcan_int
 	plane<T>::most_left() const {
@@ -232,6 +280,7 @@ namespace libcan {
 		}
 		return _end_height;
 	}
+	
 
 	template <class T> 
 	libcan_int
@@ -309,7 +358,7 @@ namespace libcan {
 	plane<T>::selective_replace(const plane<T>& other, const plane<bool>& where){
 		interval<bool>* its = where.get_intervals();
 		for (int i = 0; i < __real_height; ++i) {
-			_intervals[i].selective_set(other._intervals[i], where[i]);
+			_intervals[i].selective_set(other._intervals[i], its[i]);
 		}
 	}
 	
@@ -409,6 +458,11 @@ namespace libcan {
 		return result;
 	}
 	
+	template <class T> 
+	plane<T>
+	plane<T>::move_relative(const libcan_int x, const libcan_int y) {
+		return move(_pivot_width + x, _pivot_height + y);
+	}
 	
 	template <class T> 
 	plane<T>

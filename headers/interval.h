@@ -5,6 +5,9 @@
 
 namespace libcan {
 	
+
+	
+	
 	template <class T>
 	struct interval_content {
 		T _cont;
@@ -112,7 +115,8 @@ namespace libcan {
 			
 		void selective_set(const interval<T>& what, const interval<bool>& where);
 		
-		void reduce(const interval<bool>& how);
+		void reduce(const interval<bool>& how, interval<T>& res) const;
+		interval<T>* reduce_one(libcan_int how_start, libcan_int how_end) const;
 		
 		void set_more(const libcan_int start, const libcan_int end, const T& what);
 		void set_one(const libcan_int where, const T& what);
@@ -161,44 +165,44 @@ namespace libcan {
 	
 	template<class T>
 	interval<T>* 
-	interval<T>::reduce_one(libcan_int how_begin, libcan_int how_end) const {
-		if (_begin <= how_begin) {
-			if (_end < how_begin) {
+	interval<T>::reduce_one(libcan_int how_start, libcan_int how_end) const {
+		if (_start <= how_start) {
+			if (_end < how_start) {
 				if (_right!=NULL) {
-					return _right->reduce_one(how_begin, how_end);
+					return _right->reduce_one(how_start, how_end);
 				} else {
 					return NULL;
 				}
 			} else if (_end <= how_end) {
-				interval<T>* res = new interval<T>(how_begin, _end, _content);
+				interval<T>* res = new interval<T>(how_start, _end, _content);
 				if (_right!=NULL && _end<how_end) {
 					res->_right = _right->reduce_one(_end+1, how_end);
 				}
 				return res;
 			} else {
 				//_end > how_end
-				return new interval<T>(how_begin, how_end, _content);
+				return new interval<T>(how_start, how_end, _content);
 			}
-		} else if (_begin<=how_end) {
+		} else if (_start<=how_end) {
 			if (_end <= how_end) {
-				interval<T>* res = new interval<T>(_begin, _end, _content);
+				interval<T>* res = new interval<T>(_start, _end, _content);
 				if (_left!=NULL) {
-					res->_left = _left->reduce_one(how_begin, _begin-1);
+					res->_left = _left->reduce_one(how_start, _start-1);
 				}
 				if (_right!=NULL && how_end > _end) {
 					res->_right = _right->reduce_one(_end+1, how_end);
 				}
 				return res;
 			} else {
-				interval<T>* res = new interval<T>(_begin, how_end, _content);
-				if (_left!=null) {
-					res->_left = _left->reduce_one(how_begin, _begin-1);
+				interval<T>* res = new interval<T>(_start, how_end, _content);
+				if (_left!=NULL) {
+					res->_left = _left->reduce_one(how_start, _start-1);
 				}
 				return res;
 			}
 		} else {
 			if (_left!=NULL) {
-				return _left->reduce_one(how_begin, how_end);
+				return _left->reduce_one(how_start, how_end);
 			} else {
 				return NULL;
 			}
@@ -391,7 +395,7 @@ namespace libcan {
 	}
 	
 	template<class T>void 
-	interval<T>::add_another(const interval<T>& other, bool add=1) {
+	interval<T>::add_another(const interval<T>& other, bool add) {
 		if (!other._empty) {
 			add_more(other._start, other._end, other._content, add);
 			if (other._left!=NULL) {
@@ -508,7 +512,7 @@ namespace libcan {
 	
 	template<class T>
 	void 
-	interval<T>::add_more(const libcan_int start, const libcan_int end, const T& what, bool add=1) {
+	interval<T>::add_more(const libcan_int start, const libcan_int end, const T& what, bool add) {
 		
 		T new_content = add ? (_content + what) : what;
 		
@@ -618,7 +622,7 @@ namespace libcan {
 	
 	template<class T>
 	void 
-	interval<T>::add_one(const libcan_int where, const T& what, bool add = 1) {
+	interval<T>::add_one(const libcan_int where, const T& what, bool add) {
 		T new_content = add ? (_content + what) : what;
 		
 		if (_empty) {

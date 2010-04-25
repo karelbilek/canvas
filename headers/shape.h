@@ -48,6 +48,7 @@ namespace libcan {
 		plane<RGBa> _pixels;
 		bool _changed;
 		bool _painted;
+		bool _footprint_given;
 		plane<bool> _old_footprint;
 		plane<bool> _new_footprint;
 		
@@ -56,18 +57,24 @@ namespace libcan {
 		
 		static bool compare_by_row(const moved_arrays& a, const moved_arrays& b);
 		
+		void destroying_change();
+		void get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& max_x, libcan_int& max_y, const bool& antialias, const libcan_int height, const libcan_int width) const;
+		
 	public:
-		shape_style& get_style(const bool& will_change) const;
+		
+		bool is_changed() const;
+		
+		shape_style& get_style(const bool& will_change);
 		
 		shape(const shape_style& style, const shape_type& type);
 			
-		plane<RGBa> get_pixels(const libcan_int height, const libcan_int width, const bool antialias, const plane<bool>& where_not_paint, bool& done) const;
+		plane<RGBa> get_pixels(const libcan_int height, const libcan_int width, const bool& antialias, const plane<bool>& where_not_paint, const bool& force=false);
 		
 		void rotate(libcan_float angle);
 		void resize(libcan_float quoc);
 		void move(const point& where);
 		
-		plane<bool> get_footprint() const;
+		plane<bool> get_footprint(const bool& antialias, const libcan_int height, const libcan_int width);
 		
 		
 		

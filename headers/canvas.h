@@ -25,8 +25,9 @@ namespace libcan {
 		
 		
 	public:
+		bool should_paint() const;
 		
-		plane<bool> what_to_paint() const;
+		plane<bool> what_to_paint();
 		
 		canvas(const size_t width, const size_t height, const RGBa& background, bool antialias);
 						//vytvori novy canvas s sirkou/delkou...
@@ -36,11 +37,11 @@ namespace libcan {
 		~canvas();
 						//smaz canvas
 		
-		matrix<libcan_component> get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) const; 
+		matrix<libcan_component> get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos); 
 						//vrat matrix s temahle pozicema
 						//NENI const, viz niz
 						
-		plane<RGBa> get_plane() const;
+		plane<RGBa> get_plane();
 						//vrati plane nakresleny
 						//NENI CONST
 						//sou to sice "gettery", ale az ty gettery rikaji potomkum "nakreslete se!"
