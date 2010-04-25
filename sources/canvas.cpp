@@ -50,13 +50,18 @@ canvas::change_order(size_t from, size_t to){
 
 canvas::canvas(const size_t width, const size_t height, const RGBa& background, bool antialias) :
   _antialias(antialias),
+  _last_antialias(),
+  _first_paint(true),
   _height(height),
   _width(width),
   _background(background),
-  _shapes() {}
+  _shapes(),
+  _saved_plane(){}
 
 canvas::canvas() :
   _antialias(false),
+  _last_antialias(),
+  _first_paint(true),
   _height(1),
   _width(1),
   _background(),
@@ -72,6 +77,7 @@ canvas::~canvas() {
 
 matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) const {
 	small quoc = (_antialias?2:1);
+
 	
 	plane<RGBa> all_plane = get_plane();
 	matrix<libcan_component> all_matrix(quoc*_width,quoc*_height,4);
@@ -111,29 +117,52 @@ canvas::get_colors(libcan_component* p_red, libcan_component* p_green, libcan_co
 	_background.get_colors(p_red, p_green, p_blue, p_alpha);
 }
 
- plane<RGBa> 
+plane<bool>
+canvas::what_to_paint() const {
+	small quoc = (_antialias?2:1);	
+	plane<bool> res(0, quoc*_height);
+	for (list<shape>::const_iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
+		res.add((*i).get_footprint(_antialias));
+	}
+	return res;
+	
+}
+
+plane<RGBa> 
 canvas::get_plane() const  {
 	RGBa full(0,0,0,255);
 	
 	small quoc = (_antialias?2:1);
 	plane<RGBa> all_plane(0, quoc*_height);	
 	
+	plane<bool> not_to_paint(0, quoc*_height);
+	plane<bool> should_paint;
+	if (!((_first_paint) || (_last_antialias!=_antialias))) {
+		//neni to poprve, tj. ma smysl resit, co prekreslovat
+		should_paint = what_to_paint();
+		not_to_paint = should_paint.negative(1, 0, quoc*_width);
+	}
 	
-	plane<bool> painted_so_far(0,quoc*_height,0);
-	bool done;
+	//plane<bool> painted_so_far(0,quoc*_height,0);
+	
 	
 	for (list<shape>::const_iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
+		bool done;
 		
-		
-		plane<RGBa> pixels = (*i).get_pixels(quoc*_height, quoc*_width, _antialias, painted_so_far, done);
+		plane<RGBa> pixels = (*i).get_pixels(quoc*_height, quoc*_width, _antialias, not_to_paint, done);
 		if (done) {
 			all_plane.add(pixels);
-			painted_so_far.add(pixels.flatten_plane<bool>(1, full));
-			painted_so_far = painted_so_far.negative(1, 0, quoc*_height).negative(1, 0, quoc*_height);
+			not_to_paint.add(pixels.flatten_plane<bool>(1, full));
 		}
 	}
 		//tohle je mozna antiintuitivni, ale kreslim zeshora dolu, tj. pozadi prictu jako posledni
 	all_plane.add(plane<RGBa>(0, quoc*_height, 0, quoc*_width, _background));
+	
+	if (!((_first_paint) || (_last_antialias!=_antialias))) {
+		_saved_plane.selective_replace(all_plane, should_paint);
+	} else {
+		_saved_plane = all_plane;
+	}
 	
 	return all_plane;
 }

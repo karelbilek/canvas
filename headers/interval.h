@@ -69,6 +69,8 @@ namespace libcan {
 		libcan_int get_start() const;
 		libcan_int get_end() const;
 		
+		T get_this() const;
+		
 		const interval<T> get_left() const;
 		const interval<T> get_right() const;
 		
@@ -107,15 +109,25 @@ namespace libcan {
 		
 		contents get_all() const;
 			//vrati obsahy vsech svych deti, *vcetne* sebe
+			
+		void selective_set(const interval<T>& what, const interval<bool>& where);
 		
-		void add_more(const libcan_int start, const libcan_int end, const T& what);
+		void reduce(const interval<bool>& how);
+		
+		void set_more(const libcan_int start, const libcan_int end, const T& what);
+		void set_one(const libcan_int where, const T& what);
+			//jenom zavola add_more/one s add=0
+		
+		
+		void add_more(const libcan_int start, const libcan_int end, const T& what, bool add=1);
 			//prida novy interval - pokud se s nicim nekryje. Pokud ano, vse se upravi.
 		
-		void add_one(const libcan_int where, const T& what);
+		void add_one(const libcan_int where, const T& what, bool add=1);
 			//Prida jeden "bod" - napr. mam interval 4-8, pridam 3, interval se zmeni na 3-8.
 			//Tady je videt to mysleni "po pixelech" - ano, je to diskretni :)
 		
-		void add_another(const interval<T>& other);
+		void add_another(const interval<T>& other, bool add=1);
+		
 		
 		interval<T>* add_far_right(interval<T>* other);
 		
@@ -130,6 +142,76 @@ namespace libcan {
 		template <class U>
 		interval<U>* flatten_interval(const U& what, const T& min) const;
 	};
+	
+	template<class T>
+	void
+	interval<T>::reduce(const interval<bool>& how, interval<T>& res) const {
+		interval<T>* reduced = reduce_one(how.get_start(), how.get_end());
+		if (reduced!=NULL) {
+			res.add_another(*reduced);
+		}
+		delete reduced;
+		if (how.has_left()) {
+			reduce(how.get_left(), res);
+		}
+		if (how.has_right()) {
+			reduce(how.get_right(), res);
+		}
+	}
+	
+	template<class T>
+	interval<T>* 
+	interval<T>::reduce_one(libcan_int how_begin, libcan_int how_end) const {
+		if (_begin <= how_begin) {
+			if (_end < how_begin) {
+				if (_right!=NULL) {
+					return _right->reduce_one(how_begin, how_end);
+				} else {
+					return NULL;
+				}
+			} else if (_end <= how_end) {
+				interval<T>* res = new interval<T>(how_begin, _end, _content);
+				if (_right!=NULL && _end<how_end) {
+					res->_right = _right->reduce_one(_end+1, how_end);
+				}
+				return res;
+			} else {
+				//_end > how_end
+				return new interval<T>(how_begin, how_end, _content);
+			}
+		} else if (_begin<=how_end) {
+			if (_end <= how_end) {
+				interval<T>* res = new interval<T>(_begin, _end, _content);
+				if (_left!=NULL) {
+					res->_left = _left->reduce_one(how_begin, _begin-1);
+				}
+				if (_right!=NULL && how_end > _end) {
+					res->_right = _right->reduce_one(_end+1, how_end);
+				}
+				return res;
+			} else {
+				interval<T>* res = new interval<T>(_begin, how_end, _content);
+				if (_left!=null) {
+					res->_left = _left->reduce_one(how_begin, _begin-1);
+				}
+				return res;
+			}
+		} else {
+			if (_left!=NULL) {
+				return _left->reduce_one(how_begin, how_end);
+			} else {
+				return NULL;
+			}
+		}
+	}
+	
+	template<class T>
+	void 
+	interval<T>::selective_set(const interval<T>& what, const interval<bool>& where){
+		interval<T> reduced;
+		what.reduce(where, reduced);
+		add_another(reduced, 0);
+	}
 	
 	template<class T>
 	interval<T>*
@@ -158,13 +240,13 @@ namespace libcan {
 		if ((_start <= min_x) && (_end >= max_x)) {
 			return NULL;
 		} else if (_start <= min_x) {
-			
 			//jsem-li vlevo...
 			
 			libcan_int bigger_left = __maximum((_end+1), min_x);
 			if (_right == NULL) {
 				return new interval<T>(bigger_left, max_x, what);
 			} else {
+				
 				return _right->negative(what, bigger_left, max_x);
 			}
 			
@@ -182,14 +264,21 @@ namespace libcan {
 			//jsem-li vprostred..
 			libcan_int on_left = _start - 1;
 			libcan_int on_right = _end + 1;
-			interval<T>* left_side = NULL;
+			interval<T>* left_side;
+			interval<T>* right_side;
+			
 			if (_left!=NULL) {
 				left_side = _left->negative(what, min_x, on_left);
+			} else {
+				left_side = new interval<T>(min_x, on_left, what);
 			}
-			interval<T>* right_side = NULL;
+			
 			if (_right!=NULL) {
 				right_side = _right->negative(what, on_right, max_x);
+			} else {
+				right_side = new interval<T>(on_right, max_x, what);
 			}
+			
 			if (left_side == NULL) {
 				return right_side;
 			}
@@ -302,14 +391,14 @@ namespace libcan {
 	}
 	
 	template<class T>void 
-	interval<T>::add_another(const interval<T>& other) {
+	interval<T>::add_another(const interval<T>& other, bool add=1) {
 		if (!other._empty) {
-			add_more(other._start, other._end, other._content);
+			add_more(other._start, other._end, other._content, add);
 			if (other._left!=NULL) {
-				add_another(*other._left);
+				add_another(*other._left, add);
 			} 
 			if (other._right!=NULL) {
-				add_another(*other._right);
+				add_another(*other._right, add);
 			}
 		}
 		
@@ -407,9 +496,21 @@ namespace libcan {
 	
 	template<class T>
 	void 
-	interval<T>::add_more(const libcan_int start, const libcan_int end, const T& what) {
+	interval<T>::set_one(const libcan_int where, const T& what) {
+		add_more(where, what, 0);	
+	}
+	
+	template<class T>
+	void 
+	interval<T>::set_more(const libcan_int start, const libcan_int end, const T& what) {
+		add_more(start, end, what, 0);	
+	}
+	
+	template<class T>
+	void 
+	interval<T>::add_more(const libcan_int start, const libcan_int end, const T& what, bool add=1) {
 		
-		
+		T new_content = add ? (_content + what) : what;
 		
 		if (_empty) {
 			_empty= false;
@@ -438,7 +539,7 @@ namespace libcan {
 				if (_left == NULL) {
 					_left = new interval<T> (start, smaller, what);
 				} else {
-					_left -> add_more(start, smaller, what);
+					_left -> add_more(start, smaller, what,add);
 						//pokud vlevo neco je, musime to poslat jemu
 						
 					_left -> check();
@@ -453,7 +554,7 @@ namespace libcan {
 					
 					_right = new interval<T> (bigger, end, what);
 				} else {
-					_right -> add_more(bigger, end, what);
+					_right -> add_more(bigger, end, what,add);
 					_right -> check();
 				}
 			}
@@ -463,7 +564,7 @@ namespace libcan {
 					//    =========
 					//  --------------
 					//ten zacatek a konec je doresen, zbyva jenom zmichat sam sebe s tim, co prislo
-				_content = _content + what;
+				_content = new_content;
 		
 			} else if (start <= _start && end < _end && end >= _start) {
 					//      =============
@@ -475,7 +576,7 @@ namespace libcan {
 				
 				libcan_int b = _start;
 				_start = end + 1;
-				add_more(b, end, _content + what);
+				add_more(b, end, new_content,add);
 		
 		
 			} else if (start > _start && end >= _end && start <= _end) {
@@ -485,7 +586,7 @@ namespace libcan {
 
 				libcan_int e = _end;
 				_end = start - 1;
-				add_more(start, e, _content + what);
+				add_more(start, e, new_content,add);
 				
 				
 		
@@ -504,10 +605,10 @@ namespace libcan {
 				_end = end;
 				
 				
-				_content = _content + what;
+				_content = new_content;
 				
-				add_more(old_start, start-1, old_content); //vlevo, ty ukazatele si to vyresi
-				add_more(end+1, old_end, old_content); //vpravo
+				add_more(old_start, start-1, old_content,add); //vlevo, ty ukazatele si to vyresi
+				add_more(end+1, old_end, old_content,add); //vpravo
 				
 		
 			}
@@ -517,7 +618,8 @@ namespace libcan {
 	
 	template<class T>
 	void 
-	interval<T>::add_one(const libcan_int where, const T& what) {
+	interval<T>::add_one(const libcan_int where, const T& what, bool add = 1) {
+		T new_content = add ? (_content + what) : what;
 		
 		if (_empty) {
 			_empty= false;
@@ -536,10 +638,10 @@ namespace libcan {
 			} else if (where == _start) {
 				//takovy mozna hack, ale co
 				++_start;
-				add_one(where, _content + what);
+				add_one(where, new_content,add);
 			} else if (where == _end) {
 				--_end;
-				add_one(where, _content + what);
+				add_one(where, new_content,add);
 					//tady si nejsem jist, jestli je tohle dost efektivni
 		
 			} else if (where == _start - 1 && _content == what) {
@@ -556,9 +658,9 @@ namespace libcan {
 				libcan_int end = _end;
 				_end = where - 1;
 					//nejdriv se posunu pred to,
-				add_one(where, _content + what);
+				add_one(where, new_content,add);
 					//pak pridam tu jednu prostredni
-				add_more(where+1, end, _content);
+				add_more(where+1, end, _content,add);
 					//a nakonec pujde ta vpravo
 		
 			} else if (where < _start) {
@@ -567,7 +669,7 @@ namespace libcan {
 					_left = new interval<T>(where, where, what);
 				
 				} else {
-					_left->add_one(where, what);
+					_left->add_one(where, what,add);
 				}
 		
 			} else if (where > _end) {
@@ -575,7 +677,7 @@ namespace libcan {
 				if (_right == NULL) {
 					_right = new interval<T>(where, where, what);
 				} else {
-					_right->add_one(where, what);
+					_right->add_one(where, what,add);
 				}
 		
 			}
@@ -584,6 +686,12 @@ namespace libcan {
 	}
 
 	//----------------------------GETTERS
+	 
+	template<class T>
+	T 
+	interval<T>::get_this() const {
+		return _content;
+	}
 	
 	template<class T>
 	T 

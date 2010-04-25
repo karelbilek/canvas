@@ -45,12 +45,20 @@ namespace libcan {
 		shape_style _style;
 		shape_type _type;
 		
+		plane<RGBa> _pixels;
+		bool _changed;
+		bool _painted;
+		plane<bool> _old_footprint;
+		plane<bool> _new_footprint;
+		
 
 		static plane<bool> paint(const shape_type* const type, libcan_int min_y, libcan_int max_y) ;
 		
 		static bool compare_by_row(const moved_arrays& a, const moved_arrays& b);
 		
 	public:
+		shape_style& get_style(const bool& will_change) const;
+		
 		shape(const shape_style& style, const shape_type& type);
 			
 		plane<RGBa> get_pixels(const libcan_int height, const libcan_int width, const bool antialias, const plane<bool>& where_not_paint, bool& done) const;
@@ -58,6 +66,9 @@ namespace libcan {
 		void rotate(libcan_float angle);
 		void resize(libcan_float quoc);
 		void move(const point& where);
+		
+		plane<bool> get_footprint() const;
+		
 		
 		
 

@@ -13,14 +13,20 @@ namespace libcan {
 	private:
 		
 		bool _antialias; //je zapnuty antialias?
+		bool _last_antialias;
+		bool _first_paint;
 		libcan_int _height;
 		libcan_int _width; //sirka/vyska
 		                
 		RGBa _background; 
 		
 		std::list<shape> _shapes;
+		plane<RGBa> _saved_plane;
+		
 		
 	public:
+		
+		plane<bool> what_to_paint() const;
 		
 		canvas(const size_t width, const size_t height, const RGBa& background, bool antialias);
 						//vytvori novy canvas s sirkou/delkou...

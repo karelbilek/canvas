@@ -2,6 +2,7 @@
 #include "moved_arrays.h"
 #include "point.h"
 #include "all_shapes.h"
+#include "RGBa.h"
 
 
 
@@ -21,24 +22,82 @@ shape_style(libcan_int line_size, const RGBa& line_color, const RGBa& fill_color
   _line_color(line_color),
   _fill_color(fill_color) {}
 
+shape_style& 
+shape::get_style(const bool& will_change) const {
+	if (will_change) {
+		initiate_change();
+	}
+	return _style;
+}
+
+void
+shape::initiate_change() {
+	_old_footprint = _new_footprint;
+	_painted = false;
+	_changed = true;
+}
+
 void 
 shape::rotate(libcan_float angle){
+	initiate_change();
 	_type.rotate(angle);
 }
 
 void 
 shape::resize(libcan_float quoc){
+	initiate_change();
 	_type.resize(quoc);
 }
 
 void 
 shape::move(const point& where) {
+	initiate_change();
 	_type.move(where);
+}
+
+plane<bool> 
+shape::get_footprint(const bool& antialias) const {
+	if (_changed || !_painted) {
+		libcan_int min_x, max_x, min_y, max_y;
+
+		get_extremes(min_x,max_x,min_y,max_y, antialias);
+		
+		plane<bool> res(min_x, max_x, min_y, max_y);
+		if (_painted) {
+			res.add(_old_footprint);
+		}
+		return res;
+	} else {
+		return _new_footprint;
+	}
+}
+
+void
+shape::get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& max_x, libcan_int& max_y, const bool& antialias) {
+	_type->get_extremes(min_x, max_x, min_y, max_y);
+	if (antialias) {
+		min_x *= 2;
+		max_x *= 2;
+		min_y *= 2;
+		max_y *= 2;
+	}
+	
+	min_x = __maximum(min_x - 3.2*_style._line_size, 0);
+	max_x = __minimum(max_x + 3.2*_style._line_size, height);
+	min_y = __maximum(min_y - 3.2*_style._line_size, 0);
+	max_y = __minimum(max_y + 3.2*_style._line_size, width);
 }
 
 
 plane<RGBa> 
-shape::get_pixels(const libcan_int height, const libcan_int width, const bool antialias, const plane<bool>& where_not_paint, bool& done) const {
+shape::get_pixels(const libcan_int height, const libcan_int width, const bool& antialias, const plane<bool>& where_not_paint, bool& done) const {
+	
+	if (_painted) {
+		return _pixels;
+	} 
+	
+	_painted = true;
+	_changed = false;
 	
 	const shape_type* type_copy = &_type; //kvuli antialiasu :/
 	if (antialias) {
@@ -56,14 +115,8 @@ shape::get_pixels(const libcan_int height, const libcan_int width, const bool an
 	
 	libcan_int min_x, max_x, min_y, max_y;
 	
-	type_copy->get_extremes(min_x,max_x,min_y,max_y);
+	get_extremes(min_x,max_x,min_y,max_y, antialias);
 	
-	//------------------------------------------------pridam tloustku cary
-	min_x = __maximum(min_x - 3.2*_style._line_size, 0);
-	max_x = __minimum(max_x + 3.2*_style._line_size, height);
-	min_y = __maximum(min_y - 3.2*_style._line_size, 0);
-	max_y = __minimum(max_y + 3.2*_style._line_size, width);
-
 	
 	//------------------------------------------------co kdyz vubec nemusim kreslit?
 	if (where_not_paint.includes_square(min_x, min_y, max_x, max_y)) {
@@ -167,6 +220,10 @@ shape::get_pixels(const libcan_int height, const libcan_int width, const bool an
 		delete type_copy;
 	}
 	
+	
+	_pixels = result;
+	RGBa empty(0,0,0,0);
+	_new_footprint = _pixels.flatten_plane<bool>(1,empty);
 	return result;
 
 

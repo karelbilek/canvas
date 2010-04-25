@@ -107,7 +107,9 @@ namespace libcan {
 		void add(const plane<T>& other);
 			//slouci s jinou plochou 
 			//POZOR - z jine plochy vezme jen veci od _start_height po _end_height, zbytek ignoruje
-			
+		
+		void selective_replace(const plane<T>& other, const plane<bool>& where);
+		
 		plane<T>& operator=(const plane<T>& other);
 		
 		bool includes_square(const libcan_int min_x, const libcan_int min_y, const libcan_int max_x, const libcan_int max_y) const;
@@ -301,6 +303,15 @@ namespace libcan {
 	}
 	
 	//--------------------------------------SETTERS
+	
+	template<class T>
+	void
+	plane<T>::selective_replace(const plane<T>& other, const plane<bool>& where){
+		interval<bool>* its = where.get_intervals();
+		for (int i = 0; i < __real_height; ++i) {
+			_intervals[i].selective_set(other._intervals[i], where[i]);
+		}
+	}
 	
 	template<class T>
 	plane<T>&
