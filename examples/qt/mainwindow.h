@@ -111,6 +111,8 @@ private slots:
 
     void change_status();
 
+    void repaint_wanted();
+
 };
 
 #endif // MAINWINDOW_H

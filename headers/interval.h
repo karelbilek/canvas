@@ -703,7 +703,7 @@ namespace libcan {
 		//fakt trivialni rekurze
 		
 		if (_empty) {
-			return 0;
+			return T();
 		} else {
 			if (_start <= where && _end >= where) {
 				return _content;

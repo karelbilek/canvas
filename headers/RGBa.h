@@ -40,7 +40,9 @@ namespace libcan{
 		void set_red(const libcan_component red);
 		void set_green(const libcan_component green);
 		void set_blue(const libcan_component blue);
-		void get_colors(libcan_component* p_red, libcan_component* p_green, libcan_component* p_blue, libcan_component* p_alpha) const;
+		void get_colors_pointer(libcan_component* p_red, libcan_component* p_green, libcan_component* p_blue, libcan_component* p_alpha) const;
+		
+		void get_colors(libcan_component &red, libcan_component &green, libcan_component &blue, libcan_component &alpha) const;
 		
 		RGBa(const basic_colors color);
 		

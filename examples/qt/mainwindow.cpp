@@ -8,6 +8,7 @@
 #include "RGBa.h"
 #include "point.h"
 #include "all_shapes.h"
+#include "plane.h"
 
 using namespace libcan;//::canvas
 
@@ -45,14 +46,34 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::paintEvent(QPaintEvent *)
+void MainWindow::paintEvent(QPaintEvent *w)
 {
 
-    QImage muj = qimage_from_canvas(c);//.toQImage();
-    QPixmap muj2 = QPixmap::fromImage(muj);
-    QPainter painter(this);
+    /*QImage muj = qimage_from_canvas(c);//.toQImage();
+    QPixmap muj2 = QPixmap::fromImage(muj);*/
 
-    painter.drawPixmap(0,0,muj2);
+    plane<RGBa> colors = c.get_plane();
+
+    QPainter painter(this);
+    QVector<QRect> rects = w->region().rects();
+    for (QVector<QRect>::iterator it = rects.begin(); it < rects.end(); ++it) {
+        for (libcan_int y = it->top(); y<=it->bottom(); ++y) {
+            for (libcan_int x = it->left(); x<=it->right(); ++x) {
+                libcan_component rd,gr,bl,al;
+
+                colors.get(x, y).get_colors(rd, gr, bl, al);
+                if (rd!=255 || gr!=0 || bl!=0 || al!=255) {
+                    int whatever = 3;
+                    whatever +=2;
+                    whatever = whatever;
+                }
+                painter.setPen(QColor(rd, gr, bl, al));
+                painter.drawPoint(x,y);
+            }
+         }
+    }
+
+
 
 }
 
@@ -66,6 +87,19 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
     }
     change_status();
 
+}
+
+void MainWindow::repaint_wanted() {
+    QRegion region;
+    if (c.should_paint()) {
+        std::vector<libcan_info> infos = c.what_to_paint().all_infos();
+        for (std::vector<libcan_info>::iterator it = infos.begin(); it < infos.end(); ++it) {
+            QRegion newregion(it->min_x, it->y, (it->max_x +1 - it->min_x), 1);
+            region = region.united(newregion);
+        }
+    }
+    QVector<QRect> rects = region.rects();
+    repaint(region);
 }
 
 void MainWindow::paint_to_canvas() {
@@ -108,7 +142,7 @@ void MainWindow::paint_to_canvas() {
     }
 
     c.push_front(style, type);
-    repaint();
+    repaint_wanted();
 }
 
 
@@ -466,13 +500,13 @@ void MainWindow::on_action12_3_triggered()
 void MainWindow::on_actionZapnout_triggered()
 {
     c.set_antialias(true);
-    repaint();
+    repaint_wanted();
 }
 
 void MainWindow::on_actionVypnout_triggered()
 {
     c.set_antialias(false);
-    repaint();
+    repaint_wanted();
 }
 
 void MainWindow::on_actionBarva_triggered()
@@ -493,7 +527,7 @@ void MainWindow::on_pushButton_2_clicked()
     c.set_RGBa(RGBa(ui->R->value(), ui->G->value(), ui->B->value(), ui->A->value()));
 
     ui->barvaCanvas->setVisible(false);
-    repaint();
+    repaint_wanted();
 }
 
 void MainWindow::on_actionObd_ln_k_triggered()
@@ -515,7 +549,7 @@ void MainWindow::on_actionOto_vrchn_o_30_triggered()
     if (c.count()){
         shape& s = c.get_front();
         s.rotate(30);
-        repaint();
+        repaint_wanted();
     }
 }
 
@@ -524,7 +558,7 @@ void MainWindow::on_actionZmen_i_vrchn_2x_triggered()
     if (c.count()){
         shape& s = c.get_front();
         s.resize(0.5);
-        repaint();
+        repaint_wanted();
     }
 }
 
@@ -533,7 +567,7 @@ void MainWindow::on_actionZv_t_vrchn_2x_triggered()
     if (c.count()){
         shape& s = c.get_front();
         s.resize(2);
-        repaint();
+        repaint_wanted();
     }
 }
 
@@ -560,7 +594,7 @@ void MainWindow::on_pushButton_3_clicked()
             s.resize(ui->zvetseni->value());
         }
 
-        repaint();
+        repaint_wanted();
     }
 }
 
@@ -576,7 +610,7 @@ void MainWindow::on_actionPosun_o_10_0_triggered()
         s.move(point(10, 0));
 
 
-        repaint();
+        repaint_wanted();
     }
 }
 
@@ -584,7 +618,7 @@ void MainWindow::on_actionZe_za_tku_triggered()
 {
     if (c.count()){
         c.pop_front();
-        repaint();
+        repaint_wanted();
     }
 }
 
@@ -592,7 +626,7 @@ void MainWindow::on_actionZ_konce_triggered()
 {
     if (c.count()){
         c.pop_back();
-        repaint();
+        repaint_wanted();
     }
 }
 
@@ -600,7 +634,7 @@ void MainWindow::on_pushButton_5_clicked()
 {
     ui->poradi->setVisible(false);
     c.change_order(ui->odkud->value()-1, ui->kam->value());
-    repaint();
+    repaint_wanted();
 }
 
 void MainWindow::on_actionZm_nit_triggered()

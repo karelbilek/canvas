@@ -39,12 +39,20 @@ RGBa::RGBa(const libcan_component r, const libcan_component g, const libcan_comp
 
 
 //--------------------------GETTERS
-void RGBa::get_colors(libcan_component *p_red, libcan_component *p_green, libcan_component *p_blue, libcan_component *p_alpha) const {
+void RGBa::get_colors_pointer(libcan_component *p_red, libcan_component *p_green, libcan_component *p_blue, libcan_component *p_alpha) const {
 	
 	*p_red = _red;
 	*p_green = _green;
 	*p_blue = _blue;
 	*p_alpha = _alpha;
+}
+
+void RGBa::get_colors(libcan_component &red, libcan_component &green, libcan_component &blue, libcan_component &alpha) const {
+	
+	red = _red;
+	green = _green;
+	blue = _blue;
+	alpha = _alpha;
 }
 
 //----------------------------SETTERS

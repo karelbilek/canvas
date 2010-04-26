@@ -105,7 +105,7 @@
     <value type="QString">-r</value>
    </valuelist>
    <value key="abstractProcess.command" type="QString">/usr/bin/qmake</value>
-   <value key="abstractProcess.enabled" type="bool">true</value>
+   <value key="abstractProcess.enabled" type="bool">false</value>
    <value key="abstractProcess.workingDirectory" type="QString">/Users/karelbilek/Desktop/canvas/canvas/examples/qt</value>
   </valuemap>
  </data>

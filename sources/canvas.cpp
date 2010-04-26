@@ -90,7 +90,7 @@ matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t g
 		for (colors_row::iterator i = row.begin(); i != row.end(); ++i) {
 			
 			libcan_component color[4];
-			i->_cont.get_colors (color+red_pos, color+green_pos, color+blue_pos, color+alpha_pos);
+			i->_cont.get_colors_pointer (color+red_pos, color+green_pos, color+blue_pos, color+alpha_pos);
 			
 			all_matrix.set_more(__maximum(i->_start,0), i->_end, y, color);
 			
@@ -116,7 +116,7 @@ canvas::set_RGBa(const RGBa& what) {
 
 void 
 canvas::get_colors(libcan_component* p_red, libcan_component* p_green, libcan_component* p_blue, libcan_component* p_alpha) const {
-	_background.get_colors(p_red, p_green, p_blue, p_alpha);
+	_background.get_colors_pointer(p_red, p_green, p_blue, p_alpha);
 }
 
 plane<bool>
