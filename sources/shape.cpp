@@ -253,7 +253,7 @@ shape::get_pixels(const libcan_int small_height, const libcan_int small_width, c
 	
 	if (antialias) {
 		delete type_copy;
-		result = result.half(RGBa(), width);
+		//result = result.half(RGBa(), width);
 	}
 	
 

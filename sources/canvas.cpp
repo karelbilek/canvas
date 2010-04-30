@@ -127,9 +127,9 @@ canvas::what_to_paint(const bool change) {
 	plane<bool> res(0, _height);
 	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		plane<bool> what = (*i).get_footprint(_antialias, _height, _width, change);
-		/*if (_antialias) {
-			return what.half();
-		}*/
+		if (_antialias) {
+			return what.half(0,0);
+		}
 		res.add(what);
 	}
 	return res;
@@ -208,7 +208,9 @@ canvas::get_plane()  {
 	}
 	
 	_force_paint=false;
-	
+	if (_antialias) {
+		return _saved_plane.half(RGBa(), 0);
+	}
 	return _saved_plane;
 }
 

@@ -244,8 +244,8 @@ namespace libcan {
 	interval<T>*
 	interval<T>::quarter(interval<T> other, const T& background, const libcan_int& max_x) const{
 		interval<T> added = *this;
-		added.add_another(interval<T>(0, max_x, background), 3);
-		other.add_another(interval<T>(0, max_x, background), 3);
+		//added.add_another(interval<T>(0, max_x, background), 3);
+		//other.add_another(interval<T>(0, max_x, background), 3);
 		
 		added.add_another(other, 2);
 		added.check();
