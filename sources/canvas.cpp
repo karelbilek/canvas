@@ -197,7 +197,11 @@ canvas::get_plane()  {
 
 	}
 		//tohle je mozna antiintuitivni, ale kreslim zeshora dolu, tj. pozadi prictu jako posledni
-	all_plane.add(plane<RGBa>(0, _height, 0, _width, _background));
+	if (!_antialias) {
+		all_plane.add(plane<RGBa>(0, _height, 0, _width, _background));
+	} else {
+		all_plane.add(plane<RGBa>(0, _height*2, 0, _width*2, _background));
+	}
 	
 	if (!_force_paint) {
 		
