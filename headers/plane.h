@@ -114,6 +114,7 @@ namespace libcan {
 		
 		plane<T> move_relative(const libcan_int x, const libcan_int y);
 		
+		plane<T> half(const T& background, const libcan_int& max_x);
 		
 		plane<T> move(const libcan_int pivot_width, const libcan_int pivot_height);
 			//posune cely plane, aby mel "novy" pivot_width a start_height
@@ -130,10 +131,38 @@ namespace libcan {
 		bool includes_square(const libcan_int min_x, const libcan_int min_y, const libcan_int max_x, const libcan_int max_y) const;
 		
 		plane<T> negative(const T& what, const libcan_int min_x, const libcan_int max_x);
+		
+		bool is_all_same(const T& what) const;
 	};
+	
+	template <class T> 
+	plane<T> 
+	plane<T>::half(const T& background, const libcan_int& max_x) {
+		plane<T> res(_start_height/2, _end_height/2, _pivot_width/2);
+		for (int i = 0; i<__real_height/2; ++i) {
+			interval<T>* nw = _intervals[i*2].quarter(_intervals[i*2+1], background, max_x);
+			res._intervals[i] = *nw;
+			delete nw;
+		}
+		return res;
+	}
+	
+	
+	template <class T> 
+	bool
+	plane<T>::is_all_same(const T& what) const {
+		for (int i = 0; i < __real_height; i++) {
+			if (!_intervals[i].is_all_same(what)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 
 	//--------------------------------CONSTRUCTORS
+	
+	
 	template<class T>
 	plane<T>::plane() :
 	  _start_height(0),

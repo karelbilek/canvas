@@ -1,6 +1,5 @@
 #include "canvas.h"
 
-
 using namespace std;
 using namespace libcan;
 
@@ -51,8 +50,7 @@ canvas::change_order(size_t from, size_t to){
 
 canvas::canvas(const size_t width, const size_t height, const RGBa& background, bool antialias) :
   _antialias(antialias),
-  _last_antialias(),
-  _first_paint(true),
+  _force_paint(true),
   _height(height),
   _width(width),
   _background(background),
@@ -61,8 +59,7 @@ canvas::canvas(const size_t width, const size_t height, const RGBa& background, 
 
 canvas::canvas() :
   _antialias(false),
-  _last_antialias(),
-  _first_paint(true),
+  _force_paint(true),
   _height(1),
   _width(1),
   _background(),
@@ -106,12 +103,18 @@ matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t g
 
 void 
 canvas::set_antialias(const bool what) {
-	_antialias = what;
+	if (what!=_antialias) {
+		_antialias = what;
+		_force_paint = true;
+	}
 }
 
 void 
 canvas::set_RGBa(const RGBa& what) {
-	_background = what;
+	if (!(what==_background)) {
+		_background = what;
+		_force_paint = true;
+	}
 }
 
 void 
@@ -120,57 +123,72 @@ canvas::get_colors(libcan_component* p_red, libcan_component* p_green, libcan_co
 }
 
 plane<bool>
-canvas::what_to_paint() {
-	small quoc = (_antialias?2:1);	
-	plane<bool> res(0, quoc*_height);
+canvas::what_to_paint(const bool change) {
+	plane<bool> res(0, _height);
 	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
-		res.add((*i).get_footprint(_antialias, quoc*_height, quoc*_width));
+		plane<bool> what = (*i).get_footprint(_antialias, _height, _width, change);
+		/*if (_antialias) {
+			return what.half();
+		}*/
+		res.add(what);
 	}
 	return res;
 	
 }
 
 bool
+canvas::is_force_paint() const {
+	return _force_paint;
+}
+
+bool
 canvas::should_paint() const {
 	for (list<shape>::const_iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
-		if ((*i).is_changed()) {
+		if ((*i).should_paint()) {
 			return 1;
 		}
+	}
+	if (_force_paint) {
+		return 1;
 	}
 	return 0;
 }
 
+
 plane<RGBa> 
 canvas::get_plane()  {
 
-	if (!should_paint() && !((_first_paint) || (_last_antialias!=_antialias))) {
+	bool spaint = should_paint();
+	if (!spaint && !(_force_paint)) {
+		
 		return _saved_plane;
 	}
 	
 	RGBa full(0,0,0,255);
 	
-	small quoc = (_antialias?2:1);
-	plane<RGBa> all_plane(0, quoc*_height);	
+	plane<RGBa> all_plane(0, _height);	
 	
-	plane<bool> not_to_paint(0, quoc*_height);
+	plane<bool> not_to_paint(0, _height);
 	plane<bool> should_paint;
 	bool force;
-	if (!((_first_paint) || (_last_antialias!=_antialias))) {
+	if (!_force_paint) {
 		
 		//neni to poprve, tj. ma smysl resit, co prekreslovat
-		should_paint = what_to_paint();
-		not_to_paint = should_paint.negative(1, 0, quoc*_width);
+		should_paint = what_to_paint(true);
+		not_to_paint = should_paint.negative(1, 0, _width);
 		force = false;
 	} else {
 		force = true;
 	}
 	
-	//plane<bool> painted_so_far(0,quoc*_height,0);
 	
 	
 	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		
-		plane<RGBa> pixels = (*i).get_pixels(quoc*_height, quoc*_width, _antialias, not_to_paint, force);
+		plane<RGBa> pixels = (*i).get_pixels(_height, _width, _antialias, not_to_paint, force);
+		/*if (_antialias) {
+			pixels = pixels.half();
+		}*/
 		
 		
 
@@ -179,20 +197,18 @@ canvas::get_plane()  {
 
 	}
 		//tohle je mozna antiintuitivni, ale kreslim zeshora dolu, tj. pozadi prictu jako posledni
-	all_plane.add(plane<RGBa>(0, quoc*_height, 0, quoc*_width, _background));
+	all_plane.add(plane<RGBa>(0, _height, 0, _width, _background));
 	
-	if (!((_first_paint) || (_last_antialias!=_antialias))) {
+	if (!_force_paint) {
 		
-		/*plane<RGBa> blueshit(0,quoc*_height,0,quoc*_width, RGBa(0,0,terribleshit));
-		terribleshit -=30;*/
-		
-		_saved_plane.selective_replace(all_plane/*blueshit*/, should_paint);
+
+		_saved_plane.selective_replace(all_plane, should_paint);
 	} else {
 		_saved_plane = all_plane;
 	}
 	
-	_last_antialias = _antialias;
-	_first_paint=false;
+	_force_paint=false;
+	
 	return _saved_plane;
 }
 
@@ -268,4 +284,12 @@ canvas::push_front(const shape_style& style, const shape_type& type) {
 
 void canvas::push_back(const shape_style& style, const shape_type& type) {
 	push_back(shape(style, type));
+}
+
+libcan_int canvas::get_width() const{
+	return _width;
+}
+
+libcan_int canvas::get_height() const {
+	return _height;
 }

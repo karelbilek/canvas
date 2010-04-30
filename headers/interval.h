@@ -66,6 +66,25 @@ namespace libcan {
 		
 
 	public:
+		void print_all() {
+			std::cout<<"od "<<_start<<" do "<<_end<<"je "<<_content<<"\n";
+			
+			
+			if (_left==NULL) {
+			} else {
+				std::cout<<"JDU DOLEVA:\n";
+				_left->print_all();
+			}
+			
+			if (_right==NULL) {
+			} else {
+				std::cout<<"JDU DOPRAVA:\n";
+				_right->print_all();
+			}
+			std::cout<<"==========\n";
+			
+		}
+		
 		
 		libcan_int most_left() const;
 		libcan_int most_right() const;
@@ -109,6 +128,20 @@ namespace libcan {
 		
 		// void recur_check();
 		void check();
+		void check_if_right() const {
+			if (_left!=NULL) {
+				if (_left->_end >= _start) {
+					std::cout<<"OSHIT "<<_left->_end<<" >= "<<_start<<":-/ \n";
+					throw 1;
+				}
+			}
+			if (_right!=NULL) {
+				if (_right->_start <= _end) {
+					std::cout<<"OSHIT "<<_right->_start<<" <= "<<_end<<":-/ \n";
+					throw 1;
+				}
+			}	
+		}
 		
 		contents get_all() const;
 			//vrati obsahy vsech svych deti, *vcetne* sebe
@@ -117,24 +150,29 @@ namespace libcan {
 		
 		void reduce(const interval<bool>& how, interval<T>& res) const;
 		interval<T>* reduce_one(libcan_int how_start, libcan_int how_end) const;
+		interval<T>* remove_all(const T& what);
 		
 		void set_more(const libcan_int start, const libcan_int end, const T& what);
 		void set_one(const libcan_int where, const T& what);
 			//jenom zavola add_more/one s add=0
 		
 		
-		void add_more(const libcan_int start, const libcan_int end, const T& what, bool add=1);
+		void add_more(const libcan_int start, const libcan_int end, const T& what, int add=1);
 			//prida novy interval - pokud se s nicim nekryje. Pokud ano, vse se upravi.
 		
-		void add_one(const libcan_int where, const T& what, bool add=1);
+		void add_one(const libcan_int where, const T& what, int add=1);
 			//Prida jeden "bod" - napr. mam interval 4-8, pridam 3, interval se zmeni na 3-8.
 			//Tady je videt to mysleni "po pixelech" - ano, je to diskretni :)
 		
-		void add_another(const interval<T>& other, bool add=1);
+		void add_another(const interval<T>& other, int add=1);
 		
 		
 		interval<T>* add_far_right(interval<T>* other);
 		
+		interval<T>* half(bool& left, const bool on_right) const;
+		
+		
+		interval<T>* quarter(interval<T> other, const T& background, const libcan_int& max_x) const;
 		
 		
 		interval<T>& operator=(const interval<T>& other);
@@ -145,7 +183,188 @@ namespace libcan {
 			
 		template <class U>
 		interval<U>* flatten_interval(const U& what, const T& min) const;
+		
+		bool is_all_same(const T& what) const;
 	};
+	
+	template <class T> 
+	interval<T>* 
+	interval<T>::remove_all(const T& what) {
+		if (_left!=NULL) {
+			_left = _left->remove_all(what);
+		}
+		if (_right!=NULL) {
+			_right = _right->remove_all(what);
+		}
+		
+		if (what==_content) {
+			if (_left==NULL) {
+				if (_right == NULL) {
+					delete this; //rychle pryc odsud!
+					return NULL;
+				} else {
+					_start = _right->_start;
+					_end = _right->_end;
+					_content = _right->_content;
+					_left = _right->_left;
+					interval<T>* r = _right->_right;
+					_right->_right = NULL;
+					_right->_left = NULL; //kvuli destrctru
+					delete _right;
+					_right = r;
+					return this;
+				}
+			} else {
+				if (_left == NULL) {
+					_start = _left->_start;
+					_end = _left->_end;
+					_content = _left->_content;
+					_right = _left->_right;
+					interval<T>* l = _left->_left;
+					_left->_right = NULL;
+					_left->_left = NULL; //kvuli destrctru
+					delete _left;
+					_left = l;
+					return this;
+				} else {
+					//nejhorsi varianta
+					interval<T>* r = _left->add_far_right(_right);
+					_left = NULL;
+					_right = NULL;
+					delete this;
+					return r;
+				}
+			}
+		} else {
+			return this;
+		}
+	}
+	
+	template <class T> 
+	interval<T>*
+	interval<T>::quarter(interval<T> other, const T& background, const libcan_int& max_x) const{
+		interval<T> added = *this;
+		added.add_another(interval<T>(0, max_x, background), 3);
+		other.add_another(interval<T>(0, max_x, background), 3);
+		
+		added.add_another(other, 2);
+		added.check();
+		bool l;
+		//interval<T>* res = new interval<T>(added);
+		interval<T>* res = added.half(l, false);
+		res = res->remove_all(background);
+		if (res==NULL) {
+			res = new interval<T>();
+		}
+		return res;
+	}
+	
+	template <class T> 
+	interval<T>*
+	interval<T>::half(bool& left, const bool on_right) const {
+		check_if_right();
+		bool l;
+		libcan_int start = (_start % 2) ?(_start/2+1):(_start/2);
+		libcan_int end = _end / 2;
+		left = (_start%2);
+		libcan_int where = (_start / 2);
+		
+		std::cout<<"PUVODNI: start "<<_start<<", end "<<_end<<" nova start "<<start<<" novy end "<<end<<" tim padem left je "<<left<<" where je "<<where << "\n";
+		
+		if (end < start) {
+			//pouze, kdyz mam 2 stejna licha cisla
+			std::cout<<"end > start!\n";
+			if (_left==NULL) {				
+				if (_right==NULL) {
+					std::cout<<"A\n";
+					
+					if (!on_right) {
+						std::cout<<"B\n";
+						
+						left = false;
+						return new interval<T>(end, end, _content);
+					} else {
+						std::cout<<"C\n";
+						
+						return NULL;
+					}
+				} else {
+					std::cout<<"D\n";
+					
+					//bool add_left = false;
+					interval<T>* res = _right->half(l, false);
+					if (!on_right) {
+						std::cout<<"E\n";
+						
+						left = false;
+						res->add_one(where, _content, 2);
+					} 	
+					std::cout<<"F\n";
+									
+					return res;
+				}
+			} else {
+				std::cout<<"G\n";
+				
+				interval<T>* left_res = _left->half(l, false);
+				left_res->add_one(where, _content, 2);	
+				left = false;			
+				if (_right == NULL) {
+					std::cout<<"H\n";
+					
+					return left_res;
+				} else {
+					std::cout<<"I\n";
+					
+					interval<T>* right_res = _right->half(l, false);
+					return left_res->add_far_right(right_res);
+				}
+			}
+		} else {
+			std::cout<<"end <= start :D\n";
+			
+			interval<T>* res = new interval<T>(start, end, _content);
+			if (_left != NULL) {
+				interval<T>* left_res = _left->half(l, false);
+				res->_left = left_res;
+			}
+			if (_right != NULL) {
+				bool add_right;
+				interval<T>* right_res = _right->half(add_right, true);
+				res->_right = right_res;
+				if (add_right) {
+					res->add_one(_right->_start/2, _right->_content, 2);
+				}
+			}
+			if ((!on_right || res->_left!=NULL) && left) {
+				left = false;
+				res->add_one(where, _content, 2);			
+			}
+			return res;
+		}
+	}
+	
+	template<class T>
+	bool
+	interval<T>::is_all_same(const T& what) const {
+		if (_content == what) {
+			if (_left!=NULL) {
+				bool r = _left->is_all_same(what);
+				if (r) {
+					return false;
+				}
+			}
+			if (_right!=NULL) {
+				bool r = _right->is_all_same(what);
+				if (r) {
+					return false;
+				}
+			}			
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	template<class T>
 	void
@@ -395,7 +614,7 @@ namespace libcan {
 	}
 	
 	template<class T>void 
-	interval<T>::add_another(const interval<T>& other, bool add) {
+	interval<T>::add_another(const interval<T>& other, int add) {
 		if (!other._empty) {
 			add_more(other._start, other._end, other._content, add);
 			if (other._left!=NULL) {
@@ -512,9 +731,19 @@ namespace libcan {
 	
 	template<class T>
 	void 
-	interval<T>::add_more(const libcan_int start, const libcan_int end, const T& what, bool add) {
+	interval<T>::add_more(const libcan_int start, const libcan_int end, const T& what, int add) {
 		
-		T new_content = add ? (_content + what) : what;
+		T new_mixed;
+		if (add == 0){
+			new_mixed = what;
+		} else if (add == 1) {
+			new_mixed = (_content + what);
+		} else if (add == 2) {
+			new_mixed = _content * what;
+		} else if (add == 3) {
+			new_mixed = _content;
+		}
+		
 		
 		if (_empty) {
 			_empty= false;
@@ -568,7 +797,7 @@ namespace libcan {
 					//    =========
 					//  --------------
 					//ten zacatek a konec je doresen, zbyva jenom zmichat sam sebe s tim, co prislo
-				_content = new_content;
+				_content = new_mixed;
 		
 			} else if (start <= _start && end < _end && end >= _start) {
 					//      =============
@@ -580,7 +809,7 @@ namespace libcan {
 				
 				libcan_int b = _start;
 				_start = end + 1;
-				add_more(b, end, new_content,add);
+				add_more(b, end, new_mixed,0);//sic
 		
 		
 			} else if (start > _start && end >= _end && start <= _end) {
@@ -590,7 +819,7 @@ namespace libcan {
 
 				libcan_int e = _end;
 				_end = start - 1;
-				add_more(start, e, new_content,add);
+				add_more(start, e, new_mixed,0);//sic
 				
 				
 		
@@ -609,10 +838,10 @@ namespace libcan {
 				_end = end;
 				
 				
-				_content = new_content;
+				_content = new_mixed;
 				
-				add_more(old_start, start-1, old_content,add); //vlevo, ty ukazatele si to vyresi
-				add_more(end+1, old_end, old_content,add); //vpravo
+				add_more(old_start, start-1, old_content,0); //vlevo, ty ukazatele si to vyresi
+				add_more(end+1, old_end, old_content,0); //vpravo
 				
 		
 			}
@@ -622,8 +851,21 @@ namespace libcan {
 	
 	template<class T>
 	void 
-	interval<T>::add_one(const libcan_int where, const T& what, bool add) {
-		T new_content = add ? (_content + what) : what;
+	interval<T>::add_one(const libcan_int where, const T& what, int add) {
+		
+		T new_mixed;
+		if (add == 0){
+			new_mixed = what;
+		} else if (add == 1) {
+			new_mixed = (_content + what);
+		} else if (add == 2) {
+			new_mixed = _content * what;
+		} else if (add == 3) {
+			new_mixed = _content;
+		}
+		
+
+		
 		
 		if (_empty) {
 			_empty= false;
@@ -637,15 +879,15 @@ namespace libcan {
 			//taky zajimave - vlozi jen 1 pix
 			if (where == _start && _end == _start) {
 				//1 pixel na 1-ciselny interval
-				_content = _content + what;
+				_content = new_mixed;
 			
 			} else if (where == _start) {
 				//takovy mozna hack, ale co
 				++_start;
-				add_one(where, new_content,add);
+				add_one(where, new_mixed,0);
 			} else if (where == _end) {
 				--_end;
-				add_one(where, new_content,add);
+				add_one(where, new_mixed,0);
 					//tady si nejsem jist, jestli je tohle dost efektivni
 		
 			} else if (where == _start - 1 && _content == what) {
@@ -662,9 +904,9 @@ namespace libcan {
 				libcan_int end = _end;
 				_end = where - 1;
 					//nejdriv se posunu pred to,
-				add_one(where, new_content,add);
+				add_one(where, new_mixed,0);
 					//pak pridam tu jednu prostredni
-				add_more(where+1, end, _content,add);
+				add_more(where+1, end, _content,0);
 					//a nakonec pujde ta vpravo
 		
 			} else if (where < _start) {

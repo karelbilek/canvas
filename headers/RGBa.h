@@ -57,6 +57,9 @@ namespace libcan{
 		RGBa operator+(const RGBa& other) const;
 		//secte dve barvy, ale na zaklade "vahy" alphy
 		
+		RGBa operator-() const {
+			return RGBa(0,0,255);
+		}
 		
 		bool operator==(const RGBa& other) const;
 		bool operator>=(const RGBa& other) const;
@@ -64,6 +67,8 @@ namespace libcan{
 		RGBa operator*(const libcan_float quoc) const;
 		//vynasobeni nejakym cislem
 		
+		RGBa operator*(const RGBa& what) const;
+		//prumer
 		
 	};
 }

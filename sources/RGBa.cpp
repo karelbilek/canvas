@@ -68,6 +68,17 @@ void RGBa::set_blue(const libcan_component blue) {
 	_blue = blue;
 }
 
+RGBa 
+RGBa::operator*(const RGBa& what) const{
+	if (what == RGBa()) {
+		return ((*this) * 0.5);
+	}
+	if ((*this)==RGBa()) {
+		return (what * 0.5);
+	}
+
+	return RGBa((_red+what._red)/2, (_green+what._green)/2, (_blue+what._blue)/2, (_alpha+what._alpha)/2);
+}
 
 //-------------------------OTHERS
 bool
@@ -104,7 +115,12 @@ RGBa RGBa::operator+(const RGBa& other) const {
 	return RGBa(res_red, res_green, res_blue, res_alpha); 
 }
 
+/*RGBa RGBa::avg_with(const RGBa& other) const {
+	return 
+}*/
+
 RGBa RGBa::operator* (const libcan_float quoc) const {
+	
 	libcan_component res_alpha = static_cast<libcan_component>(_alpha*quoc);
 	RGBa res = *this;
 	res._alpha = res_alpha;

@@ -66,18 +66,25 @@ shape::move(const point& where) {
 }
 
 bool
-shape::is_changed() const {
+shape::should_paint() const {
 	return (_changed || !_footprint_given);
 }
 
 plane<bool> 
-shape::get_footprint(const bool& antialias, const libcan_int height, const libcan_int width)  {
+shape::get_footprint(const bool& antialias, const libcan_int height, const libcan_int width, const bool do_change)  {
+	
 	plane<bool> res(0, height);
 	
 	if (!_footprint_given || _changed) {
-		_footprint_given = true;
+		
+		if (do_change) {
+			_footprint_given = true;
+		}
+		
 		if (_changed) {
-			_changed = false;
+			if (do_change) {
+				_changed = false;
+			}
 			res.add(_old_footprint);
 		}
 		
@@ -115,11 +122,14 @@ shape::get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& min_y, lib
 
 
 plane<RGBa> 
-shape::get_pixels(const libcan_int height, const libcan_int width, const bool& antialias, const plane<bool>& where_not_paint, const bool& force) {
+shape::get_pixels(const libcan_int small_height, const libcan_int small_width, const bool& antialias, const plane<bool>& where_not_paint, const bool& force) {
 	
 	if (_painted && !force) {
 		return _pixels;
 	} 
+	
+	libcan_int width = small_width * (antialias ? 2 : 1);
+	libcan_int height = small_height * (antialias ? 2 : 1);
 	
 	_painted = true;
 	
@@ -243,9 +253,10 @@ shape::get_pixels(const libcan_int height, const libcan_int width, const bool& a
 	
 	if (antialias) {
 		delete type_copy;
+		result = result.half(RGBa(), width);
 	}
 	
-	
+
 	_pixels = result;
 	RGBa empty(0,0,0,0);
 	_new_footprint = _pixels.flatten_plane<bool>(1,empty);

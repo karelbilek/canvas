@@ -9,6 +9,7 @@
 #include <map>
 #include <cmath>
 #include <list>
+#include <iostream>
 
 #define __PI (static_cast<libcan::libcan_float>(4*atan(1)))
 #define __DEG2RAD(_co) (static_cast<libcan::libcan_float>((((libcan::libcan_float)_co)/180.0)*__PI))

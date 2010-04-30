@@ -54,23 +54,30 @@ void MainWindow::paintEvent(QPaintEvent *w)
 
     plane<RGBa> colors = c.get_plane();
 
+
     QPainter painter(this);
+
+
+
+
     QVector<QRect> rects = w->region().rects();
     for (QVector<QRect>::iterator it = rects.begin(); it < rects.end(); ++it) {
-        for (libcan_int y = it->top(); y<=it->bottom(); ++y) {
-            for (libcan_int x = it->left(); x<=it->right(); ++x) {
+        QImage newPixels(it->width(), it->height(), QImage::Format_RGB32);
+        int top = it->top();
+        int bottom = it->bottom();
+        int left = it->left();
+        int right = it->right();
+
+        for (libcan_int y = top; y<=bottom; ++y) {
+            for (libcan_int x = left; x<=right; ++x) {
                 libcan_component rd,gr,bl,al;
 
                 colors.get(x, y).get_colors(rd, gr, bl, al);
-                if (rd!=255 || gr!=0 || bl!=0 || al!=255) {
-                    int whatever = 3;
-                    whatever +=2;
-                    whatever = whatever;
-                }
-                painter.setPen(QColor(rd, gr, bl, al));
-                painter.drawPoint(x,y);
+
+                newPixels.setPixel(x-left,y-top, qRgba(rd,gr,bl,al));
             }
-         }
+        }
+        painter.drawImage(QPoint(it->left(), it->top()), newPixels);
     }
 
 
@@ -90,16 +97,21 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
 }
 
 void MainWindow::repaint_wanted() {
-    QRegion region;
+
     if (c.should_paint()) {
-        std::vector<libcan_info> infos = c.what_to_paint().all_infos();
-        for (std::vector<libcan_info>::iterator it = infos.begin(); it < infos.end(); ++it) {
-            QRegion newregion(it->min_x, it->y, (it->max_x +1 - it->min_x), 1);
-            region = region.united(newregion);
+        if (c.is_force_paint()) {
+            repaint();
+        } else {
+            QRegion region;
+            std::vector<libcan_info> infos = c.what_to_paint().all_infos();
+            for (std::vector<libcan_info>::iterator it = infos.begin(); it < infos.end(); ++it) {
+                QRegion newregion(it->min_x, it->y, (it->max_x +1 - it->min_x), 1);
+                region = region.united(newregion);
+            }
+            repaint(region);
         }
     }
-    QVector<QRect> rects = region.rects();
-    repaint(region);
+
 }
 
 void MainWindow::paint_to_canvas() {

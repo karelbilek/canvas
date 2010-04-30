@@ -62,7 +62,7 @@ namespace libcan {
 		
 	public:
 		
-		bool is_changed() const;
+		bool should_paint() const;
 		
 		shape_style& get_style(const bool& will_change);
 		
@@ -74,7 +74,7 @@ namespace libcan {
 		void resize(libcan_float quoc);
 		void move(const point& where);
 		
-		plane<bool> get_footprint(const bool& antialias, const libcan_int height, const libcan_int width);
+		plane<bool> get_footprint(const bool& antialias, const libcan_int height, const libcan_int width, const bool do_change);
 		
 		
 		

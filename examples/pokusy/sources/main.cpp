@@ -5,22 +5,16 @@
 using namespace libcan;
 
 
-void print_all(const interval<bool>& what) {
-	std::cout<<what.get_this()<<" od "<<what.get_start()<<" k "<<what.get_end()<<"\n";
-	std::cout<<"vlevo:\n";
-	if (what.has_left()) {
-		print_all(what.get_left());
-	}
-	if (what.has_right()) {
-		print_all(what.get_right());
-	}
-}
 
 int main () {
-	interval<bool> it(10,20,1);
+	interval<int> it(3,4,30);
+	it.add_more(1,2,10);
+	it.add_more(5,5,20);
 	
-	interval<bool>* it2 = it.negative(1, 0,30); 
-	print_all(*it2);
+	bool aaa;
+	(it.half(aaa, false))->print_all();
+	
+	
 	
 	
 	return 0;
