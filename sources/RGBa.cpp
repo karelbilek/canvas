@@ -72,15 +72,13 @@ RGBa
 RGBa::operator*(const RGBa& what) const{
 	RGBa hnus = RGBa(0,0,255);
 	
-	if (what == RGBa()) {
-		return hnus;// * (*this);
-		//return ((*this) * 0.5);
+/*	if (what == RGBa() && !((*this)==RGBa())) {
+		return ((*this) * 0.5);
 	}
-	if ((*this)==RGBa()) {
-		return hnus;// * (what);
+	if ((*this)==RGBa() && !(what==RGBa())) {
 		
-		//return (what * 0.5);
-	}
+		return (what * 0.5);
+	}*/
 	return RGBa((_red+what._red)/2, (_green+what._green)/2, (_blue+what._blue)/2, (_alpha+what._alpha)/2);
 }
 
