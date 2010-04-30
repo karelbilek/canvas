@@ -200,7 +200,7 @@ canvas::get_plane()  {
 	if (!_antialias) {
 		all_plane.add(plane<RGBa>(0, _height, 0, _width, _background));
 	} else {
-		all_plane.add(plane<RGBa>(0, _height*2, 0, _width*2, _background));
+		all_plane.add(plane<RGBa>(0, _height*4, 0, _width*2, _background));
 	}
 	
 	if (!_force_paint) {
