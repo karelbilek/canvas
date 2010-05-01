@@ -1,5 +1,5 @@
 program=example
-OBJECTS=main.o
+OBJECTS=main.o 
 HEADS=
 
 CPPFLAGS=-O0 -g -Wall -Weffc++ -Wextra -I../../headers -I./headers -I/opt/local/include/

@@ -8,12 +8,35 @@
 using namespace libcan;
 using namespace std;
 
+
+
 map<libcan_int, plane<bool> > libcan::shape::brushes;
+
+set<string> 
+shape::get_properties() {
+	
+	//vlastnosti, co ma kazdy shape, bez ohledu na cokoliv
+	string always[] = {"line_red", 
+		"line_green", 
+		"line_blue", 
+		"line_alpha", 
+		"fill_red", 
+		"fill_green", 
+		"fill_blue", 
+		"fill_alpha",
+		"line_size",
+		"name"};
+	
+	set<string> res = set<string>(always, always+(sizeof (always) / sizeof (string)));
+	return res;
+}
+
+
 
 shape::
 shape(const shape_style& style, const shape_type& type):
   _style(style),
-  _type(type),
+  _type(shape_type(type)),
   _pixels(),
   _changed(0),
   _painted(0),
@@ -205,8 +228,7 @@ shape::get_pixels(const libcan_int small_height, const libcan_int small_width, c
 			
 						//vezmu teda shape_type okraje a pripadne ho nakreslim
 				shape_type okraj = (**i).get_thick_line((antialias?2:1)*_style._line_size, previous, next);
-				line = paint(&(okraj), min_y, max_y);
-				
+				line = paint((&okraj), min_y, max_y);
 			} else {
 	//------------------------------------------------jdu na caru, co se neumi sama nakreslit
 	
@@ -216,7 +238,7 @@ shape::get_pixels(const libcan_int small_height, const libcan_int small_width, c
 				if (!brushes.count(thickness)) {
 						//pokud neni vygenerovan krouzek, vygeneruj ho!
 						
-					shape_type b = disk(point(thickness,thickness), static_cast<libcan_float>(thickness)/2);
+					disk b = disk(point(thickness,thickness), static_cast<libcan_float>(thickness)/2);
 					plane<bool> p = paint(&b, 0, 2*thickness);
 					
 					p._pivot_width = thickness;

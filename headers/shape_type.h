@@ -2,6 +2,10 @@
 #define SHAPE_TYPE_INC
 
 #include <list>
+#include <vector>
+#include <string>
+
+
 #include "moved_arrays.h"
 #include "point.h"
 
@@ -44,6 +48,8 @@ namespace libcan {
 		shape_type* clone_double() const;
 	
 		virtual ~shape_type();
+		
+		virtual std::vector<std::string> get_specific_properties();
 	};
 	
 	

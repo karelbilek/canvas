@@ -1,6 +1,6 @@
 program=libcan.a
 OBJECTS=all_shapes.o canvas.o curves/circle.o curves/line.o curves/bezier.o moved_arrays.o point.o RGBa.o shape.o shape_type.o geom_line.o
-HEADS=all_shapes.h canvas.h curve.h curves/circle.h curves/line.h curves/bezier.h interval.h matrix.h moved_arrays.h plane.h point.h RGBa.h shape.h types.h shape_type.h geom_line.h
+HEADS=all_shapes.h canvas.h curve.h curves/circle.h curves/line.h curves/bezier.h interval.h matrix.h moved_arrays.h plane.h point.h RGBa.h shape.h types.h shape_type.h geom_line.h 
 
 
 CPPFLAGSHARD=-O3 -I./headers -I/opt/local/include/

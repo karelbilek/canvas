@@ -84,6 +84,11 @@ shape_type::get_extremes(libcan_int& min_x,libcan_int& max_x,libcan_int& min_y,l
 	}
 }
 
+vector<string> 
+shape_type::get_specific_properties() {
+	return vector<string>();
+}
+
 shape_type& 
 shape_type::operator=(const shape_type& other) {
 	for (list<curve*>::iterator i = _curves.begin(); i!= _curves.end(); ++i) {
