@@ -410,6 +410,75 @@
      </item>
     </layout>
    </widget>
+   <widget class="QGroupBox" name="shapes_vlastnosti">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>271</width>
+      <height>571</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Vlastnosti</string>
+    </property>
+    <widget class="QListWidget" name="shapes">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>151</width>
+       <height>511</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="properties">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>30</y>
+       <width>91</width>
+       <height>121</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="value">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>160</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_6">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>190</y>
+       <width>91</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Budiž</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_7">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>510</y>
+       <width>91</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Zrušit</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -425,6 +494,7 @@
      <string>Vlastnosti</string>
     </property>
     <addaction name="actionZobraz"/>
+    <addaction name="actionSt_vaj_c"/>
    </widget>
    <widget class="QMenu" name="menuKresli">
     <property name="title">
@@ -529,7 +599,7 @@
   </widget>
   <action name="actionZobraz">
    <property name="text">
-    <string>Zobraz</string>
+    <string>Defaultní</string>
    </property>
   </action>
   <action name="actionUsecku">
@@ -755,6 +825,11 @@
   <action name="actionZm_nit">
    <property name="text">
     <string>změnit...</string>
+   </property>
+  </action>
+  <action name="actionSt_vaj_c">
+   <property name="text">
+    <string>Stávající</string>
    </property>
   </action>
  </widget>

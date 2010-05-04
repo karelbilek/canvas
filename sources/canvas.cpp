@@ -243,6 +243,18 @@ void canvas::push_front(const shape g, const size_t pos) {
 	
 }
 
+vector<string> 
+canvas::get_names() {
+	vector<string> res;
+	for (list<shape>::iterator it = _shapes.begin(); it != _shapes.end(); ++it) {
+		
+		string w = it->get_property("name");
+		res.push_back(w);
+	}
+	
+	return res;
+}
+
 void canvas::push_back(const shape g, const size_t pos) {
 	
 	size_t pos_c=__minimum(pos, _shapes.size());

@@ -3,10 +3,16 @@
 #include "plane.h"
 #include "RGBa.h"
 #include "curve.h"
+
 #include "shape_type.h"
 #include "point.h"
 #include <list>
 #include <map>
+#include <set>
+#include <string>
+
+
+
 
 namespace libcan {
 	/*
@@ -24,6 +30,8 @@ namespace libcan {
 	* a podle typu a barvy vrací plochu s RGBa
 	*/
 	
+
+	
 	
 	struct shape_style {
 		
@@ -31,19 +39,20 @@ namespace libcan {
 		RGBa _line_color;
 		RGBa _fill_color; 
 		
-		
+				
 		shape_style(libcan_int line_size=1, const RGBa& line_color=RGBa(0,0,0), const RGBa& fill_color=RGBa(0,0,0));
-	};
 
+	};
 
 	class shape {
 	private:
 		
+		std::string _name;
 			//aby se pokazde, kdyz mam tloustku velikosti N, nemusel znova generovat krouzek
 		static std::map<libcan_int, plane<bool> > brushes;
 		
 		shape_style _style;
-		shape_type _type;
+		shape_type* _type;
 		
 		plane<RGBa> _pixels;
 		bool _changed;
@@ -62,11 +71,15 @@ namespace libcan {
 		
 	public:
 		
+		shape(const shape& another);
+		shape& operator=(const shape& another);
+		
 		bool should_paint() const;
 		
 		shape_style& get_style(const bool& will_change);
 		
 		shape(const shape_style& style, const shape_type& type);
+	
 			
 		plane<RGBa> get_pixels(const libcan_int height, const libcan_int width, const bool& antialias, const plane<bool>& where_not_paint, const bool& force=false);
 		
@@ -76,6 +89,10 @@ namespace libcan {
 		
 		plane<bool> get_footprint(const bool& antialias, const libcan_int height, const libcan_int width, const bool do_change);
 		
+		std::string get_property(const std::string& property);
+		std::set<std::string> get_properties();
+		
+		void set_property(const std::string& property, const std::string& what);
 		
 		
 

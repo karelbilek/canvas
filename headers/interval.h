@@ -66,24 +66,6 @@ namespace libcan {
 		
 
 	public:
-		void print_all() {
-			std::cout<<"od "<<_start<<" do "<<_end<<"je "<<_content<<"\n";
-			
-			
-			if (_left==NULL) {
-			} else {
-				std::cout<<"JDU DOLEVA:\n";
-				_left->print_all();
-			}
-			
-			if (_right==NULL) {
-			} else {
-				std::cout<<"JDU DOPRAVA:\n";
-				_right->print_all();
-			}
-			std::cout<<"==========\n";
-			
-		}
 		
 		
 		libcan_int most_left() const;
@@ -128,20 +110,7 @@ namespace libcan {
 		
 		// void recur_check();
 		void check();
-		void check_if_right() const {
-			if (_left!=NULL) {
-				if (_left->_end >= _start) {
-					std::cout<<"OSHIT "<<_left->_end<<" >= "<<_start<<":-/ \n";
-					throw 1;
-				}
-			}
-			if (_right!=NULL) {
-				if (_right->_start <= _end) {
-					std::cout<<"OSHIT "<<_right->_start<<" <= "<<_end<<":-/ \n";
-					throw 1;
-				}
-			}	
-		}
+
 		
 		contents get_all() const;
 			//vrati obsahy vsech svych deti, *vcetne* sebe
@@ -262,66 +231,59 @@ namespace libcan {
 	template <class T> 
 	interval<T>*
 	interval<T>::half(bool& left, const bool on_right) const {
-		check_if_right();
 		bool l;
 		libcan_int start = (_start % 2) ?(_start/2+1):(_start/2);
 		libcan_int end = _end / 2;
 		left = (_start%2);
 		libcan_int where = (_start / 2);
 		
-		std::cout<<"PUVODNI: start "<<_start<<", end "<<_end<<" nova start "<<start<<" novy end "<<end<<" tim padem left je "<<left<<" where je "<<where << "\n";
 		
 		if (end < start) {
 			//pouze, kdyz mam 2 stejna licha cisla
-			std::cout<<"end > start!\n";
 			if (_left==NULL) {				
 				if (_right==NULL) {
-					std::cout<<"A\n";
 					
 					if (!on_right) {
-						std::cout<<"B\n";
 						
 						left = false;
 						return new interval<T>(end, end, _content);
 					} else {
-						std::cout<<"C\n";
 						
 						return NULL;
 					}
 				} else {
-					std::cout<<"D\n";
 					
 					//bool add_left = false;
-					interval<T>* res = _right->half(l, false);
+					interval<T>* res = _right->half(l, true);
+					if (l==true) {
+						throw 1;
+					}
 					if (!on_right) {
-						std::cout<<"E\n";
 						
 						left = false;
 						res->add_one(where, _content, 2);
 					} 	
-					std::cout<<"F\n";
 									
 					return res;
 				}
 			} else {
-				std::cout<<"G\n";
 				
 				interval<T>* left_res = _left->half(l, false);
 				left_res->add_one(where, _content, 2);	
 				left = false;			
 				if (_right == NULL) {
-					std::cout<<"H\n";
 					
 					return left_res;
 				} else {
-					std::cout<<"I\n";
 					
-					interval<T>* right_res = _right->half(l, false);
+					interval<T>* right_res = _right->half(l, true);
+					if (l==true) {
+						throw 1;
+					}
 					return left_res->add_far_right(right_res);
 				}
 			}
 		} else {
-			std::cout<<"end <= start :D\n";
 			
 			interval<T>* res = new interval<T>(start, end, _content);
 			if (_left != NULL) {
@@ -868,6 +830,7 @@ namespace libcan {
 		
 		
 		if (_empty) {
+			
 			_empty= false;
 			_start = where;
 			_end = where;
@@ -879,6 +842,7 @@ namespace libcan {
 			//taky zajimave - vlozi jen 1 pix
 			if (where == _start && _end == _start) {
 				//1 pixel na 1-ciselny interval
+				
 				_content = new_mixed;
 			
 			} else if (where == _start) {
@@ -890,12 +854,12 @@ namespace libcan {
 				add_one(where, new_mixed,0);
 					//tady si nejsem jist, jestli je tohle dost efektivni
 		
-			} else if (where == _start - 1 && _content == what) {
+			} else if (where == _start - 1 && _content == new_mixed) {
 					//jsem tesne vlevo! a jsem totez!
 				--_start;
 			
 			
-			} else if (where == _end + 1 && _content == what) {
+			} else if (where == _end + 1 && _content == new_mixed) {
 					//jsem tesne vpravo! a totez!
 				++_end;
 		
@@ -922,6 +886,7 @@ namespace libcan {
 				//moc vpravo
 				if (_right == NULL) {
 					_right = new interval<T>(where, where, what);
+					
 				} else {
 					_right->add_one(where, what,add);
 				}

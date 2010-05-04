@@ -107,7 +107,7 @@ libcan_int line::get_max_y() const {return __maximum(_a.y,_b.y)+2;}
 libcan_int line::get_min_x() const {return __minimum(_a.x,_b.x)-5;}
 libcan_int line::get_max_x() const {return __maximum(_a.x,_b.x)+2;}
 
-shape_type 
+shape_type
 line::get_thick_line(const libcan_float thickness, const curve* const previous, const curve* const next) const{
 	point a;
 	point b;

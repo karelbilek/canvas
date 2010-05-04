@@ -1,21 +1,28 @@
-#include "interval.h"
+#include "shape.h"
+#include "all_shapes.h"
+
 #include <iostream>
 #include <string>
+#include <map>
+#include <iostream>
+#include <sstream>
+
+
+
+using namespace std;
 
 using namespace libcan;
 
 
 
+
 int main () {
-	interval<int> it(3,4,30);
-	it.add_more(1,2,10);
-	it.add_more(5,5,20);
+	stringstream wwww;
 	
-	bool aaa;
-	(it.half(aaa, false))->print_all();
+	wwww<<"prvni druhe";
+	string aaa=wwww.str();
 	
-	
-	
+	cout<<aaa;
 	
 	return 0;
 }
