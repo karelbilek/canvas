@@ -66,6 +66,24 @@ shape_type::center() const {
 	return point((min_x+max_x)/2, (min_y+max_y)/2);
 }
 
+void 
+shape_type::get_property(const std::string& property, std::stringstream& where) const {
+	if (property=="name") {
+		string l = "unknown shape";
+		where<<l;
+	}
+}
+
+shape_type* 
+shape_type::new_with_property(const string& property, const string& what, const libcan_int what_int, const libcan_float what_float) {
+	return clone();
+}
+
+shape_type* 
+shape_type::clone() const {
+	return new shape_type(*this);
+}
+
 void
 shape_type::get_extremes(libcan_int& min_x,libcan_int& max_x,libcan_int& min_y,libcan_int& max_y) const{
 	std::list<curve*>::const_iterator i = _curves.begin();	

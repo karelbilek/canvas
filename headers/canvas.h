@@ -19,6 +19,7 @@ namespace libcan {
 		                
 		RGBa _background; 
 		
+		
 		std::list<shape> _shapes;
 		plane<RGBa> _saved_plane;
 		
@@ -31,7 +32,7 @@ namespace libcan {
 		bool is_force_paint() const;
 		bool should_paint() const;
 		
-		
+		std::vector<std::string> get_names();
 		
 		plane<bool> what_to_paint(const bool change=false);
 		

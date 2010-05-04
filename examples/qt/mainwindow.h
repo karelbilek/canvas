@@ -36,12 +36,20 @@ private:
     int waiting;
     int waited;
     int polygon_hint;
+    int selected_shape;
+    bool closing;
+    bool clearing;
 
     libcan::libcan_component carR, carG, carB, carA, fillR, fillG, fillB, fillA;
     libcan::small carSir;
 
 
 private slots:
+    void on_pushButton_7_clicked();
+    void on_pushButton_6_clicked();
+    void on_properties_currentRowChanged(int currentRow);
+    void on_shapes_currentRowChanged(int currentRow);
+    void on_actionSt_vaj_c_triggered();
     void on_actionZm_nit_triggered();
     void on_pushButton_5_clicked();
     void on_actionZ_konce_triggered();

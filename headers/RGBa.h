@@ -4,6 +4,7 @@
 #include "types.h"
 #include <map>
 
+
 namespace libcan{
 	
 	enum basic_colors{
@@ -37,9 +38,17 @@ namespace libcan{
 		
 		bool is_not_transparent() const;
 		
+		void set_alpha(const libcan_component alpha);
 		void set_red(const libcan_component red);
 		void set_green(const libcan_component green);
 		void set_blue(const libcan_component blue);
+		
+		libcan_component get_green() const;
+		libcan_component get_red() const;
+		libcan_component get_blue() const;
+		libcan_component get_alpha() const;
+		
+		
 		void get_colors_pointer(libcan_component* p_red, libcan_component* p_green, libcan_component* p_blue, libcan_component* p_alpha) const;
 		
 		void get_colors(libcan_component &red, libcan_component &green, libcan_component &blue, libcan_component &alpha) const;

@@ -256,7 +256,6 @@ namespace libcan {
 					//bool add_left = false;
 					interval<T>* res = _right->half(l, true);
 					if (l==true) {
-						std::cout<<"ULTRASHIT\n";
 						throw 1;
 					}
 					if (!on_right) {
@@ -279,7 +278,6 @@ namespace libcan {
 					
 					interval<T>* right_res = _right->half(l, true);
 					if (l==true) {
-						std::cout<<"ULTRASHIT\n";
 						throw 1;
 					}
 					return left_res->add_far_right(right_res);
@@ -297,13 +295,11 @@ namespace libcan {
 				interval<T>* right_res = _right->half(add_right, true);
 				res->_right = right_res;
 				if (add_right) {
-					std::cout<<"chystam se do add_one 1...\n";
 					res->add_one(_right->_start/2, _right->_content, 2);
 				}
 			}
 			if ((!on_right || res->_left!=NULL) && left) {
 				left = false;
-				std::cout<<"chystam se do add_one 2...\n";
 				res->add_one(where, _content, 2);			
 			}
 			return res;
@@ -834,7 +830,6 @@ namespace libcan {
 		
 		
 		if (_empty) {
-			std::cout<<"...nastavuju ale what\n";
 			
 			_empty= false;
 			_start = where;
@@ -847,7 +842,6 @@ namespace libcan {
 			//taky zajimave - vlozi jen 1 pix
 			if (where == _start && _end == _start) {
 				//1 pixel na 1-ciselny interval
-				std::cout<<"...nastavuju mixed\n";
 				
 				_content = new_mixed;
 			
@@ -863,13 +857,11 @@ namespace libcan {
 			} else if (where == _start - 1 && _content == new_mixed) {
 					//jsem tesne vlevo! a jsem totez!
 				--_start;
-				std::cout<<"...nastavuju mixed\n";
 			
 			
 			} else if (where == _end + 1 && _content == new_mixed) {
 					//jsem tesne vpravo! a totez!
 				++_end;
-				std::cout<<"...nastavuju mixed\n";
 		
 			} else if (where > _start && where < _end) {
 					//Strkam nekam doprostred
@@ -885,7 +877,6 @@ namespace libcan {
 				//nekde moc vlevo
 				if (_left == NULL) {
 					_left = new interval<T>(where, where, what);
-					std::cout<<"...nastavuju ale what\n";
 				
 				} else {
 					_left->add_one(where, what,add);
@@ -895,7 +886,6 @@ namespace libcan {
 				//moc vpravo
 				if (_right == NULL) {
 					_right = new interval<T>(where, where, what);
-					std::cout<<"...nastavuju ale what\n";
 					
 				} else {
 					_right->add_one(where, what,add);

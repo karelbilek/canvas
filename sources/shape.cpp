@@ -3,6 +3,7 @@
 #include "point.h"
 #include "all_shapes.h"
 #include "RGBa.h"
+#include <sstream>
 
 
 using namespace libcan;
@@ -28,21 +29,137 @@ shape::get_properties() {
 		"name"};
 	
 	set<string> res = set<string>(always, always+(sizeof (always) / sizeof (string)));
+	
+	
+	vector<string> add = _type->get_specific_properties();
+	res.insert(add.begin(), add.end());
+	
 	return res;
+}
+
+string
+shape::get_property(const string& property) {
+	stringstream res;
+	if (property=="line_red") {
+		res << (int) _style._line_color.get_red();
+	} else if (property=="line_green") {
+		res << (int) _style._line_color.get_green();
+	} else if (property=="line_blue"){
+		res << (int) _style._line_color.get_blue();
+	} else if (property=="line_alpha") {
+		res << (int) _style._line_color.get_alpha();
+	} else if (property=="fill_red") {
+		res << (int) _style._fill_color.get_red();
+	} else if (property=="fill_green") {
+		res << (int) _style._fill_color.get_green();
+	} else if (property=="fill_blue"){
+		res << (int) _style._fill_color.get_blue();
+	} else if (property=="fill_alpha") {
+		res << (int) _style._fill_color.get_alpha();
+	} else if (property=="line_size") {
+		res << _style._line_size;
+	} else if (property=="name") {
+		if (_name=="") {
+			
+			_type->get_property(property, res);
+		} else {
+			
+			return _name;
+		}
+	} else {
+		_type->get_property(property, res);
+	}
+	
+	return res.str();
+}
+
+void 
+shape::set_property(const string& property, const string& what){
+	if (!get_properties().count(property)) {
+		throw 1;
+	}
+	
+	string old = get_property(property);
+	if (old!=what) {
+		destroying_change();
+	
+		libcan_int int_what;
+		istringstream(what)>>int_what;
+	
+		if (property=="line_red") {
+			_style._line_color.set_red(int_what);
+		} else if (property=="line_green") {
+			_style._line_color.set_green(int_what);
+		} else if (property=="line_blue"){
+			_style._line_color.set_blue(int_what);
+		} else if (property=="line_alpha") {
+			_style._line_color.set_alpha(int_what);
+		} else if (property=="fill_red") {
+			_style._fill_color.set_red(int_what);
+		} else if (property=="fill_green") {
+			_style._fill_color.set_green(int_what);
+		} else if (property=="fill_blue"){
+			_style._fill_color.set_blue(int_what);
+		} else if (property=="fill_alpha") {
+			_style._fill_color.set_alpha(int_what);
+		} else if (property=="line_size") {
+			_style._line_size = int_what;
+		} else if (property=="name") {
+			
+			_name = what;
+		} else {
+			libcan_float float_what;
+			istringstream(what)>>float_what;
+			shape_type* new_type = _type->new_with_property(property, what, int_what, float_what);
+			delete _type;
+			_type = new_type;
+		}
+	}
+}
+
+shape& 
+shape::operator=(const shape& another) {
+	_name = another._name;
+	_style = another._style;
+	shape_type* new_type = another._type -> clone();
+	delete _type;
+	_type = new_type;
+	_pixels = another._pixels;
+	_changed = another._changed;
+	_pixels = another._pixels;
+	_footprint_given = another._footprint_given;
+	_old_footprint = another._old_footprint;
+	_new_footprint = another._new_footprint;
+	return *this;
+}
+
+shape::
+shape(const shape& another) :
+  _name(another._name),
+  _style(another._style),
+  _type(another._type->clone()),
+  _pixels(another._pixels),
+  _changed(another._changed),
+  _painted(another._painted),
+  _footprint_given(another._footprint_given),
+  _old_footprint(another._old_footprint),
+  _new_footprint(another._new_footprint){	
 }
 
 
 
 shape::
 shape(const shape_style& style, const shape_type& type):
+  _name(),
   _style(style),
-  _type(shape_type(type)),
+  _type(type.clone()),
   _pixels(),
   _changed(0),
   _painted(0),
   _footprint_given(0),
   _old_footprint(),
-  _new_footprint(){}
+  _new_footprint(){
+}
 
 shape_style::
 shape_style(libcan_int line_size, const RGBa& line_color, const RGBa& fill_color):
@@ -68,13 +185,13 @@ shape::destroying_change() {
 void 
 shape::rotate(libcan_float angle){
 	destroying_change();
-	_type.rotate(angle);
+	_type->rotate(angle);
 }
 
 void 
 shape::resize(libcan_float quoc){
 	destroying_change();
-	_type.resize(quoc);
+	_type->resize(quoc);
 }
 
 void 
@@ -85,7 +202,7 @@ shape::move(const point& where) {
 	
 	_new_footprint = _old_footprint.move_relative(where.x, where.y);	
 	_pixels = _pixels.move_relative(where.x, where.y);
-	_type.move(where);
+	_type->move(where);
 }
 
 bool
@@ -129,7 +246,7 @@ shape::get_footprint(const bool& antialias, const libcan_int height, const libca
 
 void
 shape::get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& min_y, libcan_int& max_y, const bool& antialias, const libcan_int height, const libcan_int width) const {
-	_type.get_extremes(min_x, max_x, min_y, max_y);
+	_type->get_extremes(min_x, max_x, min_y, max_y);
 	if (antialias) {
 		min_x *= 2;
 		max_x *= 2;
@@ -156,7 +273,7 @@ shape::get_pixels(const libcan_int small_height, const libcan_int small_width, c
 	
 	_painted = true;
 	
-	const shape_type* type_copy = &_type; //kvuli antialiasu :/
+	const shape_type* type_copy = _type; //kvuli antialiasu :/
 	if (antialias) {
 		type_copy = type_copy->clone_double(); //pozor, tady alokuju novy, MUSI dole byt to delete!
 	}
@@ -177,8 +294,6 @@ shape::get_pixels(const libcan_int small_height, const libcan_int small_width, c
 	
 	//------------------------------------------------co kdyz vubec nemusim kreslit?
 	if (where_not_paint.includes_square(min_x, min_y, max_x, max_y)) {
-		//RGBa blueshit(0,0,255);
-		//return where_not_paint.flatten_plane<RGBa>(blueshit, 1);
 		
 		return plane<RGBa>();	
 	}
@@ -268,7 +383,7 @@ shape::get_pixels(const libcan_int small_height, const libcan_int small_width, c
 	
 	
 	
-	if (_style._fill_color.is_not_transparent() && _type._filled) {
+	if (_style._fill_color.is_not_transparent() && _type->_filled) {
 		result.add((paint(type_copy, min_y, max_y)).flatten_plane<RGBa>(_style._fill_color, true));
 		
 	}

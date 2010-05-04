@@ -55,6 +55,25 @@ void RGBa::get_colors(libcan_component &red, libcan_component &green, libcan_com
 	alpha = _alpha;
 }
 
+libcan_component 
+RGBa::get_green() const {
+	return _green;
+}
+libcan_component 
+RGBa::get_red() const {
+	return _red;
+};
+
+libcan_component 
+RGBa::get_blue() const {
+	return _blue;
+}
+
+libcan_component 
+RGBa::get_alpha() const {
+	return _alpha;
+};
+
 //----------------------------SETTERS
 void RGBa::set_red(const libcan_component red) {
 	_red = red;
@@ -66,6 +85,10 @@ void RGBa::set_green(const libcan_component green) {
 
 void RGBa::set_blue(const libcan_component blue) {
 	_blue = blue;
+}
+
+void RGBa::set_alpha(const libcan_component alpha) {
+	_alpha = alpha;
 }
 
 RGBa 

@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->barvaCanvas->setVisible(false);
     ui->transformace->setVisible(false);
     ui->poradi->setVisible(false);
+    ui->shapes_vlastnosti->setVisible(false);
 
     ui->carA->setValue(carA=255);
     ui->carR->setValue(carR=0);
@@ -120,7 +121,7 @@ void MainWindow::paint_to_canvas() {
                     //I have no clue why Qt creator doesn't like this line of code
 
     //shape_style style(carSir, RGBa(50, 50, 50, 50), RGBa(50,50,50,50));
-    shape_type type;
+    shape_type* type;
 
     QList<point> points;
     for (int i=0; i<waited; i++) {
@@ -131,29 +132,29 @@ void MainWindow::paint_to_canvas() {
 
     switch (expected_type) {
     case 1:
-        type = segment(points[1], points[0]);
+        type = new segment(points[1], points[0]);
         break;
     case 2:
-        type = disk(points[1], points[0]);
+        type = new disk(points[1], points[0]);
         break;
     case 3:
-        type = polygon(points.toStdList());
+        type = new polygon(points.toStdList());
         break;
     case 4:
-        type = regular(points[1], points[0], polygon_hint);
+        type = new regular(points[1], points[0], polygon_hint);
         break;
     case 5:
-        type = regular_from_center(points[1], points[0], polygon_hint);
+        type = new regular_from_center(points[1], points[0], polygon_hint);
         break;
     case 6:
-        type = rectangle(points[2], points[1], points[0]);
+        type = new rectangle(points[2], points[1], points[0]);
         break;
     case 7:
-        type = elipse(points[2], points[1], points[0]);
+        type = new elipse(points[2], points[1], points[0]);
         break;
     }
 
-    c.push_front(style, type);
+    c.push_front(style, *type);
     repaint_wanted();
 }
 
@@ -659,5 +660,75 @@ void MainWindow::on_actionZm_nit_triggered()
         ui->odkud->setMaximum(i);
         ui->kam->setMaximum(i);
         ui->odkud->setMinimum(1);
+    }
+}
+
+void MainWindow::on_actionSt_vaj_c_triggered()
+{
+    closing = false;
+    std::vector<std::string> vec = c.get_names();
+    QStringList list;
+    for (std::vector<std::string>::iterator it = vec.begin(); it != vec.end(); ++it) {
+        list << QString::fromStdString(*it);
+    }
+
+    QListWidget* s = ui->shapes;   
+    s->addItems(list);
+
+    clearing = true;
+    ui->properties->clear();
+
+    ui->shapes_vlastnosti->setVisible(true);
+
+}
+
+void MainWindow::on_shapes_currentRowChanged(int currentRow)
+{
+
+    if (!closing) {
+
+        selected_shape = currentRow;
+        shape& s = c.get_object(currentRow);
+        std::set<std::string> vec = s.get_properties();
+        QStringList list;
+        for (std::set<std::string>::iterator it = vec.begin(); it != vec.end(); ++it) {
+            list << QString::fromStdString(*it);
+        }
+        QListWidget* w = ui->properties;
+        clearing = true;
+        w->clear();
+        w->addItems(list);
+        clearing = false;
+
+    }
+
+}
+
+void MainWindow::on_properties_currentRowChanged(int currentRow)
+{
+    if (!clearing) {
+        std::string w = c.get_object(selected_shape).get_property(ui->properties->item(currentRow)->text().toStdString());
+
+        ui->value->setText(QString::fromStdString(w));
+    }
+
+}
+
+void MainWindow::on_pushButton_6_clicked()
+{
+    int selected = ui->properties->currentRow();
+    std::string key = ui->properties->item(selected)->text().toStdString();
+    std::string value = ui->value->text().toStdString();
+    c.get_object(selected_shape).set_property(key, value);
+    repaint_wanted();
+}
+
+void MainWindow::on_pushButton_7_clicked()
+{
+    ui->shapes_vlastnosti->setVisible(false);
+    closing=true;
+    while (ui->shapes->count()!=0) {
+
+        ui->shapes->takeItem(0);
     }
 }

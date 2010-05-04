@@ -47,11 +47,12 @@ namespace libcan {
 	class shape {
 	private:
 		
+		std::string _name;
 			//aby se pokazde, kdyz mam tloustku velikosti N, nemusel znova generovat krouzek
 		static std::map<libcan_int, plane<bool> > brushes;
 		
 		shape_style _style;
-		shape_type _type;
+		shape_type* _type;
 		
 		plane<RGBa> _pixels;
 		bool _changed;
@@ -70,6 +71,9 @@ namespace libcan {
 		
 	public:
 		
+		shape(const shape& another);
+		shape& operator=(const shape& another);
+		
 		bool should_paint() const;
 		
 		shape_style& get_style(const bool& will_change);
@@ -85,8 +89,10 @@ namespace libcan {
 		
 		plane<bool> get_footprint(const bool& antialias, const libcan_int height, const libcan_int width, const bool do_change);
 		
+		std::string get_property(const std::string& property);
 		std::set<std::string> get_properties();
 		
+		void set_property(const std::string& property, const std::string& what);
 		
 		
 

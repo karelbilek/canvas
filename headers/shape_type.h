@@ -4,10 +4,14 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <sstream>
 
 
 #include "moved_arrays.h"
 #include "point.h"
+
+#define __shape_type_properties(name, ...) std::vector<std::string> name::get_specific_properties() {std::string arr[] = {__VA_ARGS__};return std::vector<std::string>(arr, arr+sizeof(arr)/sizeof(std::string));}
+
 
 namespace libcan {
 	class curve;
@@ -46,10 +50,15 @@ namespace libcan {
 		
 				//zdvojnasobeni (kvuli antialiasu)
 		shape_type* clone_double() const;
+		
 	
 		virtual ~shape_type();
 		
+		virtual void get_property(const std::string& property, std::stringstream& where) const;
+		
 		virtual std::vector<std::string> get_specific_properties();
+		virtual shape_type* clone() const;
+		virtual shape_type* new_with_property(const std::string& property, const std::string& what, const libcan_int what_int, const libcan_float what_float);
 	};
 	
 	
