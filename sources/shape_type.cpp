@@ -75,7 +75,7 @@ shape_type::get_property(const std::string& property, std::stringstream& where) 
 }
 
 shape_type* 
-shape_type::new_with_property(const string& property, const string& what, const libcan_int what_int, const libcan_float what_float) {
+shape_type::new_with_property(const string& property, std::stringstream& what) {
 	return clone();
 }
 

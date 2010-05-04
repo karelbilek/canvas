@@ -12,17 +12,17 @@ regular::clone() const {
 }
 
 shape_type* 
-regular::new_with_property(const string& property, const string& what, const libcan_int what_int, const libcan_float what_float){
+regular::new_with_property(const string& property, stringstream& what){
 	if (property=="a_x") {
-		_a.x = what_int;
+		what >> _a.x;
 	} else if (property=="a_y") {
-		_a.y = what_int;
+		what >> _a.y;
 	} else if (property=="b_x") {
-		_b.x = what_int;
+		what >> _b.x;
 	} else if (property=="b_y") {
-		_b.y = what_int;
+		what >> _b.y;
 	} else if (property=="n") {
-		_n = what_int;
+		what >> _n;
 	}
 	return new regular(_a, _b, _n);
 }
@@ -52,17 +52,17 @@ regular_from_center::clone() const {
 }
 
 shape_type* 
-regular_from_center::new_with_property(const string& property, const string& what, const libcan_int what_int, const libcan_float what_float){
+regular_from_center::new_with_property(const string& property, stringstream& what){
 	if (property=="a_x") {
-		_a.x = what_int;
+		what >> _a.x;
 	} else if (property=="a_y") {
-		_a.y = what_int;
+		what >> _a.y;
 	} else if (property=="c_x") {
-		_c.x = what_int;
+		what >> _c.x;
 	} else if (property=="c_y") {
-		_c.y = what_int;
+		what >> _c.y;
 	} else if (property=="n") {
-		_n = what_int;
+		what >> _n;
 	}
 	return new regular_from_center(_c, _a, _n);
 }

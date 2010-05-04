@@ -84,7 +84,9 @@ shape::set_property(const string& property, const string& what){
 		destroying_change();
 	
 		libcan_int int_what;
-		istringstream(what)>>int_what;
+		stringstream wstream;
+		wstream<<what;
+		wstream>>int_what;
 	
 		if (property=="line_red") {
 			_style._line_color.set_red(int_what);
@@ -110,7 +112,7 @@ shape::set_property(const string& property, const string& what){
 		} else {
 			libcan_float float_what;
 			istringstream(what)>>float_what;
-			shape_type* new_type = _type->new_with_property(property, what, int_what, float_what);
+			shape_type* new_type = _type->new_with_property(property, wstream);
 			delete _type;
 			_type = new_type;
 		}

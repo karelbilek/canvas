@@ -12,23 +12,23 @@ bezier_segment::clone() const {
 }
 
 shape_type* 
-bezier_segment::new_with_property(const string& property, const string& what, const libcan_int what_int, const libcan_float what_float){
+bezier_segment::new_with_property(const string& property, std::stringstream& what){
 	if (property=="a_x") {
-		_a.x = what_int;
+		what >> _a.x;
 	} else if (property=="a_y") {
-		_a.y = what_int;
+		what >> _a.y;
 	} else if (property=="b_x") {
-		_b.x = what_int;
+		what >> _b.x;
 	} else if (property=="b_y") {
-		_b.y = what_int;
+		what >> _b.y;
 	} else if (property=="c_x") {
-		_c.x = what_int;
+		what >> _c.x;
 	} else if (property=="c_y") {
-		_c.y = what_int;
+		what >> _c.y;
 	} else if (property=="d_x") {
-		_d.x = what_int;
+		what >> _d.x;
 	} else if (property=="d_y") {
-		_d.y = what_int;
+		what >> _d.y;
 	}
 	return new bezier_segment(_a, _b, _c, _d);
 }

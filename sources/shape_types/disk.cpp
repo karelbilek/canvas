@@ -11,13 +11,13 @@ disk::clone() const {
 }
 
 shape_type* 
-disk::new_with_property(const string& property, const string& what, const libcan_int what_int, const libcan_float what_float){
+disk::new_with_property(const string& property, std::stringstream& what){
 	if (property=="center_x") {
-		_center.x = what_int;
+		what >> _center.x;
 	} else if (property=="center_y") {
-		_center.y = what_int;
+		what >> _center.y;
 	} else if (property=="radius") {
-		_radius = what_float; 
+		what >> _radius; 
 	}
 	return new disk(_center, _radius);
 }

@@ -12,19 +12,19 @@ elipse::clone() const {
 }
 
 shape_type* 
-elipse::new_with_property(const string& property, const string& what, const libcan_int what_int, const libcan_float what_float){
+elipse::new_with_property(const string& property, std::stringstream& what){
 	if (property=="a_x") {
-		_a.x = what_int;
+		what >> _a.x;
 	} else if (property=="a_y") {
-		_a.y = what_int;
+		what >> _a.y;
 	} else if (property=="s_x") {
-		_s.x = what_int;
+		what >> _s.x;
 	} else if (property=="s_y") {
-		_s.y = what_int;
+		what >> _s.y;
 	} else if (property=="v_x") {
-		_v.x = what_int;
+		what >>_v.x;
 	} else if (property=="v_y") {
-		_v.y = what_int;
+		what >> _v.y;
 	} 
 	return new elipse(_s, _a, _v);
 }

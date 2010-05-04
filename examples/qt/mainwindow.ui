@@ -415,7 +415,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>271</width>
+      <width>331</width>
       <height>571</height>
      </rect>
     </property>
@@ -427,7 +427,7 @@
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>151</width>
+       <width>201</width>
        <height>511</height>
       </rect>
      </property>
@@ -435,18 +435,18 @@
     <widget class="QListWidget" name="properties">
      <property name="geometry">
       <rect>
-       <x>170</x>
+       <x>220</x>
        <y>30</y>
        <width>91</width>
-       <height>121</height>
+       <height>411</height>
       </rect>
      </property>
     </widget>
     <widget class="QLineEdit" name="value">
      <property name="geometry">
       <rect>
-       <x>170</x>
-       <y>160</y>
+       <x>220</x>
+       <y>450</y>
        <width>91</width>
        <height>22</height>
       </rect>
@@ -455,9 +455,9 @@
     <widget class="QPushButton" name="pushButton_6">
      <property name="geometry">
       <rect>
-       <x>170</x>
-       <y>190</y>
-       <width>91</width>
+       <x>210</x>
+       <y>480</y>
+       <width>101</width>
        <height>32</height>
       </rect>
      </property>
@@ -468,9 +468,9 @@
     <widget class="QPushButton" name="pushButton_7">
      <property name="geometry">
       <rect>
-       <x>160</x>
+       <x>210</x>
        <y>510</y>
-       <width>91</width>
+       <width>101</width>
        <height>32</height>
       </rect>
      </property>

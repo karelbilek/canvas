@@ -12,19 +12,19 @@ rectangle::clone() const {
 }
 
 shape_type* 
-rectangle::new_with_property(const string& property, const string& what, const libcan_int what_int, const libcan_float what_float){
+rectangle::new_with_property(const string& property, stringstream& what){
 	if (property=="a_x") {
-		_a.x = what_int;
+		what >> _a.x;
 	} else if (property=="a_y") {
-		_a.y = what_int;
+		what >> _a.y;
 	} else if (property=="b_x") {
-		_b.x = what_int;
+		what >> _b.x;
 	} else if (property=="b_y") {
-		_b.y = what_int;
+		what >> _b.y;
 	} else if (property=="p_x") {
-		_p.x = what_int;
+		what >> _p.x;
 	} else if (property=="p_y") {
-		_p.y = what_int;
+		what >> _p.y;
 	}
 	return new rectangle(_a, _b, _p);
 }
