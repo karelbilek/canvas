@@ -83,35 +83,36 @@ shape::set_property(const string& property, const string& what){
 	if (old!=what) {
 		destroying_change();
 	
-		libcan_int int_what;
 		stringstream wstream;
 		wstream<<what;
-		wstream>>int_what;
+		
 	
-		if (property=="line_red") {
-			_style._line_color.set_red(int_what);
-		} else if (property=="line_green") {
-			_style._line_color.set_green(int_what);
-		} else if (property=="line_blue"){
-			_style._line_color.set_blue(int_what);
-		} else if (property=="line_alpha") {
-			_style._line_color.set_alpha(int_what);
-		} else if (property=="fill_red") {
-			_style._fill_color.set_red(int_what);
-		} else if (property=="fill_green") {
-			_style._fill_color.set_green(int_what);
-		} else if (property=="fill_blue"){
-			_style._fill_color.set_blue(int_what);
-		} else if (property=="fill_alpha") {
-			_style._fill_color.set_alpha(int_what);
-		} else if (property=="line_size") {
-			_style._line_size = int_what;
-		} else if (property=="name") {
+		if (property.substr(0,4)=="line" || property.substr(0,4)=="fill"){
+			libcan_int int_what;
 			
+			wstream>>int_what;
+			if (property=="line_red") {
+				_style._line_color.set_red(int_what);
+			} else if (property=="line_green") {
+				_style._line_color.set_green(int_what);
+			} else if (property=="line_blue"){
+				_style._line_color.set_blue(int_what);
+			} else if (property=="line_alpha") {
+				_style._line_color.set_alpha(int_what);
+			} else if (property=="fill_red") {
+				_style._fill_color.set_red(int_what);
+			} else if (property=="fill_green") {
+				_style._fill_color.set_green(int_what);
+			} else if (property=="fill_blue"){
+				_style._fill_color.set_blue(int_what);
+			} else if (property=="fill_alpha") {
+				_style._fill_color.set_alpha(int_what);
+			} else if (property=="line_size") {
+				_style._line_size = int_what;
+			}
+		} else if (property=="name") {
 			_name = what;
 		} else {
-			libcan_float float_what;
-			istringstream(what)>>float_what;
 			shape_type* new_type = _type->new_with_property(property, wstream);
 			delete _type;
 			_type = new_type;
