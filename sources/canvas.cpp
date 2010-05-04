@@ -127,9 +127,6 @@ canvas::what_to_paint(const bool change) {
 	plane<bool> res(0, _height);
 	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		plane<bool> what = (*i).get_footprint(_antialias, _height, _width, change);
-		if (_antialias) {
-			return what.half(0,0);
-		}
 		res.add(what);
 	}
 	return res;
@@ -197,11 +194,8 @@ canvas::get_plane()  {
 
 	}
 		//tohle je mozna antiintuitivni, ale kreslim zeshora dolu, tj. pozadi prictu jako posledni
-	if (!_antialias) {
-		all_plane.add(plane<RGBa>(0, _height, 0, _width, _background));
-	} else {
-		all_plane.add(plane<RGBa>(0, _height*2, 0, _width*2, _background));
-	}
+	
+	all_plane.add(plane<RGBa>(0, _height, 0, _width, _background));
 	
 	if (!_force_paint) {
 		
@@ -212,9 +206,7 @@ canvas::get_plane()  {
 	}
 	
 	_force_paint=false;
-	if (_antialias) {
-		return _saved_plane.half(RGBa(), 0);
-	}
+	
 	return _saved_plane;
 }
 
