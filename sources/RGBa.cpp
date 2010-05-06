@@ -151,3 +151,7 @@ RGBa RGBa::operator* (const libcan_float quoc) const {
 	res._alpha = res_alpha;
 	return res;
 }
+
+// std::ostream& operator<<(std::ostream& out, const libcan::RGBa& c) {
+// 	return out << (int) (c.get_red()) << " " << (int)(c.get_green()) << " " << (int)(c.get_blue()) << "(" << (int)(c.get_alpha()) << ")";
+// }

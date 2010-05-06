@@ -14,6 +14,10 @@ namespace libcan {
 		
 		bool _antialias; //je zapnuty antialias?
 		bool _force_paint;
+		
+		bool _is_deleted;
+		plane<bool> _deleted;
+		
 		libcan_int _height;
 		libcan_int _width; //sirka/vyska
 		                

@@ -138,7 +138,7 @@ namespace libcan {
 		
 		interval<T>* add_far_right(interval<T>* other);
 		
-		interval<T>* half(bool& left, const bool on_right) const;
+		interval<T>* half(std::vector<libcan_int>& add_where, std::vector<T>& add_what) const;
 		
 		
 		interval<T>* quarter(interval<T> other, const T& background, const libcan_int& max_x) const;
@@ -212,98 +212,103 @@ namespace libcan {
 	template <class T> 
 	interval<T>*
 	interval<T>::quarter(interval<T> other, const T& background, const libcan_int& max_x) const{
+
+		
+		
 		interval<T> added = *this;
 		added.add_another(interval<T>(0, max_x, background), 3);
-		other.add_another(interval<T>(0, max_x, background), 3);
+		added.add_another(interval<T>(0, max_x, background), 3);
 		
 		added.add_another(other, 2);
 		added.check();
-		bool l;
-		//interval<T>* res = new interval<T>(added);
-		interval<T>* res = added.half(l, false);
+
+		std::vector<libcan_int> add_where;
+		std::vector<T> add_what;
+		interval<T>* res = added.half(add_where, add_what);
+
+		for (size_t i = 0; i < add_where.size(); ++i) {
+			if (res==NULL) {
+				res = new interval<T>(add_where[i], add_where[i], add_what[i]);
+			} else {
+
+				res->add_one(add_where[i], add_what[i], 2);
+			}
+		}
+		
 		res = res->remove_all(background);
 		if (res==NULL) {
 			res = new interval<T>();
+		} else {
+			res->check();
 		}
+		
 		return res;
 	}
 	
 	template <class T> 
 	interval<T>*
-	interval<T>::half(bool& left, const bool on_right) const {
-		bool l;
-		libcan_int start = (_start % 2) ?(_start/2+1):(_start/2);
-		libcan_int end = _end / 2;
-		left = (_start%2);
-		libcan_int where = (_start / 2);
+	interval<T>::half(std::vector<libcan_int>& add_where, std::vector<T>& add_what) const {
+
+			// 0 1 2 3 4 5 6 7 8 9 10 11
+			// 0 0 1 1 2 2 3 3 4 4 5  5
+			
+			
+		libcan_int start = (_start % 2) ?((_start-1)/2+1):(_start/2);
+		libcan_int end = (_end % 2) ? ((_end-1) / 2) :((_end/2)-1);
 		
-		
-		if (end < start) {
-			//pouze, kdyz mam 2 stejna licha cisla
-			if (_left==NULL) {				
-				if (_right==NULL) {
-					
-					if (!on_right) {
-						
-						left = false;
-						return new interval<T>(end, end, _content);
-					} else {
-						
-						return NULL;
-					}
-				} else {
-					
-					//bool add_left = false;
-					interval<T>* res = _right->half(l, true);
-					if (l==true) {
-						throw 1;
-					}
-					if (!on_right) {
-						
-						left = false;
-						res->add_one(where, _content, 2);
-					} 	
-									
-					return res;
+		if (start > end) {
+			if (_start == _end) {
+				libcan_int add = _start/2;
+				
+				add_where.push_back(add);
+				add_what.push_back(_content);
+			
+				interval<T>* left=NULL;
+				interval<T>* right=NULL;
+				if (_left!=NULL) {
+					left = _left->half(add_where, add_what);
 				}
+				if (_right!=NULL) {
+					right = _right->half(add_where, add_what);
+				}
+				if (left==NULL) {
+					return right;
+				}
+				if (right==NULL) {
+					return left;
+				}
+				return left->add_far_right(right);
 			} else {
 				
-				interval<T>* left_res = _left->half(l, false);
-				left_res->add_one(where, _content, 2);	
-				left = false;			
-				if (_right == NULL) {
-					
-					return left_res;
-				} else {
-					
-					interval<T>* right_res = _right->half(l, true);
-					if (l==true) {
-						throw 1;
-					}
-					return left_res->add_far_right(right_res);
+				interval<T>* res = new interval<T>(end, start, _content);
+				if (_left!=NULL) {
+					res->_left = _left->half(add_where, add_what);
 				}
+				if (_right!=NULL) {
+					res->_right = _right->half(add_where, add_what);
+				}
+				return res;
 			}
 		} else {
-			
+			if (_start%2) {
+				add_where.push_back(start-1);
+				add_what.push_back(_content);
+			}
+			if (!(_end%2)) {
+				
+				add_where.push_back(end+1);
+				add_what.push_back(_content);
+			}
 			interval<T>* res = new interval<T>(start, end, _content);
-			if (_left != NULL) {
-				interval<T>* left_res = _left->half(l, false);
-				res->_left = left_res;
+			if (_left!=NULL) {
+				res->_left = _left->half(add_where, add_what);
 			}
-			if (_right != NULL) {
-				bool add_right;
-				interval<T>* right_res = _right->half(add_right, true);
-				res->_right = right_res;
-				if (add_right) {
-					res->add_one(_right->_start/2, _right->_content, 2);
-				}
-			}
-			if ((!on_right || res->_left!=NULL) && left) {
-				left = false;
-				res->add_one(where, _content, 2);			
+			if (_right!=NULL) {
+				res->_right = _right->half(add_where, add_what);
 			}
 			return res;
 		}
+		
 	}
 	
 	template<class T>
@@ -844,13 +849,16 @@ namespace libcan {
 				//1 pixel na 1-ciselny interval
 				
 				_content = new_mixed;
+				
 			
 			} else if (where == _start) {
 				//takovy mozna hack, ale co
 				++_start;
+								
 				add_one(where, new_mixed,0);
 			} else if (where == _end) {
 				--_end;
+				
 				add_one(where, new_mixed,0);
 					//tady si nejsem jist, jestli je tohle dost efektivni
 		
@@ -862,9 +870,12 @@ namespace libcan {
 			} else if (where == _end + 1 && _content == new_mixed) {
 					//jsem tesne vpravo! a totez!
 				++_end;
+				
 		
 			} else if (where > _start && where < _end) {
 					//Strkam nekam doprostred
+					
+					
 				libcan_int end = _end;
 				_end = where - 1;
 					//nejdriv se posunu pred to,
@@ -876,6 +887,7 @@ namespace libcan {
 			} else if (where < _start) {
 				//nekde moc vlevo
 				if (_left == NULL) {
+					
 					_left = new interval<T>(where, where, what);
 				
 				} else {
@@ -885,6 +897,7 @@ namespace libcan {
 			} else if (where > _end) {
 				//moc vpravo
 				if (_right == NULL) {
+					
 					_right = new interval<T>(where, where, what);
 					
 				} else {

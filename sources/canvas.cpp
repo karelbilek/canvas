@@ -51,6 +51,8 @@ canvas::change_order(size_t from, size_t to){
 canvas::canvas(const size_t width, const size_t height, const RGBa& background, bool antialias) :
   _antialias(antialias),
   _force_paint(true),
+  _is_deleted(false),
+  _deleted(0, height),
   _height(height),
   _width(width),
   _background(background),
@@ -60,6 +62,8 @@ canvas::canvas(const size_t width, const size_t height, const RGBa& background, 
 canvas::canvas() :
   _antialias(false),
   _force_paint(true),
+  _is_deleted(false),
+  _deleted(0, 1),
   _height(1),
   _width(1),
   _background(),
@@ -75,13 +79,12 @@ canvas::~canvas() {
 
 
 matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) {
-	small quoc = (_antialias?2:1);
 
 	
 	plane<RGBa> all_plane = get_plane();
-	matrix<libcan_component> all_matrix(quoc*_width,quoc*_height,4);
+	matrix<libcan_component> all_matrix(_width,_height,4);
 	
-	for (libcan_int y = 0; y < quoc*_height; ++y) {
+	for (libcan_int y = 0; y < _height; ++y) {
 		
 		colors_row row = all_plane.get_row(y);
 		for (colors_row::iterator i = row.begin(); i != row.end(); ++i) {
@@ -94,11 +97,7 @@ matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t g
 		}
 	}
 	
-	if (!_antialias) {
-		return all_matrix;
-	} else {
-		return all_matrix.half();
-	}
+	return all_matrix;
 }
 
 void 
@@ -126,8 +125,17 @@ plane<bool>
 canvas::what_to_paint(const bool change) {
 	plane<bool> res(0, _height);
 	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
-		plane<bool> what = (*i).get_footprint(_antialias, _height, _width, change);
+		plane<bool> what = (*i).get_footprint(_height, _width, change);
 		res.add(what);
+	}
+	if (_is_deleted) {
+		
+		res.add(_deleted);
+		if (change) {
+			
+			_is_deleted = false;
+			_deleted = plane<bool>(0, _height);
+		}
 	}
 	return res;
 	
@@ -140,13 +148,17 @@ canvas::is_force_paint() const {
 
 bool
 canvas::should_paint() const {
+	if (_is_deleted) {
+		return 1;
+	}
+	if (_force_paint) {
+		return 1;
+	}
+	
 	for (list<shape>::const_iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		if ((*i).should_paint()) {
 			return 1;
 		}
-	}
-	if (_force_paint) {
-		return 1;
 	}
 	return 0;
 }
@@ -155,9 +167,9 @@ canvas::should_paint() const {
 plane<RGBa> 
 canvas::get_plane()  {
 
+	
 	bool spaint = should_paint();
 	if (!spaint && !(_force_paint)) {
-		
 		return _saved_plane;
 	}
 	
@@ -175,6 +187,7 @@ canvas::get_plane()  {
 		not_to_paint = should_paint.negative(1, 0, _width);
 		force = false;
 	} else {
+		
 		force = true;
 	}
 	
@@ -182,7 +195,7 @@ canvas::get_plane()  {
 	
 	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		
-		plane<RGBa> pixels = (*i).get_pixels(_height, _width, _antialias, not_to_paint, force);
+		plane<RGBa> pixels = (*i).get_pixels(_height, _width, _antialias, not_to_paint, _background, force);
 		/*if (_antialias) {
 			pixels = pixels.half();
 		}*/
@@ -264,6 +277,12 @@ void canvas::remove(const size_t pos) {
 	if (pos < _shapes.size()) {
 		list<shape>::iterator it = _shapes.begin();
 		for (size_t i = 0; i < pos; ++i, ++it) {}
+		
+		plane<bool> added = (*it).get_footprint(_height, _width, false, true);
+		
+		_deleted.add(added);
+		_is_deleted = true;
+		
 		_shapes.erase(it);
 	}
 }
@@ -277,12 +296,26 @@ void canvas::remove_all() {
 
 void canvas::pop_back(){
     if (!_shapes.empty()) {
+		
+		plane<bool> added = (_shapes.back()).get_footprint(_height, _width, false, true);
+		
+		_deleted.add(added);
+		_is_deleted = true;
+		
+		
 		_shapes.pop_back();
     }
 }
 
 void canvas::pop_front(){
     if (!_shapes.empty()) {
+		plane<bool> added = (_shapes.front()).get_footprint(_height, _width, false, true);
+
+		_deleted.add(added);
+		_is_deleted = true;
+		
+		
+		
 		_shapes.pop_front();
     }
 }

@@ -53,6 +53,7 @@ void MainWindow::paintEvent(QPaintEvent *w)
     /*QImage muj = qimage_from_canvas(c);//.toQImage();
     QPixmap muj2 = QPixmap::fromImage(muj);*/
 
+
     plane<RGBa> colors = c.get_plane();
 
 
@@ -63,6 +64,8 @@ void MainWindow::paintEvent(QPaintEvent *w)
 
     QVector<QRect> rects = w->region().rects();
     for (QVector<QRect>::iterator it = rects.begin(); it < rects.end(); ++it) {
+
+
         QImage newPixels(it->width(), it->height(), QImage::Format_RGB32);
         int top = it->top();
         int bottom = it->bottom();
@@ -101,14 +104,19 @@ void MainWindow::repaint_wanted() {
 
     if (c.should_paint()) {
         if (c.is_force_paint()) {
+
             repaint();
         } else {
+
+
             QRegion region;
             std::vector<libcan_info> infos = c.what_to_paint().all_infos();
             for (std::vector<libcan_info>::iterator it = infos.begin(); it < infos.end(); ++it) {
+
                 QRegion newregion(it->min_x, it->y, (it->max_x +1 - it->min_x), 1);
                 region = region.united(newregion);
             }
+
             repaint(region);
         }
     }

@@ -67,7 +67,7 @@ namespace libcan {
 		static bool compare_by_row(const moved_arrays& a, const moved_arrays& b);
 		
 		void destroying_change();
-		void get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& max_x, libcan_int& max_y, const bool& antialias, const libcan_int height, const libcan_int width) const;
+		void get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& max_x, libcan_int& max_y, const bool& double_it, const libcan_int height, const libcan_int width) const;
 		
 	public:
 		
@@ -81,13 +81,13 @@ namespace libcan {
 		shape(const shape_style& style, const shape_type& type);
 	
 			
-		plane<RGBa> get_pixels(const libcan_int height, const libcan_int width, const bool& antialias, const plane<bool>& where_not_paint, const bool& force=false);
+		plane<RGBa> get_pixels(const libcan_int height, const libcan_int width, const bool& antialias, const plane<bool>& where_not_paint, const RGBa& background, const bool& force=false);
 		
 		void rotate(libcan_float angle);
 		void resize(libcan_float quoc);
 		void move(const point& where);
 		
-		plane<bool> get_footprint(const bool& antialias, const libcan_int height, const libcan_int width, const bool do_change);
+		plane<bool> get_footprint(const libcan_int height, const libcan_int width, const bool do_change, const bool force = false);
 		
 		std::string get_property(const std::string& property);
 		std::set<std::string> get_properties();

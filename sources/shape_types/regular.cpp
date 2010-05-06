@@ -83,3 +83,53 @@ regular_from_center::get_property(const std::string& property, std::stringstream
 		where << "regular "<<_n<<"-gon"; 
 	}
 }
+
+regular::regular(const point& a, const point& b, int n):
+ shape_type(1,1),
+ _a(a),
+ _b(b),
+ _n(n) {
+	libcan_float angle = (180-360/n);
+	libcan_float length = geom_line(a,b).length();
+	
+	point aa = a;
+	point bb = b;
+	
+	for (int i=0; i<n-1; i++){
+		_curves.push_back(new line(aa,bb));
+		point c = geom_line(aa,bb).line_from_rev_angle(angle, length).b;
+		aa=bb;
+		bb=c;
+	}
+	
+	_curves.push_back(new line(aa,a));
+			//nepresnosti se kumuluji, tak o pixel to vyjde jinak, ale to uz dela potize!
+	
+}
+
+regular_from_center::regular_from_center(const point& c, const point& a, int n):
+ shape_type(1,1),
+ _c(c),
+ _a(a),
+ _n(n) {
+	libcan_float angle = (180-360/n);
+	
+	geom_line me(c, a);
+	
+	libcan_float length = cos(__DEG2RAD(angle/2))*2*( me.length());
+	geom_line l = me.line_from_rev_angle(angle/2, length);
+	
+	point aa = l.a;
+	point bb = l.b;
+	
+	for (int i=0; i<n-1; i++){
+		_curves.push_back(new line(aa,bb));
+		point c = geom_line(aa,bb).line_from_rev_angle(angle, length).b;
+		aa=bb;
+		bb=c;
+	}
+	
+	_curves.push_back(new line(aa,l.a));	
+	
+	
+}

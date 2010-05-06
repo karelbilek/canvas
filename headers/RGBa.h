@@ -3,6 +3,8 @@
 
 #include "types.h"
 #include <map>
+//#include <iostream>
+
 
 
 namespace libcan{
@@ -81,5 +83,8 @@ namespace libcan{
 		
 	};
 }
+
+
+//std::ostream& operator<<(std::ostream& out, const libcan::RGBa& c);
 
 #endif

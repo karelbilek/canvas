@@ -214,11 +214,11 @@ shape::should_paint() const {
 }
 
 plane<bool> 
-shape::get_footprint(const bool& antialias, const libcan_int height, const libcan_int width, const bool do_change)  {
+shape::get_footprint( const libcan_int height, const libcan_int width, const bool do_change, const bool force)  {
 	
 	plane<bool> res(0, height);
 	
-	if (!_footprint_given || _changed) {
+	if (!_footprint_given || _changed || force) {
 		
 		if (do_change) {
 			_footprint_given = true;
@@ -235,7 +235,7 @@ shape::get_footprint(const bool& antialias, const libcan_int height, const libca
 			res.add(_new_footprint);
 		} else {
 			libcan_int min_x, max_x, min_y, max_y;
-			get_extremes(min_x,max_x,min_y,max_y, antialias, height, width);
+			get_extremes(min_x,max_x,min_y,max_y, false, height, width);
 			plane<bool> ad(min_x, max_x, min_y, max_y, 1);
 			res.add(ad);
 		}
@@ -248,9 +248,9 @@ shape::get_footprint(const bool& antialias, const libcan_int height, const libca
 }
 
 void
-shape::get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& min_y, libcan_int& max_y, const bool& antialias, const libcan_int height, const libcan_int width) const {
+shape::get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& min_y, libcan_int& max_y, const bool& double_it, const libcan_int height, const libcan_int width) const {
 	_type->get_extremes(min_x, max_x, min_y, max_y);
-	if (antialias) {
+	if (double_it) {
 		min_x *= 2;
 		max_x *= 2;
 		min_y *= 2;
@@ -265,7 +265,7 @@ shape::get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& min_y, lib
 
 
 plane<RGBa> 
-shape::get_pixels(const libcan_int small_height, const libcan_int small_width, const bool& antialias, const plane<bool>& where_not_paint, const bool& force) {
+shape::get_pixels(const libcan_int small_height, const libcan_int small_width, const bool& antialias, const plane<bool>& where_not_paint, const RGBa& background, const bool& force) {
 	
 	if (_painted && !force) {
 		return _pixels;
@@ -423,14 +423,13 @@ shape::compare_by_row(const moved_arrays& a, const moved_arrays& b) {
 plane<bool>
 shape::paint(const shape_type* const type, libcan_int min_y, libcan_int max_y){
 	
-	//to min_y neni pres referenci ale kopii, protoze ho budu menit
 	list<moved_arrays> borders = type->all_curve_arrays();
-	
+		//vrati vsechny konkretni segmenty vsech okraju
 
 	
+		//vyrazeni vsech horizontalnich (trivialni)
 	for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ) {
-		
-			//horizontalni me moc nezajimaji
+			
 		if (i->is_horizontal()) {
 			list<moved_arrays>::iterator j = i;
 			++i;
@@ -439,20 +438,11 @@ shape::paint(const shape_type* const type, libcan_int min_y, libcan_int max_y){
 			++i;
 		}
 	}
-	
-		//extremni pripad
-	if (min_y==0 && max_y==0) {
-		list<moved_arrays>::iterator i = borders.begin();
-		min_y = i->get_min_nonempty_y();
-		max_y = i->get_max_nonempty_y();
-		for (++i; i!=borders.end();++i){
-			min_y = __minimum(min_y, i->get_min_nonempty_y());
-			max_y = __maximum(max_y, i->get_max_nonempty_y());
-		}
-	}
+
 	
 	plane<bool> res(min_y,max_y);
-	
+
+			//proste pridam cary do vysledku
 	for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ++i) {
 		res.add(i->to_plane());
 	}
@@ -462,15 +452,20 @@ shape::paint(const shape_type* const type, libcan_int min_y, libcan_int max_y){
 		//autor Josef Pelikan
 		//mnou notne upraveno
 		
+		
+		//seradi tak, ze na radku y jsou pekne za sebou
 		for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ++i) {
 			i->_sorting_hint = y; //I got no better idea than this
 		} 
 								  //.....because of this
 		borders.sort(shape::compare_by_row);
 		
-		libcan_int paint_start = 0;
-		libcan_int paint_end = 0;
+		//do paint_start si budu ukladat, odkud mam kreslit, do paint_end kam mam kreslit,
+		//do paint_part jestli zrovna kreslim nebo
+		libcan_int paint_start;
+		libcan_int paint_end;
 		bool paint_part = false;
+		
 		
 		bool previous_was_ending=false;
 		bool previous_was_starting=false;
