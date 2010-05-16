@@ -12,13 +12,19 @@ polygon::clone() const {
 vector<string> polygon::get_specific_properties() {
 	vector<string> res;
 	
-	for (size_t i = 0; i < res.size(); ++i) {
+	for (size_t i = 0; i < _points.size(); ++i) {
 		string x,y;
-		stringstream ss;
-		ss<<"a"<<i+1<<"_x";
-		ss>>x;
-		ss<<"a"<<i+1<<"_y";
-		ss>>y;
+		
+		{
+			stringstream ss;
+			ss<<"a"<<i+1<<"_x";
+			x=ss.str();
+		}
+		{
+			stringstream ss;
+			ss<<"a"<<i+1<<"_y";
+			y=ss.str();
+		}
 		res.push_back(x);
 		res.push_back(y);
 	}

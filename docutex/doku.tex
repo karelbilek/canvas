@@ -1,0 +1,86 @@
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+\usepackage{graphicx}
+\usepackage[czech]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{url}
+
+\usepackage{bm}
+\usepackage{geometry} 
+\usepackage{subfigure}
+\geometry{a4paper} 
+
+
+\usepackage{listings}
+\usepackage{ae}
+
+\begin{document}
+    \title{Dokumentace knihovny Canvas}
+    \author{Karel Bílek}
+    \date{10. května 2010}
+    \maketitle
+    
+    SMAZAT MATRIX
+\section{Úvod}
+Knihovna Canvas je knihovna, určená pro kreslení jednoduchých geometrických objektů na obrazovku, jejich zobrazování a manipulaci. 
+
+Implementováním podtříd pro některé třídy je pak možné jednoduše vytvářet nové geometrické objekty.
+
+\section{Stručný popis}
+Při kreslení canvasu postupuje knihovna takto:
+
+\begin{itemize}
+    \item Podívá se na seznam \uv{svých} geometrických objektů (třída \texttt{shape}), jestli v některém z nich bylo od posledního kreslení změna - pokud ne, vrátí totéž, co minule, bez kreslení. Pokud kreslí poprvé, musí nakreslit vše.
+    \item Poté zjistí, na jakém prostoru se změny staly (pokud kreslím poprvé, tento prostor = celý rozměr canvasu).
+    \item Poté na \textbf{každý} \texttt{shape} zavolá funkci \texttt{get\_pixels} (s tím, že řekne, na jakém úseku se kreslí). Stane se tam následující:
+    \begin{itemize}
+        \item Pokud byl objekt nakreslen a od té doby nezměněn, vrátí se jeho nakreslení
+        \item Jinak nejdřív \texttt{shape} vezme svoje okraje (třída \texttt{curve}) a podle toho, jestli \texttt{curve} umí, nebo neumí vrátit sama sebe s určitou tloušťkou geometricky, se buď vrátí geometricky a vyplní, nebo se nakreslí bod po bodu
+        \item A nakonec se vyplní samotný obsah - tak, že krajní \texttt{curves} vrátí svojí reprezentaci jako pole začátků a konců, poté se provede algoritmus, lépe popsaný v \cite{Pelikan}.
+    \end{itemize}
+\end{itemize}
+
+Manipulace se samotnými \texttt{shapes} v \texttt{canvas} je následující:
+\begin{itemize}
+    \item Buď se může přímo zavolat funkce \texttt{rotate}, \texttt{resize} nebo \texttt{move}, které by měly zaručeně fungovat vždy.
+    \item Nebo můžou mít \texttt{shape} implementované tzv. vlastnosti (properties)
+    \begin{itemize}
+        \item property Name má \texttt{shape} vždy, stejně jako barvy čáry a výplně a tloušťku čáry
+        \item ostatní properties můžou být definovány v odpovídajícím \texttt{shape\_type} (o tom viz níže), například u kruhu je to střed a poloměr, u úsečky dvě čáry apod.
+        \item \uv{můžu} píšu proto, protože uživatel nemusí chtít properties v rámci vlastní podtřídy \texttt{shape\_type} definovat - nastavování properties je totiž implementováno možná trochu netradičním způsobem.
+    \end{itemize}
+\end{itemize}
+    
+Zbytek programu jsou podtřídy \texttt{shape\_type} a \texttt{curve}.
+
+Podtřída třídy \texttt{shape\_type} reprezentuje typ tvaru. Některé v knihovně jsou např. \texttt{elipse}, \texttt{segment} (úsečka) apod. Podtřída \texttt{shape\_type} musí mít definováno:
+\begin{itemize}
+    \item konstruktor, co vytvoří \texttt{curves}
+    \item proceduru, kterou daný \uv{naklonuje} sám sebe
+\end{itemize}
+a dále nepovinně procedury na seznam všech možných properties a na změnu a hodnotu nějaké property.\footnote{Seznam všech properties by, logicky vzato, měla být funkce \emph{třídy} a ne instance, ale C++ statické virtuální funkce neumí.}
+
+Podtřída třídy \texttt{curve} má mít:
+\begin{itemize}
+    \item proceduru na \uv{naklonování} sama sebe
+    \item procedury na otočení, posunutí a zvětšení
+    \item proceduru na vrácení všech segmentů křivky \uv{bod po bodu}
+    \item proceduru, co vrací, jestli umím nebo ne nakreslit sám sebe s tloušťkou jako \textt{shape\_type} - a pokud ano, tak jak přesně
+\end{itemize}
+
+
+
+
+
+\begin{thebibliography}{9}
+
+   \bibitem{Pelikan}
+     \url{http://cgg.mff.cuni.cz/~pepca/lectures/npgr003.html}
+     
+ \end{thebibliography}
+
+
+\end{document}

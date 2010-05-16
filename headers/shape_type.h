@@ -1,10 +1,7 @@
 #ifndef SHAPE_TYPE_INC
 #define SHAPE_TYPE_INC
 
-#include <list>
-#include <vector>
-#include <string>
-#include <sstream>
+
 
 
 #include "moved_arrays.h"
@@ -35,12 +32,12 @@ namespace libcan {
 		
 		point center() const;
 		
-		void rotate(libcan_float angle);
-		void resize(libcan_float quoc);
+		void rotate(double angle);
+		void resize(double quoc);
 		void move(const point& where);
 		
 		
-		void get_extremes(libcan_int& min_x,libcan_int& max_x,libcan_int& min_y,libcan_int& max_y)const;
+		void get_extremes(long& min_x,long& max_x,long& min_y,long& max_y)const;
 		
 			//vraci rovnou segmenty (pro zjednoduseni)
 		std::list<moved_arrays> all_curve_arrays() const;

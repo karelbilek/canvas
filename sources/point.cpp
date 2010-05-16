@@ -1,11 +1,10 @@
 #include "point.h"
-#include <cmath>
 
 using namespace libcan;
 
 //-------------------------CONSTRUCTORS
-point::point(libcan_float new_x, libcan_float new_y):x(new_x),y(new_y) {}
-point::point(libcan_int new_x, libcan_int new_y):x(new_x),y(new_y) {}
+point::point(double new_x, double new_y):x(new_x),y(new_y) {}
+point::point(long new_x, long new_y):x(new_x),y(new_y) {}
 point::point(int new_x, int new_y):x(new_x),y(new_y) {}
 
 
@@ -13,7 +12,7 @@ point::point():x(0), y(0) { }
 
 //-------------------------OTHER
 point
-point::move(const libcan_float distance, libcan_float degrees) const{
+point::move(const double distance, double degrees) const{
 	while (degrees<0) {
 		degrees+=360;
 	}
@@ -21,7 +20,7 @@ point::move(const libcan_float distance, libcan_float degrees) const{
 		degrees-=360;
 	}	//modulo, ale na cislech, kde mi to c++ nedovoli
 	
-	libcan_float rad = __DEG2RAD(degrees);
+	double rad = __DEG2RAD(degrees);
 	return point(x+distance*cos(rad), y+distance*sin(rad));
 }
 
@@ -38,12 +37,12 @@ point::operator-(const point& other) const {
 }
 
 point 
-point::operator*(const libcan_float n) const {
+point::operator*(const double n) const {
 	return point(x*n, y*n);
 }
 
 point 
-point::operator*(const libcan_int n) const {
+point::operator*(const long n) const {
 	return point(x*n, y*n);
 }
 
@@ -53,7 +52,7 @@ point::operator*(const int n) const {
 }
 point
 point::trunc() const {
-	return point(static_cast<libcan_int>(x), static_cast<libcan_int>(y));
+	return point(static_cast<long>(x), static_cast<long>(y));
 }
 
 point& 
@@ -65,12 +64,12 @@ point::operator=(const point& other) {
 
 bool 
 point::operator==(const point& other) const {
-	return (__abs(x - other.x)<0.01 && __abs(y - other.y)<0.01);
+	return (abs(x - other.x)<0.01 && abs(y - other.y)<0.01);
 }
 
 bool 
 point::operator!=(const point& other) const {
-	return (__abs(x - other.x)>=0.01 || __abs(y - other.y)>=0.01);
+	return (abs(x - other.x)>=0.01 || abs(y - other.y)>=0.01);
 }
 
 

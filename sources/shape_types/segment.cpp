@@ -36,11 +36,11 @@ segment::get_property(const std::string& property, std::stringstream& where) con
 	} else if (property=="b_y") {
 		where<<_b.y;
 	} else if (property=="name") {
-		where << "segment "<<_a.x<<","<<_a.y<<"] - ["<<_b.x<<","<<_b.y<<"]"; 
+		where << "segment ["<<_a.x<<","<<_a.y<<"] - ["<<_b.x<<","<<_b.y<<"]"; 
 	}
 }
 
-segment::segment(const libcan_float ax, const libcan_float ay, const libcan_float bx, const libcan_float by): 
+segment::segment(const double ax, const double ay, const double bx, const double by): 
  shape_type(0,0),
  _a(point(ax,ay)),
  _b(point(bx,by)) {

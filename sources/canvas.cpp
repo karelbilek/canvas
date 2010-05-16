@@ -78,21 +78,21 @@ canvas::~canvas() {
 //-----------------------------------GETTERS
 
 
-matrix<libcan_component> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) {
+matrix<unsigned char> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) {
 
 	
 	plane<RGBa> all_plane = get_plane();
-	matrix<libcan_component> all_matrix(_width,_height,4);
+	matrix<unsigned char> all_matrix(_width,_height,4);
 	
-	for (libcan_int y = 0; y < _height; ++y) {
+	for (long y = 0; y < _height; ++y) {
 		
 		colors_row row = all_plane.get_row(y);
 		for (colors_row::iterator i = row.begin(); i != row.end(); ++i) {
 			
-			libcan_component color[4];
+			unsigned char color[4];
 			i->_cont.get_colors_pointer (color+red_pos, color+green_pos, color+blue_pos, color+alpha_pos);
 			
-			all_matrix.set_more(__maximum(i->_start,0), i->_end, y, color);
+			all_matrix.set_more(std::max(i->_start, (long)0), i->_end, y, color);
 			
 		}
 	}
@@ -117,7 +117,7 @@ canvas::set_RGBa(const RGBa& what) {
 }
 
 void 
-canvas::get_colors(libcan_component* p_red, libcan_component* p_green, libcan_component* p_blue, libcan_component* p_alpha) const {
+canvas::get_colors(unsigned char* p_red, unsigned char* p_green, unsigned char* p_blue, unsigned char* p_alpha) const {
 	_background.get_colors_pointer(p_red, p_green, p_blue, p_alpha);
 }
 
@@ -196,12 +196,6 @@ canvas::get_plane()  {
 	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		
 		plane<RGBa> pixels = (*i).get_pixels(_height, _width, _antialias, not_to_paint, _background, force);
-		/*if (_antialias) {
-			pixels = pixels.half();
-		}*/
-		
-		
-
 		all_plane.add(pixels);
 		not_to_paint.add(pixels.flatten_plane<bool>(1, full));
 
@@ -238,7 +232,7 @@ void canvas::push_back(const shape g) {
 
 void canvas::push_front(const shape g, const size_t pos) {
 	
-	size_t pos_c=__minimum(pos, _shapes.size());
+	size_t pos_c=std::min(pos, _shapes.size());
 	
 	list<shape>::iterator it = _shapes.begin();
 	for (size_t i = 0; i < pos_c; ++i) {
@@ -262,7 +256,7 @@ canvas::get_names() {
 
 void canvas::push_back(const shape g, const size_t pos) {
 	
-	size_t pos_c=__minimum(pos, _shapes.size());
+	size_t pos_c=std::min(pos, _shapes.size());
 	
 	
 	list<shape>::iterator it = _shapes.end();
@@ -329,10 +323,10 @@ void canvas::push_back(const shape_style& style, const shape_type& type) {
 	push_back(shape(style, type));
 }
 
-libcan_int canvas::get_width() const{
+long canvas::get_width() const{
 	return _width;
 }
 
-libcan_int canvas::get_height() const {
+long canvas::get_height() const {
 	return _height;
 }

@@ -8,9 +8,9 @@ namespace libcan {
 	class disk:public shape_type {
 	private:
 		point _center;
-		libcan_float _radius;
+		double _radius;
 	public:
-		disk(const point& center, const libcan_float radius);
+		disk(const point& center, const double radius);
 		disk(const point& center, const point& ref_point);
 		virtual std::vector<std::string> get_specific_properties();
 		virtual shape_type* clone() const;

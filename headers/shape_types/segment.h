@@ -10,7 +10,7 @@ namespace libcan {
 		point _a;
 		point _b;
 	public:	
-		segment(const libcan_float ax, const libcan_float ay, const libcan_float bx, const libcan_float by);
+		segment(const double ax, const double ay, const double bx, const double by);
 		segment(const point& a, const point& b);
 		virtual shape_type* clone() const;
 		

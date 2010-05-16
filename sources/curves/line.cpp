@@ -21,13 +21,13 @@ line::line(point a, point b) :
 }
 
 void
-line::rotate(const point& center, const libcan_float angle){
+line::rotate(const point& center, const double angle){
 	_a = geom_line(center,_a).rotate_fixed_a(angle).b;
 	_b = geom_line(center,_b).rotate_fixed_a(angle).b;
 }
 
 void 
-line::resize(const point& center, const libcan_float quoc){
+line::resize(const point& center, const double quoc){
 	_a = geom_line(center,_a).resize(quoc).b;
 	_b = geom_line(center,_b).resize(quoc).b;
 }
@@ -44,7 +44,7 @@ line::get_arrays() {
 	//autor algoritmu Josef Pelikan
 		
 		//kreslim vzdycky podel delsiho rozmeru, a od mensiho cisla k vetsimu
-	bool is_width_bigger = (__abs(_a.x-_b.x) > __abs(_a.y-_b.y));
+	bool is_width_bigger = (abs(_a.x-_b.x) > abs(_a.y-_b.y));
 	bool is_switch_points = ((is_width_bigger)?(_b.x>_a.x):(_b.y>_a.y));
 	
 	
@@ -56,19 +56,19 @@ line::get_arrays() {
 	bool increasing = (is_width_bigger ? ((end_p.y-begin_p.y)>0) : ((end_p.x-begin_p.x)>0));
 	
 				//vysledky
-	moved_arrays res(__minimum(begin_p.y,end_p.y),__maximum(begin_p.y, end_p.y));
+	moved_arrays res(std::min(begin_p.y,end_p.y),std::max(begin_p.y, end_p.y));
 	
 	
 				//ta mensi velikost
-	libcan_int lower_size = static_cast<libcan_int>(is_width_bigger?__abs(begin_p.y-end_p.y):__abs(begin_p.x-end_p.x));
+	long lower_size = static_cast<long>(is_width_bigger?abs(begin_p.y-end_p.y):abs(begin_p.x-end_p.x));
 	
 				//ta vetsi velikost
-	libcan_int bigger_size = static_cast<libcan_int>(is_width_bigger?__abs(begin_p.x-end_p.x):__abs(begin_p.y-end_p.y));
+	long bigger_size = static_cast<long>(is_width_bigger?abs(begin_p.x-end_p.x):abs(begin_p.y-end_p.y));
 	
 	
-	libcan_int D = 2*lower_size - bigger_size;
-	libcan_int inc0 = 2*lower_size;
-	libcan_int inc1 = 2*(lower_size - bigger_size);
+	long D = 2*lower_size - bigger_size;
+	long inc0 = 2*lower_size;
+	long inc1 = 2*(lower_size - bigger_size);
 	
 			//timhle se sunu
 	point moving = begin_p;
@@ -76,12 +76,12 @@ line::get_arrays() {
 	
 	
 			//tohle sou reference, tj staci zvysovat nebo snizovat je a meni se to i v moving
-	libcan_float& moving_bigger = is_width_bigger?moving.x:moving.y;
-	libcan_float& moving_lower = is_width_bigger?moving.y:moving.x;
+	double& moving_bigger = is_width_bigger?moving.x:moving.y;
+	double& moving_lower = is_width_bigger?moving.y:moving.x;
 	
 
 	
-	for (libcan_int i = 0; i < bigger_size; ++i) {
+	for (long i = 0; i < bigger_size; ++i) {
 		if (D<=0){
 			D+=inc0;
 		} else {
@@ -101,14 +101,14 @@ line::get_arrays() {
 }
 
 
-libcan_int line::get_min_y() const {return __minimum(_a.y,_b.y)-5;}
-libcan_int line::get_max_y() const {return __maximum(_a.y,_b.y)+2;}
+long line::get_min_y() const {return std::min(_a.y,_b.y)-5;}
+long line::get_max_y() const {return std::max(_a.y,_b.y)+2;}
 
-libcan_int line::get_min_x() const {return __minimum(_a.x,_b.x)-5;}
-libcan_int line::get_max_x() const {return __maximum(_a.x,_b.x)+2;}
+long line::get_min_x() const {return std::min(_a.x,_b.x)-5;}
+long line::get_max_x() const {return std::max(_a.x,_b.x)+2;}
 
 shape_type
-line::get_thick_line(const libcan_float thickness, const curve* const previous, const curve* const next) const{
+line::get_thick_line(const double thickness, const curve* const previous, const curve* const next) const{
 	point a;
 	point b;
 	point c;

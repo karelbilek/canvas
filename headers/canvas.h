@@ -18,8 +18,8 @@ namespace libcan {
 		bool _is_deleted;
 		plane<bool> _deleted;
 		
-		libcan_int _height;
-		libcan_int _width; //sirka/vyska
+		long _height;
+		long _width; //sirka/vyska
 		                
 		RGBa _background; 
 		
@@ -29,8 +29,8 @@ namespace libcan {
 		
 				
 	public:
-		libcan_int get_width() const;
-		libcan_int get_height() const;
+		long get_width() const;
+		long get_height() const;
 		
 		
 		bool is_force_paint() const;
@@ -48,7 +48,7 @@ namespace libcan {
 		~canvas();
 						//smaz canvas
 		
-		matrix<libcan_component> get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos); 
+		matrix<unsigned char> get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos); 
 						//vrat matrix s temahle pozicema
 						//NENI const, viz niz
 						
@@ -57,7 +57,7 @@ namespace libcan {
 						//NENI CONST
 						//sou to sice "gettery", ale az ty gettery rikaji potomkum "nakreslete se!"
 		
-		void get_colors(libcan_component* p_red, libcan_component* p_green, libcan_component* p_blue, libcan_component* p_alpha) const;
+		void get_colors(unsigned char* p_red, unsigned char* p_green, unsigned char* p_blue, unsigned char* p_alpha) const;
 		
 		void set_antialias(const bool what);
 		void set_RGBa(const RGBa& what);

@@ -6,6 +6,7 @@
 #include <map>
 #include <iostream>
 #include <sstream>
+#include <cmath>
 
 
 
@@ -17,12 +18,11 @@ using namespace libcan;
 
 
 int main () {
-	stringstream wwww;
+	double lolf=-3.5;
+	long loll = floor(lolf);
 	
-	wwww<<"prvni druhe";
-	string aaa=wwww.str();
+	std::cout<<loll<<"\n";
 	
-	cout<<aaa;
 	
 	return 0;
 }

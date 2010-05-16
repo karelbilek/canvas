@@ -35,7 +35,7 @@ disk::get_property(const std::string& property, std::stringstream& where) const 
 	}
 }
 
-disk::disk(const point& center, const libcan_float radius): 
+disk::disk(const point& center, const double radius): 
  shape_type(1,1),
  _center(center),
  _radius(radius) {

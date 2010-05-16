@@ -30,7 +30,7 @@ shape_type() :
 }
 
 void
-shape_type::rotate(libcan_float angle) {
+shape_type::rotate(double angle) {
 	point c = center();
 	
 	for (list<curve*>::iterator i = _curves.begin();i!=_curves.end(); ++i) {
@@ -39,7 +39,7 @@ shape_type::rotate(libcan_float angle) {
 }
 
 void
-shape_type::resize(libcan_float quoc) {
+shape_type::resize(double quoc) {
 	point c = center();
 	
 	for (list<curve*>::iterator i = _curves.begin();i!=_curves.end(); ++i) {
@@ -59,7 +59,7 @@ shape_type::move(const point& where){
 
 point 
 shape_type::center() const {
-	libcan_int min_x, max_x, min_y, max_y;
+	long min_x, max_x, min_y, max_y;
 	
 	get_extremes(min_x,max_x,min_y,max_y);
 	
@@ -85,7 +85,7 @@ shape_type::clone() const {
 }
 
 void
-shape_type::get_extremes(libcan_int& min_x,libcan_int& max_x,libcan_int& min_y,libcan_int& max_y) const{
+shape_type::get_extremes(long& min_x,long& max_x,long& min_y,long& max_y) const{
 	std::list<curve*>::const_iterator i = _curves.begin();	
 	std::list<curve*>::const_iterator end = _curves.end();
 	
@@ -95,10 +95,10 @@ shape_type::get_extremes(libcan_int& min_x,libcan_int& max_x,libcan_int& min_y,l
 	max_y = (**i).get_max_y();
 
 	for (++i;i!=end; ++i) {
-		min_x = __minimum((**i).get_min_x(), min_x);
-		max_x = __maximum((**i).get_max_x(), max_x);
-		min_y = __minimum((**i).get_min_y(), min_y);
-		max_y = __maximum((**i).get_max_y(), max_y);
+		min_x = std::min((**i).get_min_x(), min_x);
+		max_x = std::max((**i).get_max_x(), max_x);
+		min_y = std::min((**i).get_min_y(), min_y);
+		max_y = std::max((**i).get_max_y(), max_y);
 	}
 }
 

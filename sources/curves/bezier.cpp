@@ -21,7 +21,7 @@ bool
 bezier::have_thick_line() const {return 0;}
 
 void 
-bezier::rotate(const point& center, const libcan_float angle){
+bezier::rotate(const point& center, const double angle){
 	_a = geom_line(center, _a).rotate_fixed_a(angle).b;
 	_b = geom_line(center, _b).rotate_fixed_a(angle).b;
 	_c = geom_line(center, _c).rotate_fixed_a(angle).b;
@@ -30,7 +30,7 @@ bezier::rotate(const point& center, const libcan_float angle){
 }
 
 void 
-bezier::resize(const point& center, const libcan_float quoc){
+bezier::resize(const point& center, const double quoc){
 	_a = geom_line(center, _a).resize(quoc).b;
 	_b = geom_line(center, _b).resize(quoc).b;
 	_c = geom_line(center, _c).resize(quoc).b;
@@ -47,17 +47,17 @@ bezier::move(const point& where){
 }
 
 shape_type 
-bezier::get_thick_line(const libcan_float thickness, const curve* const previous, const curve* const next) const {throw 1;}
+bezier::get_thick_line(const double thickness, const curve* const previous, const curve* const next) const {throw 1;}
 
 list<moved_arrays> 
 bezier::get_arrays() {
 	//zdroj algoritmu - http://www.niksula.cs.hut.fi/~hkankaan/Homepages/bezierfast.html
 	//(C) Hannu Kankaanpää
 	
-	libcan_int min_y = get_min_y();
-	libcan_int max_y = get_max_y();
+	long min_y = get_min_y();
+	long max_y = get_max_y();
 	
-	libcan_uint steps = __maximum((max_y - min_y), (get_max_x()-get_min_x()))*5;
+	unsigned long steps = std::max((max_y - min_y), (get_max_x()-get_min_x()))*5;
 			//!!!!!!ta 5ka je umele dodana konstanta
 			//mozna by to slo zvetsit/zmensit? ale me se to zda OK
 	
@@ -70,8 +70,8 @@ bezier::get_arrays() {
 	
 	point f;
 	point fd, fdd, fddd, fdd_per_2, fddd_per_2, fddd_per_6;
-	libcan_float t = static_cast<libcan_float>(1.0 / steps);
-	libcan_float temp = t * t;
+	double t = static_cast<double>(1.0 / steps);
+	double temp = t * t;
 	
 			//silene derivace.... 
 			
@@ -84,7 +84,7 @@ bezier::get_arrays() {
 	fdd = fdd_per_2 + fdd_per_2;
 	fddd_per_6 = fddd_per_2 * (1.0 / 3);
 	
-	for (libcan_uint i=0; i < steps; ++i) {
+	for (unsigned long i=0; i < steps; ++i) {
 		ma.set(f.x,f.y);
 		
 		if (first) {
@@ -132,23 +132,23 @@ bezier::get_arrays() {
 }
 
 
-libcan_int 
+long 
 bezier::get_min_x() const {
-	return static_cast<libcan_int>(__minimum4(_a.x,_b.x,_c.x, _d.x));
+	return static_cast<long>(std::min(std::min(_a.x,_b.x),std::min(_c.x, _d.x)));
 	//(b<((c<d)?(c):(d)))?(b):((c<d)?(c):(d))
 }
 
-libcan_int 
+long 
 bezier::get_max_x() const{
-	return static_cast<libcan_int>(__maximum4(_a.x, _b.x, _c.x, _d.x)+2);
+	return static_cast<long>(std::max(std::max(_a.x, _b.x), std::max(_c.x, _d.x))+2);
 }
 
-libcan_int 
+long 
 bezier::get_min_y() const {
-	return static_cast<libcan_int>(__minimum4(_a.y,_b.y, _c.y, _d.y));
+	return static_cast<long>(std::min(std::min(_a.y,_b.y), std::min(_c.y, _d.y)));
 }
 
-libcan_int
+long
 bezier::get_max_y() const{
-	return static_cast<libcan_int> (__maximum4(_a.y, _b.y, _c.y, _d.y)+2);
+	return static_cast<long> (std::max(std::max(_a.y, _b.y), std::max(_c.y, _d.y))+2);
 }

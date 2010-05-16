@@ -3,7 +3,7 @@
 using namespace libcan;
 
 QImage qimage_from_canvas(canvas& c) {
-    matrix<libcan_component> my_matrix = c.get_matrix(0,1,2,3);
+    matrix<unsigned char> my_matrix = c.get_matrix(0,1,2,3);
 
     int height = my_matrix.get_height();
     int width = my_matrix.get_width();

@@ -12,6 +12,16 @@
 
 using namespace libcan;//::canvas
 
+class netvor:public shape_type {
+public:
+    netvor(point p1, point p2, point p3, point p4, point p5, point p6, point p7, point p8, point p9) :
+       shape_type(1,1) {
+        _curves.push_back(new bezier(p1,p2,p3, p4));
+        _curves.push_back(new bezier(p4,p5,p6, p7));
+        _curves.push_back(new bezier(p7,p8,p9, p1));
+    }
+};
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -72,9 +82,9 @@ void MainWindow::paintEvent(QPaintEvent *w)
         int left = it->left();
         int right = it->right();
 
-        for (libcan_int y = top; y<=bottom; ++y) {
-            for (libcan_int x = left; x<=right; ++x) {
-                libcan_component rd,gr,bl,al;
+        for (long y = top; y<=bottom; ++y) {
+            for (long x = left; x<=right; ++x) {
+                unsigned char rd,gr,bl,al;
 
                 colors.get(x, y).get_colors(rd, gr, bl, al);
 
@@ -152,13 +162,16 @@ void MainWindow::paint_to_canvas() {
         type = new regular(points[1], points[0], polygon_hint);
         break;
     case 5:
-        type = new regular_from_center(points[1], points[0], polygon_hint);
+        type = new regular(points[1], points[0], polygon_hint, true);
         break;
     case 6:
         type = new rectangle(points[2], points[1], points[0]);
         break;
     case 7:
         type = new elipse(points[2], points[1], points[0]);
+        break;
+    case 8:
+        type = new netvor(points[8], points[7], points[6], points[5], points[4], points[3], points[2], points[1], points[0]);
         break;
     }
 
@@ -216,6 +229,9 @@ void MainWindow::change_status()
             break;
         case 7:
             new_status += QString::fromUtf8("elipsu");
+            break;
+        case 8:
+            new_status += QString::fromUtf8("beziérovské cosi");
             break;
         default:
             new_status += QString::fromUtf8("neznámý objekt");
@@ -532,7 +548,7 @@ void MainWindow::on_actionVypnout_triggered()
 
 void MainWindow::on_actionBarva_triggered()
 {
-    libcan_component colors[4];
+    unsigned char colors[4];
     c.get_colors(colors, colors+1, colors+2, colors+3);
 
     ui->R->setValue( colors[0]);
@@ -739,4 +755,11 @@ void MainWindow::on_pushButton_7_clicked()
 
         ui->shapes->takeItem(0);
     }
+}
+
+void MainWindow::on_actionBezier_netvor_triggered()
+{
+    waited=waiting=9;
+    expected_type=8;
+    change_status();
 }

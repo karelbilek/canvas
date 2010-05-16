@@ -2,16 +2,15 @@
 #define PL_INC
 
 #include "interval.h" //kazdy radek je interval
-#include <vector>
 
 #define __real_height (_end_height - _start_height)
 
 namespace libcan {
 	
 	struct libcan_info {
-		libcan_int min_x;
-		libcan_int max_x;
-		libcan_int y;
+		long min_x;
+		long max_x;
+		long y;
 	};
 	
 
@@ -40,14 +39,14 @@ namespace libcan {
 	private:	
 		
 		
-		libcan_int _start_height; //zacatecni vyska
-		libcan_int _end_height; //konecna vyska
+		long _start_height; //zacatecni vyska
+		long _end_height; //konecna vyska
 		
 		interval<T>* _intervals;
 		
 	public:
-		libcan_int _pivot_width; 
-		libcan_int _pivot_height;
+		long _pivot_width; 
+		long _pivot_height;
 		
 		typedef std::list<interval_content<T> > T_list;
 			//list "obsahu" - obsah struktura T, zacatek, konec
@@ -59,10 +58,10 @@ namespace libcan {
 		
 		plane(const plane<T>& other);
 		
-		plane(const libcan_int start_height, const libcan_int end_height, const libcan_int pivot_width=0);
+		plane(const long start_height, const long end_height, const long pivot_width=0);
 			//konstruktor, co chce pocatecni a konecnou vysku a pivotni sirku a neprida nikam nic
 		
-		plane(const libcan_int start_width, const libcan_int end_width, const libcan_int start_height, const libcan_int end_height, const T& what);
+		plane(const long start_width, const long end_width, const long start_height, const long end_height, const T& what);
 			//konstruktor, co se mu jeste da zacatek a konec kazdeho radku a on do kazdeho prida velky interval s danou hodnotou
 	
 	
@@ -71,52 +70,52 @@ namespace libcan {
 		template <class U>
 		plane<U> flatten_plane(const U& what, const T& min) const;
 		
-		libcan_int get_start_height() const;
-		libcan_int get_end_height() const;
-		libcan_int get_real_height() const;
+		long get_start_height() const;
+		long get_end_height() const;
+		long get_real_height() const;
 		T_intervals get_intervals() const;
 		
-		libcan_int get_pivot_height() const {return _pivot_height;}
-		libcan_int get_pivot_width() const {return _pivot_width;}
+		long get_pivot_height() const {return _pivot_height;}
+		long get_pivot_width() const {return _pivot_width;}
 		
 			//klasicke gettery
 			
 		std::vector<libcan_info> all_infos() const;
 		
-		libcan_int first_non_zero() const;
-		libcan_int last_non_zero() const;
+		long first_non_zero() const;
+		long last_non_zero() const;
 		
-		libcan_int most_left(libcan_int y) const;
-		libcan_int most_right(libcan_int y) const;
+		long most_left(long y) const;
+		long most_right(long y) const;
 		
-		libcan_int most_top_left() const;
-		libcan_int most_down_right() const;
+		long most_top_left() const;
+		long most_down_right() const;
 		
-		libcan_int most_left() const;
-		libcan_int most_right() const;
+		long most_left() const;
+		long most_right() const;
 		
 		bool is_empty() const;
 		
-		T_list get_row(const libcan_int y) const;
+		T_list get_row(const long y) const;
 			//vrati konkretni radek v listu paru <T, rozsah>
 			
-		void set_whole_interval(const libcan_int y, const interval<T> new_interval);
+		void set_whole_interval(const long y, const interval<T> new_interval);
 			//vlaste pomerne troufale, ale co :)
 		
-		T get(const libcan_int x, const libcan_int y) const;
+		T get(const long x, const long y) const;
 			//vrati hodnotu na konkretni pozici, nebo defaultni T(), pokud tam nic neni
 		
-		void add(const libcan_int x, const libcan_int y, const T& what);
+		void add(const long x, const long y, const T& what);
 			//nastavi konkretni hodnotu (pozor, SCITA!)
 		
-		void add_more(const libcan_int start_x, const libcan_int end_x, const libcan_int y, const T& what);
+		void add_more(const long start_x, const long end_x, const long y, const T& what);
 			//nastavi na y radku vse od start_x do end_x na what (tj, prida interval, mozna neco upravi)
 		
-		plane<T> move_relative(const libcan_int x, const libcan_int y);
+		plane<T> move_relative(const long x, const long y);
 		
-		plane<T> half(const T& background, const libcan_int& max_x);
+		plane<T> half(const T& background, const long& max_x);
 		
-		plane<T> move(const libcan_int pivot_width, const libcan_int pivot_height);
+		plane<T> move(const long pivot_width, const long pivot_height);
 			//posune cely plane, aby mel "novy" pivot_width a start_height
 			//pozor, sam se sebou neposune, ale posunty VRACI
 		
@@ -128,16 +127,16 @@ namespace libcan {
 		
 		plane<T>& operator=(const plane<T>& other);
 		
-		bool includes_square(const libcan_int min_x, const libcan_int min_y, const libcan_int max_x, const libcan_int max_y) const;
+		bool includes_square(const long min_x, const long min_y, const long max_x, const long max_y) const;
 		
-		plane<T> negative(const T& what, const libcan_int min_x, const libcan_int max_x);
+		plane<T> negative(const T& what, const long min_x, const long max_x);
 		
 		bool is_all_same(const T& what) const;
 	};
 	
 	template <class T> 
 	plane<T> 
-	plane<T>::half(const T& background, const libcan_int& max_x) {
+	plane<T>::half(const T& background, const long& max_x) {
 		plane<T> res(_start_height/2, _end_height/2, _pivot_width/2);
 		for (int i = 0; i<__real_height/2; ++i) {
 			interval<T>* nw = _intervals[i*2].quarter(_intervals[i*2+1], background, max_x);
@@ -173,9 +172,9 @@ namespace libcan {
 	}
 	
 	template<class T>
-	plane<T>::plane(const libcan_int start_height, const libcan_int end_height, const libcan_int pivot_width) :
+	plane<T>::plane(const long start_height, const long end_height, const long pivot_width) :
 	  _start_height(start_height), 
-	  _end_height(__maximum(start_height, end_height)),	
+	  _end_height(std::max(start_height, end_height)),	
 	  _intervals(new interval<T>[__real_height]),
 	  _pivot_width(pivot_width),
 	  _pivot_height(0){
@@ -189,8 +188,8 @@ namespace libcan {
 	  _pivot_width(other._pivot_width),
 	  _pivot_height(other._pivot_height) {
 		
-		libcan_int rs = __real_height;
-		for (libcan_int i = 0; i < rs; ++i) {
+		long rs = __real_height;
+		for (long i = 0; i < rs; ++i) {
 			_intervals[i]=other._intervals[i];
 		}
 		
@@ -201,15 +200,15 @@ namespace libcan {
 	
 		//cely zaplni whatem
 	template<class T>
-	plane<T>::plane(const libcan_int start_width, const libcan_int end_width, const libcan_int start_height, const libcan_int end_height, const T& what) : 
+	plane<T>::plane(const long start_width, const long end_width, const long start_height, const long end_height, const T& what) : 
 	  _start_height(start_height),
-	  _end_height(__maximum(start_height, end_height)), 
+	  _end_height(std::max(start_height, end_height)), 
 	  _intervals(new interval<T>[__real_height]),
 	  _pivot_width(0),
 	  _pivot_height(0) {
 		
-		libcan_int rs = __real_height;
-		for (libcan_int i = 0; i < rs; ++i) {
+		long rs = __real_height;
+		for (long i = 0; i < rs; ++i) {
 			_intervals[i]=interval<T>(start_width, end_width-1, what);
 		}
 	}
@@ -229,7 +228,7 @@ namespace libcan {
 		
 		std::vector<libcan_info> res;
 		
-		for (libcan_int i = 0; i < __real_height; ++i) {
+		for (long i = 0; i < __real_height; ++i) {
 			int_cont ob = _intervals[i].get_all();
 			typename int_cont::const_iterator iter;
 			for (iter=ob.begin() ; iter != ob.end(); ++iter ) {
@@ -246,7 +245,7 @@ namespace libcan {
 	template <class T> 
 	bool
 	plane<T>::is_empty() const {
-		for (libcan_int i = 0; i < __real_height; ++i) {
+		for (long i = 0; i < __real_height; ++i) {
 			if (! _intervals[i].is_empty()) {
 				return false;
 			}
@@ -255,27 +254,27 @@ namespace libcan {
 	}
 	
 	template <class T> 
-	libcan_int
+	long
 	plane<T>::most_left() const {
-		libcan_int min = libcan_INT_MAX;
-		for (libcan_int i = first_non_zero(); i <= last_non_zero(); ++i) {
-			min = __minimum(min, _intervals[i-_start_height].most_left());
+		long min = LONG_MAX;
+		for (long i = first_non_zero(); i <= last_non_zero(); ++i) {
+			min = std::min(min, _intervals[i-_start_height].most_left());
 		}
 		return min;
 	}
 
 	template <class T> 
-	libcan_int
+	long
 	plane<T>::most_right() const {
-		libcan_int max = 0;
-		for (libcan_int i = first_non_zero(); i <= last_non_zero(); ++i) {
-			max = __maximum(max, _intervals[i-_start_height].most_right());
+		long max = 0;
+		for (long i = first_non_zero(); i <= last_non_zero(); ++i) {
+			max = std::max(max, _intervals[i-_start_height].most_right());
 		}
 		return max;
 	}
 
 	template <class T>
-	libcan_int
+	long
 	plane<T>::most_top_left() const {
 		return most_left(first_non_zero());
 	
@@ -283,27 +282,27 @@ namespace libcan {
 
 
 	template <class T> 
-	libcan_int
+	long
 	plane<T>::most_down_right() const {
 		return most_right(last_non_zero());
 	}
 
 	template <class T> 
-	libcan_int
-	plane<T>::most_left(libcan_int y) const {
+	long
+	plane<T>::most_left(long y) const {
 		return _intervals[y-_start_height].most_left();
 	}
 
 	template <class T> 
-	libcan_int
-	plane<T>::most_right(libcan_int y) const {
+	long
+	plane<T>::most_right(long y) const {
 		return _intervals[y-_start_height].most_right();
 	}
 
 	template <class T> 
-	libcan_int
+	long
 	plane<T>::first_non_zero() const {
-		for (libcan_int i = 0; i < __real_height; ++i) {
+		for (long i = 0; i < __real_height; ++i) {
 			if (!_intervals[i].is_empty())
 				return i+_start_height;
 		}
@@ -312,10 +311,10 @@ namespace libcan {
 	
 
 	template <class T> 
-	libcan_int
+	long
 	plane<T>::last_non_zero() const {
 		if (__real_height!=0) {
-			for (libcan_uint i = __real_height - 1; i != 0; --i) {
+			for (unsigned long i = __real_height - 1; i != 0; --i) {
 				if (!_intervals[i].is_empty())
 					return i+_start_height;
 			}
@@ -326,18 +325,18 @@ namespace libcan {
 	}
 
 	template <class T> 
-	libcan_int
+	long
 	plane<T>::get_start_height() const {
 		return _start_height;
 	}
 
 	template <class T> 
-	libcan_int
+	long
 	plane<T>::get_real_height() const {
 		return __real_height;
 	}
 
-	template <class T> libcan_int
+	template <class T> long
 	plane<T>::get_end_height() const {
 		return _end_height;
 	}
@@ -352,7 +351,7 @@ namespace libcan {
 	
 	template<class T> 
 	typename plane<T>::T_list 
-	plane<T>::get_row(libcan_int y) const {
+	plane<T>::get_row(long y) const {
 		if ((y >= _end_height) || (y < _start_height)) {
 			return T_list();
 		}
@@ -362,7 +361,7 @@ namespace libcan {
 	
 	template<class T>
 	bool
-	plane<T>::includes_square(const libcan_int min_x, const libcan_int min_y, const libcan_int max_x, const libcan_int max_y) const {
+	plane<T>::includes_square(const long min_x, const long min_y, const long max_x, const long max_y) const {
 		if (min_y < _start_height) {
 			return false;
 		}
@@ -401,10 +400,10 @@ namespace libcan {
 		_end_height=other._end_height;
 		delete [] _intervals;
 		
-		libcan_int rs = __real_height;
+		long rs = __real_height;
 		_intervals=new interval<T>[__real_height];
 		
-		for (libcan_int i = 0; i < rs; ++i) {
+		for (long i = 0; i < rs; ++i) {
 			_intervals[i]=other._intervals[i];
 		}
 		return *this;
@@ -412,7 +411,7 @@ namespace libcan {
 	
 	template<class T>
 	void 
-	plane<T>::set_whole_interval(const libcan_int y, const interval<T> new_interval) {
+	plane<T>::set_whole_interval(const long y, const interval<T> new_interval) {
 		if (y<=__real_height) {
 			_intervals[y]=new_interval;
 			//tohle trva, bohuzel, pomerne dlouho
@@ -421,7 +420,7 @@ namespace libcan {
 	
 	template<class T> 
 	void 
-	plane<T>::add(const libcan_int x, const libcan_int y, const T& what) {
+	plane<T>::add(const long x, const long y, const T& what) {
 		if ((y >= _end_height) || (y < _start_height)) {
 			return;
 		}
@@ -431,7 +430,7 @@ namespace libcan {
 	}
 
 	template<class T> void  
-	libcan::plane<T>::add_more(const libcan::libcan_int start_x, const libcan::libcan_int end_x, const libcan::libcan_int y, const T& what) {
+	libcan::plane<T>::add_more(const long start_x, const long end_x, const long y, const T& what) {
 		if ((y >= _end_height) || (y < _start_height)) {
 			return;
 		}
@@ -443,14 +442,14 @@ namespace libcan {
 	template<class T> void  
 	libcan::plane<T>::add(const plane<T>& other) {
 	
-		libcan_int start = __maximum(_start_height, other._start_height);
-		libcan_int end = __minimum(_end_height, other._end_height);
+		long start = std::max(_start_height, other._start_height);
+		long end = std::min(_end_height, other._end_height);
 			//start a end jsou minimalni hranice, co musim zkoumat
 			//POZOR - radky, co jsou nad this->_start_height a pod this->_end_height se ignoruji!
 	
-		for (libcan_int i = start; i < end; ++i) {
-			libcan_uint it = i - _start_height;
-			libcan_uint oth_it = i - other._start_height;
+		for (long i = start; i < end; ++i) {
+			unsigned long it = i - _start_height;
+			unsigned long oth_it = i - other._start_height;
 				//beru primo z vektoru, bez get_row, musim vedet jak svuj index (it) tak index toho druheho (oth_it)
 
 			_intervals[it].add_another(other._intervals[oth_it]);
@@ -460,7 +459,7 @@ namespace libcan {
 	
 	
 	template<class T> T 
-	plane<T>::get(const libcan_int x, const libcan_int y) const {
+	plane<T>::get(const long x, const long y) const {
 		if ((y >= _end_height) || (y < _start_height)) {
 			return T();
 		}
@@ -472,7 +471,7 @@ namespace libcan {
 	
 	template <class T>
 	plane<T> 
-	plane<T>::negative(const T& what, const libcan_int min_x, const libcan_int max_x) {
+	plane<T>::negative(const T& what, const long min_x, const long max_x) {
 		plane<T> result(_start_height, _end_height, _pivot_width);
 		
 		int rs = __real_height;
@@ -489,20 +488,20 @@ namespace libcan {
 	
 	template <class T> 
 	plane<T>
-	plane<T>::move_relative(const libcan_int x, const libcan_int y) {
+	plane<T>::move_relative(const long x, const long y) {
 		return move(_pivot_width + x, _pivot_height + y);
 	}
 	
 	template <class T> 
 	plane<T>
-	plane<T>::move(const libcan_int new_width, const libcan_int new_height) {
+	plane<T>::move(const long new_width, const long new_height) {
 		plane<T> res = plane<T>(*this);
 			//neni overloadnuty CC - neni se tu ceho bat, neni tu zadne pole
 			//(stromova struktura intervals sama sebe umi zkopirovat)
 	
 		
-		libcan_int height_diff = (new_height - _pivot_height); //- kdyz nahoru, + kdyz dolu
-		libcan_int width_diff = (new_width - _pivot_width);
+		long height_diff = (new_height - _pivot_height); //- kdyz nahoru, + kdyz dolu
+		long width_diff = (new_width - _pivot_width);
 				
 		res._start_height = res._start_height + height_diff;
 		res._end_height = res._end_height + height_diff;
@@ -511,7 +510,7 @@ namespace libcan {
 		res._pivot_width = new_width;
 		res._pivot_height = new_height;
 	
-		for (libcan_int i = 0; i < __real_height; ++i) {
+		for (long i = 0; i < __real_height; ++i) {
 			res._intervals[i].move(-width_diff);
 		}
 			//posouvame sirku

@@ -11,9 +11,9 @@ namespace libcan {
 	template <class T>
 	struct interval_content {
 		T _cont;
-		libcan_int _start;
-		libcan_int _end;
-		interval_content(const T& cont, libcan_int start, libcan_int end): _cont(cont), _start(start), _end(end){}
+		long _start;
+		long _end;
+		interval_content(const T& cont, long start, long end): _cont(cont), _start(start), _end(end){}
 	};
 
 
@@ -41,9 +41,9 @@ namespace libcan {
 	protected:
 		
 		
-		libcan_int _start;
+		long _start;
 			//Zacatek intervalu
-		libcan_int _end; 
+		long _end; 
 			//Konec intervalu - vcetne!!! 
 		
 		T _content;
@@ -68,10 +68,10 @@ namespace libcan {
 	public:
 		
 		
-		libcan_int most_left() const;
-		libcan_int most_right() const;
-		libcan_int get_start() const;
-		libcan_int get_end() const;
+		long most_left() const;
+		long most_right() const;
+		long get_start() const;
+		long get_end() const;
 		
 		T get_this() const;
 		
@@ -85,10 +85,10 @@ namespace libcan {
 		bool has_right() const;
 		bool is_empty() const;
 		
-		bool includes(const libcan_int from, const libcan_int to) const;
+		bool includes(const long from, const long to) const;
 		
 		
-		interval (const libcan_int start, const libcan_int end, const T& content);
+		interval (const long start, const long end, const T& content);
 			//"klasicky" konstruktor
 		interval (const interval<T>& other);
 			//zkopiruje z dalsiho nodu
@@ -97,11 +97,11 @@ namespace libcan {
 		interval ();
 			//prazdny
 		
-		T get(libcan_int where) const;
+		T get(long where) const;
 			//najde danou pozici - pokud ne, da T()
 		
 		
-		void move(libcan_int sirka);
+		void move(long sirka);
 			//posune sebe i synky o sirka doLEVA
 		
 		~interval();
@@ -118,18 +118,18 @@ namespace libcan {
 		void selective_set(const interval<T>& what, const interval<bool>& where);
 		
 		void reduce(const interval<bool>& how, interval<T>& res) const;
-		interval<T>* reduce_one(libcan_int how_start, libcan_int how_end) const;
+		interval<T>* reduce_one(long how_start, long how_end) const;
 		interval<T>* remove_all(const T& what);
 		
-		void set_more(const libcan_int start, const libcan_int end, const T& what);
-		void set_one(const libcan_int where, const T& what);
+		void set_more(const long start, const long end, const T& what);
+		void set_one(const long where, const T& what);
 			//jenom zavola add_more/one s add=0
 		
 		
-		void add_more(const libcan_int start, const libcan_int end, const T& what, int add=1);
+		void add_more(const long start, const long end, const T& what, int add=1);
 			//prida novy interval - pokud se s nicim nekryje. Pokud ano, vse se upravi.
 		
-		void add_one(const libcan_int where, const T& what, int add=1);
+		void add_one(const long where, const T& what, int add=1);
 			//Prida jeden "bod" - napr. mam interval 4-8, pridam 3, interval se zmeni na 3-8.
 			//Tady je videt to mysleni "po pixelech" - ano, je to diskretni :)
 		
@@ -138,16 +138,16 @@ namespace libcan {
 		
 		interval<T>* add_far_right(interval<T>* other);
 		
-		interval<T>* half(std::vector<libcan_int>& add_where, std::vector<T>& add_what) const;
+		interval<T>* half(std::vector<long>& add_where, std::vector<T>& add_what) const;
 		
 		
-		interval<T>* quarter(interval<T> other, const T& background, const libcan_int& max_x) const;
+		interval<T>* quarter(interval<T> other, const T& background, const long& max_x) const;
 		
 		
 		interval<T>& operator=(const interval<T>& other);
 			//vrati kopii
 		
-		interval<T>* negative(const T& what, const libcan_int min_x, const libcan_int max_x);
+		interval<T>* negative(const T& what, const long min_x, const long max_x);
 		
 			
 		template <class U>
@@ -211,7 +211,7 @@ namespace libcan {
 	
 	template <class T> 
 	interval<T>*
-	interval<T>::quarter(interval<T> other, const T& background, const libcan_int& max_x) const{
+	interval<T>::quarter(interval<T> other, const T& background, const long& max_x) const{
 
 		
 		
@@ -222,7 +222,7 @@ namespace libcan {
 		added.add_another(other, 2);
 		added.check();
 
-		std::vector<libcan_int> add_where;
+		std::vector<long> add_where;
 		std::vector<T> add_what;
 		interval<T>* res = added.half(add_where, add_what);
 
@@ -247,18 +247,18 @@ namespace libcan {
 	
 	template <class T> 
 	interval<T>*
-	interval<T>::half(std::vector<libcan_int>& add_where, std::vector<T>& add_what) const {
+	interval<T>::half(std::vector<long>& add_where, std::vector<T>& add_what) const {
 
 			// 0 1 2 3 4 5 6 7 8 9 10 11
 			// 0 0 1 1 2 2 3 3 4 4 5  5
 			
 			
-		libcan_int start = (_start % 2) ?((_start-1)/2+1):(_start/2);
-		libcan_int end = (_end % 2) ? ((_end-1) / 2) :((_end/2)-1);
+		long start = (_start % 2) ?((_start-1)/2+1):(_start/2);
+		long end = (_end % 2) ? ((_end-1) / 2) :((_end/2)-1);
 		
 		if (start > end) {
 			if (_start == _end) {
-				libcan_int add = _start/2;
+				long add = _start/2;
 				
 				add_where.push_back(add);
 				add_what.push_back(_content);
@@ -351,7 +351,7 @@ namespace libcan {
 	
 	template<class T>
 	interval<T>* 
-	interval<T>::reduce_one(libcan_int how_start, libcan_int how_end) const {
+	interval<T>::reduce_one(long how_start, long how_end) const {
 		if (_start <= how_start) {
 			if (_end < how_start) {
 				if (_right!=NULL) {
@@ -425,14 +425,14 @@ namespace libcan {
 	
 	template<class T>
 	interval<T>* 
-	interval<T>::negative(const T& what, const libcan_int min_x, const libcan_int max_x) {
+	interval<T>::negative(const T& what, const long min_x, const long max_x) {
 		
 		if ((_start <= min_x) && (_end >= max_x)) {
 			return NULL;
 		} else if (_start <= min_x) {
 			//jsem-li vlevo...
 			
-			libcan_int bigger_left = __maximum((_end+1), min_x);
+			long bigger_left = std::max((_end+1), min_x);
 			if (_right == NULL) {
 				return new interval<T>(bigger_left, max_x, what);
 			} else {
@@ -443,7 +443,7 @@ namespace libcan {
 		} else if (_end >= max_x) {
 			
 			//jsem-li vpravo
-			libcan_int smaller_right = __minimum(max_x, (_start-1));
+			long smaller_right = std::min(max_x, (_start-1));
 			
 			if (_left == NULL) {
 				return new interval<T>(min_x, smaller_right, what);
@@ -452,8 +452,8 @@ namespace libcan {
 			}
 		} else {
 			//jsem-li vprostred..
-			libcan_int on_left = _start - 1;
-			libcan_int on_right = _end + 1;
+			long on_left = _start - 1;
+			long on_right = _end + 1;
 			interval<T>* left_side;
 			interval<T>* right_side;
 			
@@ -483,7 +483,7 @@ namespace libcan {
 	
 	template<class T>
 	bool 
-	interval<T>::includes(const libcan_int from, const libcan_int to) const {
+	interval<T>::includes(const long from, const long to) const {
 		//paradoxne, to co jde primo "na me" ignoruju
 		
 		if (from < _start) {
@@ -521,9 +521,9 @@ namespace libcan {
 	}
 
 	template<class T>
-	interval<T>::interval (const libcan_int start, const libcan_int end, const T& content): 
+	interval<T>::interval (const long start, const long end, const T& content): 
 	  _start(start), 
-	  _end(__maximum(end,start)),
+	  _end(std::max(end,start)),
 	  _content(content),
 	  _left(NULL),
 	  _right(NULL),
@@ -669,7 +669,7 @@ namespace libcan {
 	
 	template<class T>
 	void 
-	interval<T>::move(libcan_int sirka) {
+	interval<T>::move(long sirka) {
 		if (!_empty) {
 			if (_left!=NULL) {
 				_left->move(sirka);
@@ -686,19 +686,19 @@ namespace libcan {
 	
 	template<class T>
 	void 
-	interval<T>::set_one(const libcan_int where, const T& what) {
+	interval<T>::set_one(const long where, const T& what) {
 		add_more(where, what, 0);	
 	}
 	
 	template<class T>
 	void 
-	interval<T>::set_more(const libcan_int start, const libcan_int end, const T& what) {
+	interval<T>::set_more(const long start, const long end, const T& what) {
 		add_more(start, end, what, 0);	
 	}
 	
 	template<class T>
 	void 
-	interval<T>::add_more(const libcan_int start, const libcan_int end, const T& what, int add) {
+	interval<T>::add_more(const long start, const long end, const T& what, int add) {
 		
 		T new_mixed;
 		if (add == 0){
@@ -722,7 +722,7 @@ namespace libcan {
 		} else {
 			if (start < _start) {
 				
-				libcan_int smaller = __minimum (_start-1, end);
+				long smaller = std::max (_start-1, end);
 					//Chceme vlozit neco, co zacina driv
 					//Uvazuju ale jenom to, co "nekouka" pripadne prese mne - to pak poresim.
 					//Pokud je situace takhle:
@@ -749,7 +749,7 @@ namespace libcan {
 			if (end > _end) {
 				//totez v bledemodrem
 				
-				libcan_int bigger = __maximum(_end+1, start);
+				long bigger = std::max(_end+1, start);
 				if (_right == NULL) {
 					
 					_right = new interval<T> (bigger, end, what);
@@ -774,7 +774,7 @@ namespace libcan {
 					//sloucit s necim, co uz je vlevo
 					
 				
-				libcan_int b = _start;
+				long b = _start;
 				_start = end + 1;
 				add_more(b, end, new_mixed,0);//sic
 		
@@ -784,7 +784,7 @@ namespace libcan {
 				//           ---------
 				
 
-				libcan_int e = _end;
+				long e = _end;
 				_end = start - 1;
 				add_more(start, e, new_mixed,0);//sic
 				
@@ -797,8 +797,8 @@ namespace libcan {
 					//3 kousky
 					
 				
-				libcan_int old_end = _end;
-				libcan_int old_start = _start;
+				long old_end = _end;
+				long old_start = _start;
 				T old_content = _content;
 				
 				_start = start;
@@ -818,7 +818,7 @@ namespace libcan {
 	
 	template<class T>
 	void 
-	interval<T>::add_one(const libcan_int where, const T& what, int add) {
+	interval<T>::add_one(const long where, const T& what, int add) {
 		
 		T new_mixed;
 		if (add == 0){
@@ -876,7 +876,7 @@ namespace libcan {
 					//Strkam nekam doprostred
 					
 					
-				libcan_int end = _end;
+				long end = _end;
 				_end = where - 1;
 					//nejdriv se posunu pred to,
 				add_one(where, new_mixed,0);
@@ -919,7 +919,7 @@ namespace libcan {
 	
 	template<class T>
 	T 
-	interval<T>::get(libcan::libcan_int where) const {
+	interval<T>::get(long where) const {
 		//fakt trivialni rekurze
 		
 		if (_empty) {
@@ -946,7 +946,7 @@ namespace libcan {
 		}
 	}
 	
-	template<class T> libcan_int
+	template<class T> long
 	interval<T>::most_left() const {
 
 		if (_empty) {
@@ -959,7 +959,7 @@ namespace libcan {
 	
 	}
 	
-	template<class T> libcan_int
+	template<class T> long
 	interval<T>::get_start() const {
 		return _start;
 	}
@@ -990,13 +990,13 @@ namespace libcan {
 	}
 	
 	
-	template<class T> libcan_int
+	template<class T> long
 	interval<T>::get_end() const {
 		return _end;
 	}
 	
 
-	template<class T> libcan::libcan_int
+	template<class T> long
 	interval<T>::most_right() const {
 		if (_empty) {
 			return 0;

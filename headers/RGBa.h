@@ -2,7 +2,6 @@
 #define RGBA_INC
 
 #include "types.h"
-#include <map>
 //#include <iostream>
 
 
@@ -24,46 +23,46 @@ namespace libcan{
 	class RGBa {
 		/*
 		 * Trida na reprezentaci barev.
-		 * Ve skutecnosti ulozeno jako POLE (!) ctyr hodnot libcan_component,
-		 * libcan_component = 0...255
+		 * Ve skutecnosti ulozeno jako POLE (!) ctyr hodnot unsigned char,
+		 * unsigned char = 0...255
 		 * 
 		 * Pole proto, ze to teoreticky urychluje pristup k barvam, kdyz to pak kladu do PNG
 		 * (ta rychlost stejne neni nijak extra velka, ale v jednu chvili vyvoje jsem chtel zrychlit jakkoliv cokoliv)
 		 */
 	private:
-		libcan_component _red;
-		libcan_component _green;
-		libcan_component _blue;
-		libcan_component _alpha;
+		unsigned char _red;
+		unsigned char _green;
+		unsigned char _blue;
+		unsigned char _alpha;
 		
 	public:
 		
 		bool is_not_transparent() const;
 		
-		void set_alpha(const libcan_component alpha);
-		void set_red(const libcan_component red);
-		void set_green(const libcan_component green);
-		void set_blue(const libcan_component blue);
+		void set_alpha(const unsigned char alpha);
+		void set_red(const unsigned char red);
+		void set_green(const unsigned char green);
+		void set_blue(const unsigned char blue);
 		
-		libcan_component get_green() const;
-		libcan_component get_red() const;
-		libcan_component get_blue() const;
-		libcan_component get_alpha() const;
+		unsigned char get_green() const;
+		unsigned char get_red() const;
+		unsigned char get_blue() const;
+		unsigned char get_alpha() const;
 		
 		
-		void get_colors_pointer(libcan_component* p_red, libcan_component* p_green, libcan_component* p_blue, libcan_component* p_alpha) const;
+		void get_colors_pointer(unsigned char* p_red, unsigned char* p_green, unsigned char* p_blue, unsigned char* p_alpha) const;
 		
-		void get_colors(libcan_component &red, libcan_component &green, libcan_component &blue, libcan_component &alpha) const;
+		void get_colors(unsigned char &red, unsigned char &green, unsigned char &blue, unsigned char &alpha) const;
 		
 		RGBa(const basic_colors color);
 		
 		RGBa();
 		//0/0/0/0, myslim (s 0 alphou je stejne vsechno naprd)
 		
-		RGBa(const libcan_component r, const libcan_component g, const libcan_component b);
+		RGBa(const unsigned char r, const unsigned char g, const unsigned char b);
 		//alpha = 255, ne 0 :)
 		
-		RGBa(const libcan_component r, const libcan_component g, const libcan_component b, const libcan_component a);
+		RGBa(const unsigned char r, const unsigned char g, const unsigned char b, const unsigned char a);
 		
 		RGBa operator+(const RGBa& other) const;
 		//secte dve barvy, ale na zaklade "vahy" alphy
@@ -75,7 +74,7 @@ namespace libcan{
 		bool operator==(const RGBa& other) const;
 		bool operator>=(const RGBa& other) const;
 		
-		RGBa operator*(const libcan_float quoc) const;
+		RGBa operator*(const double quoc) const;
 		//vynasobeni nejakym cislem
 		
 		RGBa operator*(const RGBa& what) const;

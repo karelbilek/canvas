@@ -6,7 +6,6 @@
 #include "point.h"
 
 
-#include <list>
 
 namespace libcan{
 	
@@ -51,17 +50,17 @@ namespace libcan{
 
 		virtual bool have_thick_line() const=0;
 				//umis tloustku?
-		virtual shape_type get_thick_line(const libcan_float thickness, const curve* const previous, const curve* const next) const = 0;
+		virtual shape_type get_thick_line(const double thickness, const curve* const previous, const curve* const next) const = 0;
 				//cara s tloustkou
 				
-		virtual libcan_int get_min_y() const = 0;
-		virtual libcan_int get_max_y() const = 0;
-		virtual libcan_int get_min_x() const = 0;
-		virtual libcan_int get_max_x() const = 0;
+		virtual long get_min_y() const = 0;
+		virtual long get_max_y() const = 0;
+		virtual long get_min_x() const = 0;
+		virtual long get_max_x() const = 0;
 				//vraci leva/prava/horni/dolni maxima
 		
-		virtual void rotate(const point& center, const libcan_float angle)=0;
-		virtual void resize(const point& center, const libcan_float quoc)=0;
+		virtual void rotate(const point& center, const double angle)=0;
+		virtual void resize(const point& center, const double quoc)=0;
 		
 		virtual void move(const point& where)=0;
 		

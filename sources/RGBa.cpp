@@ -33,13 +33,13 @@ RGBa::is_not_transparent() const{
 
 RGBa::RGBa() : _red(0), _green(0),_blue(0),_alpha(0) {}
 
-RGBa::RGBa(const libcan_component r, const libcan_component g, const libcan_component b) : _red(r), _green(g),_blue(b),_alpha(255)   {}
+RGBa::RGBa(const unsigned char r, const unsigned char g, const unsigned char b) : _red(r), _green(g),_blue(b),_alpha(255)   {}
 
-RGBa::RGBa(const libcan_component r, const libcan_component g, const libcan_component b, const libcan_component a) : _red(r), _green(g),_blue(b),_alpha(a)  {}
+RGBa::RGBa(const unsigned char r, const unsigned char g, const unsigned char b, const unsigned char a) : _red(r), _green(g),_blue(b),_alpha(a)  {}
 
 
 //--------------------------GETTERS
-void RGBa::get_colors_pointer(libcan_component *p_red, libcan_component *p_green, libcan_component *p_blue, libcan_component *p_alpha) const {
+void RGBa::get_colors_pointer(unsigned char *p_red, unsigned char *p_green, unsigned char *p_blue, unsigned char *p_alpha) const {
 	
 	*p_red = _red;
 	*p_green = _green;
@@ -47,7 +47,7 @@ void RGBa::get_colors_pointer(libcan_component *p_red, libcan_component *p_green
 	*p_alpha = _alpha;
 }
 
-void RGBa::get_colors(libcan_component &red, libcan_component &green, libcan_component &blue, libcan_component &alpha) const {
+void RGBa::get_colors(unsigned char &red, unsigned char &green, unsigned char &blue, unsigned char &alpha) const {
 	
 	red = _red;
 	green = _green;
@@ -55,39 +55,39 @@ void RGBa::get_colors(libcan_component &red, libcan_component &green, libcan_com
 	alpha = _alpha;
 }
 
-libcan_component 
+unsigned char 
 RGBa::get_green() const {
 	return _green;
 }
-libcan_component 
+unsigned char 
 RGBa::get_red() const {
 	return _red;
 };
 
-libcan_component 
+unsigned char 
 RGBa::get_blue() const {
 	return _blue;
 }
 
-libcan_component 
+unsigned char 
 RGBa::get_alpha() const {
 	return _alpha;
 };
 
 //----------------------------SETTERS
-void RGBa::set_red(const libcan_component red) {
+void RGBa::set_red(const unsigned char red) {
 	_red = red;
 }
 
-void RGBa::set_green(const libcan_component green) {
+void RGBa::set_green(const unsigned char green) {
 	_green = green;
 }
 
-void RGBa::set_blue(const libcan_component blue) {
+void RGBa::set_blue(const unsigned char blue) {
 	_blue = blue;
 }
 
-void RGBa::set_alpha(const libcan_component alpha) {
+void RGBa::set_alpha(const unsigned char alpha) {
 	_alpha = alpha;
 }
 
@@ -95,13 +95,13 @@ RGBa
 RGBa::operator*(const RGBa& what) const{
 	RGBa hnus = RGBa(0,0,255);
 	
-/*	if (what == RGBa() && !((*this)==RGBa())) {
-		return ((*this) * 0.5);
+	if (what == RGBa() && !((*this)==RGBa())) {
+		return ((*this) * 0.55);
 	}
 	if ((*this)==RGBa() && !(what==RGBa())) {
 		
-		return (what * 0.5);
-	}*/
+		return (what * 0.55);
+	}
 	return RGBa((_red+what._red)/2, (_green+what._green)/2, (_blue+what._blue)/2, (_alpha+what._alpha)/2);
 }
 
@@ -129,13 +129,13 @@ RGBa RGBa::operator+(const RGBa& other) const {
 	
 	
 	
-	libcan_float this_f = (libcan_float)_alpha / (libcan_float)res_alpha;
-	libcan_float other_f = 1 - this_f;
+	double this_f = (double)_alpha / (double)res_alpha;
+	double other_f = 1 - this_f;
 	
 	
-	libcan_component res_red = static_cast<libcan_component>(this_f * _red + other_f * other._red);
-	libcan_component res_green = static_cast<libcan_component>(this_f * _green + other_f * other._green);
-	libcan_component res_blue = static_cast<libcan_component>(this_f * _blue + other_f * other._blue);
+	unsigned char res_red = static_cast<unsigned char>(this_f * _red + other_f * other._red);
+	unsigned char res_green = static_cast<unsigned char>(this_f * _green + other_f * other._green);
+	unsigned char res_blue = static_cast<unsigned char>(this_f * _blue + other_f * other._blue);
 
 	return RGBa(res_red, res_green, res_blue, res_alpha); 
 }
@@ -144,9 +144,9 @@ RGBa RGBa::operator+(const RGBa& other) const {
 	return 
 }*/
 
-RGBa RGBa::operator* (const libcan_float quoc) const {
+RGBa RGBa::operator* (const double quoc) const {
 	
-	libcan_component res_alpha = static_cast<libcan_component>(_alpha*quoc);
+	unsigned char res_alpha = static_cast<unsigned char>(_alpha*quoc);
 	RGBa res = *this;
 	res._alpha = res_alpha;
 	return res;

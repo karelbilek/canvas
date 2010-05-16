@@ -3,7 +3,6 @@
 #include "point.h"
 #include "all_shapes.h"
 #include "RGBa.h"
-#include <sstream>
 
 
 using namespace libcan;
@@ -11,7 +10,7 @@ using namespace std;
 
 
 
-map<libcan_int, plane<bool> > libcan::shape::brushes;
+map<long, plane<bool> > libcan::shape::brushes;
 
 set<string> 
 shape::get_properties() {
@@ -88,7 +87,7 @@ shape::set_property(const string& property, const string& what){
 		
 	
 		if (property.substr(0,4)=="line" || property.substr(0,4)=="fill"){
-			libcan_int int_what;
+			long int_what;
 			
 			wstream>>int_what;
 			if (property=="line_red") {
@@ -108,7 +107,7 @@ shape::set_property(const string& property, const string& what){
 			} else if (property=="fill_alpha") {
 				_style._fill_color.set_alpha(int_what);
 			} else if (property=="line_size") {
-				_style._line_size = int_what;
+				_style._line_size = abs(int_what);
 			}
 		} else if (property=="name") {
 			_name = what;
@@ -165,7 +164,7 @@ shape(const shape_style& style, const shape_type& type):
 }
 
 shape_style::
-shape_style(libcan_int line_size, const RGBa& line_color, const RGBa& fill_color):
+shape_style(long line_size, const RGBa& line_color, const RGBa& fill_color):
   _line_size(line_size),
   _line_color(line_color),
   _fill_color(fill_color) {}
@@ -186,13 +185,13 @@ shape::destroying_change() {
 }
 
 void 
-shape::rotate(libcan_float angle){
+shape::rotate(double angle){
 	destroying_change();
 	_type->rotate(angle);
 }
 
 void 
-shape::resize(libcan_float quoc){
+shape::resize(double quoc){
 	destroying_change();
 	_type->resize(quoc);
 }
@@ -214,7 +213,7 @@ shape::should_paint() const {
 }
 
 plane<bool> 
-shape::get_footprint( const libcan_int height, const libcan_int width, const bool do_change, const bool force)  {
+shape::get_footprint( const long height, const long width, const bool do_change, const bool force)  {
 	
 	plane<bool> res(0, height);
 	
@@ -234,7 +233,7 @@ shape::get_footprint( const libcan_int height, const libcan_int width, const boo
 		if (_painted) {
 			res.add(_new_footprint);
 		} else {
-			libcan_int min_x, max_x, min_y, max_y;
+			long min_x, max_x, min_y, max_y;
 			get_extremes(min_x,max_x,min_y,max_y, false, height, width);
 			plane<bool> ad(min_x, max_x, min_y, max_y, 1);
 			res.add(ad);
@@ -248,7 +247,7 @@ shape::get_footprint( const libcan_int height, const libcan_int width, const boo
 }
 
 void
-shape::get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& min_y, libcan_int& max_y, const bool& double_it, const libcan_int height, const libcan_int width) const {
+shape::get_extremes(long& min_x, long& max_x, long& min_y, long& max_y, const bool& double_it, const long height, const long width) const {
 	_type->get_extremes(min_x, max_x, min_y, max_y);
 	if (double_it) {
 		min_x *= 2;
@@ -257,22 +256,22 @@ shape::get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& min_y, lib
 		max_y *= 2;
 	}
 	
-	min_x = __maximum(min_x - 3.2*_style._line_size, 0);
-	max_x = __minimum(max_x + 3.2*_style._line_size, height);
-	min_y = __maximum(min_y - 3.2*_style._line_size, 0);
-	max_y = __minimum(max_y + 3.2*_style._line_size, width);
+	min_x = std::max(min_x - 3.2*_style._line_size, (double) 0);
+	max_x = std::min(max_x + 3.2*_style._line_size, (double) height);
+	min_y = std::max(min_y - 3.2*_style._line_size, (double) 0);
+	max_y = std::min(max_y + 3.2*_style._line_size, (double) width);
 }
 
 
 plane<RGBa> 
-shape::get_pixels(const libcan_int small_height, const libcan_int small_width, const bool& antialias, const plane<bool>& where_not_paint, const RGBa& background, const bool& force) {
+shape::get_pixels(const long small_height, const long small_width, const bool& antialias, const plane<bool>& where_not_paint, const RGBa& background, const bool& force) {
 	
 	if (_painted && !force) {
 		return _pixels;
 	} 
 	
-	libcan_int width = small_width * (antialias ? 2 : 1);
-	libcan_int height = small_height * (antialias ? 2 : 1);
+	long width = small_width * (antialias ? 2 : 1);
+	long height = small_height * (antialias ? 2 : 1);
 	
 	_painted = true;
 	
@@ -281,16 +280,11 @@ shape::get_pixels(const libcan_int small_height, const libcan_int small_width, c
 		type_copy = type_copy->clone_double(); //pozor, tady alokuju novy, MUSI dole byt to delete!
 	}
 	
-	std::list<curve*>::const_iterator i = type_copy->_curves.begin();
-	
-	std::list<curve*>::const_iterator one_before_end = type_copy->_curves.end();
-	--one_before_end;
-	std::list<curve*>::const_iterator begin = type_copy->_curves.begin();
-	std::list<curve*>::const_iterator end = type_copy->_curves.end();
+
 	
 	//-----------------------------------------------hledani minima z curves
 	
-	libcan_int min_x, max_x, min_y, max_y;
+	long min_x, max_x, min_y, max_y;
 	
 	get_extremes(min_x,max_x,min_y,max_y, antialias, height, width);
 	
@@ -308,6 +302,13 @@ shape::get_pixels(const libcan_int small_height, const libcan_int small_width, c
 	
 	//------------------------------------------------jdu na okraje, ale jenom, kdyz jsou
 	if (_style._line_size != 0) {
+		
+		std::list<curve*>::const_iterator i = type_copy->_curves.begin();
+
+		std::list<curve*>::const_iterator one_before_end = type_copy->_curves.end();
+		--one_before_end;
+		std::list<curve*>::const_iterator begin = type_copy->_curves.begin();
+		std::list<curve*>::const_iterator end = type_copy->_curves.end();
 		
 		for (i=begin;i!=end; ++i) {
 	//------------------------------------------------jdu na konretni caru
@@ -350,27 +351,27 @@ shape::get_pixels(const libcan_int small_height, const libcan_int small_width, c
 			} else {
 	//------------------------------------------------jdu na caru, co se neumi sama nakreslit
 	
-				libcan_int thickness = static_cast<libcan_int>((antialias?2:1)*(_style._line_size));
+				long thickness = static_cast<long>((antialias?2:1)*(_style._line_size));
 				
 				
 				if (!brushes.count(thickness)) {
 						//pokud neni vygenerovan krouzek, vygeneruj ho!
 						
-					disk b = disk(point(thickness,thickness), static_cast<libcan_float>(thickness)/2);
+					disk b = disk(point(thickness,thickness), static_cast<double>(thickness)/2);
 					plane<bool> p = paint(&b, 0, 2*thickness);
 					
 					p._pivot_width = thickness;
 					p._pivot_height = thickness;
 							
-					brushes.insert(pair<libcan_int,plane<bool> >(thickness, p));
+					brushes.insert(pair<long,plane<bool> >(thickness, p));
 				}
 				
 				plane<bool> p = brushes[thickness];
 				list<moved_arrays> borders = type_copy->all_curve_arrays();
 				
 				for (list<moved_arrays>::iterator i=borders.begin(); i!=borders.end(); ++i) {
-					for (libcan_int y = i->get_min_nonempty_y(); y<=i->get_max_nonempty_y(); ++y) {
-						for (libcan_int x = i->get_start(y); x<=i->get_end(y); ++x) {
+					for (long y = i->get_min_nonempty_y(); y<=i->get_max_nonempty_y(); ++y) {
+						for (long x = i->get_start(y); x<=i->get_end(y); ++x) {
 							
 								//cely to zamaluj!
 							plane<bool> m = p.move(x,y);
@@ -421,23 +422,10 @@ shape::compare_by_row(const moved_arrays& a, const moved_arrays& b) {
 }
 
 plane<bool>
-shape::paint(const shape_type* const type, libcan_int min_y, libcan_int max_y){
+shape::paint(const shape_type* const type, long min_y, long max_y){
 	
 	list<moved_arrays> borders = type->all_curve_arrays();
 		//vrati vsechny konkretni segmenty vsech okraju
-
-	
-		//vyrazeni vsech horizontalnich (trivialni)
-	for(list<moved_arrays>::iterator i = borders.begin(); i!=borders.end(); ) {
-			
-		if (i->is_horizontal()) {
-			list<moved_arrays>::iterator j = i;
-			++i;
-			borders.erase(j); 
-		} else {
-			++i;
-		}
-	}
 
 	
 	plane<bool> res(min_y,max_y);
@@ -447,7 +435,7 @@ shape::paint(const shape_type* const type, libcan_int min_y, libcan_int max_y){
 		res.add(i->to_plane());
 	}
 	
-	for (libcan_int y = min_y; y < max_y; ++y) {
+	for (long y = min_y; y < max_y; ++y) {
 		//uplne puvodni algoritmus odsud http://cgg.mff.cuni.cz/~pepca/lectures/npgr003.html
 		//autor Josef Pelikan
 		//mnou notne upraveno
@@ -462,53 +450,43 @@ shape::paint(const shape_type* const type, libcan_int min_y, libcan_int max_y){
 		
 		//do paint_start si budu ukladat, odkud mam kreslit, do paint_end kam mam kreslit,
 		//do paint_part jestli zrovna kreslim nebo
-		libcan_int paint_start;
-		libcan_int paint_end;
+		long paint_start;
+		long paint_end;
 		bool paint_part = false;
 		
 		
-		bool previous_was_ending=false;
-		bool previous_was_starting=false;
+		bool last_max;
+		bool last_min;
 		
 		for (list<moved_arrays>::iterator i = borders.begin();i!=borders.end() && i->is_set(y);++i) {
-			if (!paint_part) {
-				paint_start = i->get_end(y);
-	
-				previous_was_ending = (y==i->get_max_nonempty_y());
-				
-				previous_was_starting = (y==i->get_min_nonempty_y());
-				paint_part = true;
+			
+			bool switchit;
+			if (y==i->get_max_nonempty_y() || y==i->get_min_nonempty_y()) {
+				if (!(last_min || last_max)) {
+					last_min = (y == i->get_min_nonempty_y());
+					last_max = (y == i->get_max_nonempty_y());
+					switchit = false;
+				} else if (last_min) {
+					switchit = !(y == i->get_min_nonempty_y());
+				} else if (last_max) {
+					switchit = !(y == i->get_max_nonempty_y());
+				}
 			} else {
-				if (i->is_set(y)) {
+				switchit = true;
+			}
+			if (switchit) {
+				if (!paint_part) {
+					paint_start = i->get_end(y);
+				} else {
 					paint_end = i->get_start(y);
-					
-					bool should_paint = true;
-					if (y==i->get_max_nonempty_y()) { //konci
-						
-						if (previous_was_starting&&paint_end<=paint_start) {
-							should_paint = false;
-						}
-					} else if (y==i->get_min_nonempty_y()) {
-					
-						
-						if (previous_was_ending&&paint_end<=paint_start) {
-							should_paint = false;
-						}
-					}
-					previous_was_ending = (y==i->get_max_nonempty_y());
-					previous_was_starting = (y==i->get_min_nonempty_y());
-					
-					if (should_paint) {
-						if (paint_end >= paint_start) {
-							res.add_more(paint_start, paint_end, y, true);
-						} else {
-							res.add_more(paint_end, paint_start, y, true);
-						}
-						paint_part = false;
+					if (paint_end >= paint_start) {
+						res.add_more(paint_start, paint_end, y, true);
+					} else {
+						res.add_more(paint_end, paint_start, y, true);
 					}
 				}
+				paint_part = !paint_part;
 			}
-			
 		}
 		
 		

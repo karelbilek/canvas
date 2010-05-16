@@ -6,10 +6,7 @@
 
 #include "shape_type.h"
 #include "point.h"
-#include <list>
-#include <map>
-#include <set>
-#include <string>
+
 
 
 
@@ -35,12 +32,12 @@ namespace libcan {
 	
 	struct shape_style {
 		
-		libcan_int _line_size;
+		long _line_size;
 		RGBa _line_color;
 		RGBa _fill_color; 
 		
 				
-		shape_style(libcan_int line_size=1, const RGBa& line_color=RGBa(0,0,0), const RGBa& fill_color=RGBa(0,0,0));
+		shape_style(long line_size=1, const RGBa& line_color=RGBa(0,0,0), const RGBa& fill_color=RGBa(0,0,0));
 
 	};
 
@@ -49,7 +46,7 @@ namespace libcan {
 		
 		std::string _name;
 			//aby se pokazde, kdyz mam tloustku velikosti N, nemusel znova generovat krouzek
-		static std::map<libcan_int, plane<bool> > brushes;
+		static std::map<long, plane<bool> > brushes;
 		
 		shape_style _style;
 		shape_type* _type;
@@ -62,12 +59,12 @@ namespace libcan {
 		plane<bool> _new_footprint;
 		
 
-		static plane<bool> paint(const shape_type* const type, libcan_int min_y, libcan_int max_y) ;
+		static plane<bool> paint(const shape_type* const type, long min_y, long max_y) ;
 		
 		static bool compare_by_row(const moved_arrays& a, const moved_arrays& b);
 		
 		void destroying_change();
-		void get_extremes(libcan_int& min_x, libcan_int& max_x, libcan_int& max_x, libcan_int& max_y, const bool& double_it, const libcan_int height, const libcan_int width) const;
+		void get_extremes(long& min_x, long& max_x, long& max_x, long& max_y, const bool& double_it, const long height, const long width) const;
 		
 	public:
 		
@@ -81,13 +78,13 @@ namespace libcan {
 		shape(const shape_style& style, const shape_type& type);
 	
 			
-		plane<RGBa> get_pixels(const libcan_int height, const libcan_int width, const bool& antialias, const plane<bool>& where_not_paint, const RGBa& background, const bool& force=false);
+		plane<RGBa> get_pixels(const long height, const long width, const bool& antialias, const plane<bool>& where_not_paint, const RGBa& background, const bool& force=false);
 		
-		void rotate(libcan_float angle);
-		void resize(libcan_float quoc);
+		void rotate(double angle);
+		void resize(double quoc);
 		void move(const point& where);
 		
-		plane<bool> get_footprint(const libcan_int height, const libcan_int width, const bool do_change, const bool force = false);
+		plane<bool> get_footprint(const long height, const long width, const bool do_change, const bool force = false);
 		
 		std::string get_property(const std::string& property);
 		std::set<std::string> get_properties();

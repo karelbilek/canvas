@@ -40,11 +40,12 @@ private:
     bool closing;
     bool clearing;
 
-    libcan::libcan_component carR, carG, carB, carA, fillR, fillG, fillB, fillA;
-    libcan::small carSir;
+    libcan::unsigned char carR, carG, carB, carA, fillR, fillG, fillB, fillA;
+    unsigned char carSir;
 
 
 private slots:
+    void on_actionBezier_netvor_triggered();
     void on_pushButton_7_clicked();
     void on_pushButton_6_clicked();
     void on_properties_currentRowChanged(int currentRow);

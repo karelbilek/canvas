@@ -14,7 +14,7 @@ void libcan::png_paint(const std::string& path, canvas& my_canvas) {
 	//http://zarb.org/~gc/html/libpng.html
 	//http://www.root.cz/clanky/jak-vytvorit-rastrovy-obrazek-v-jazyce-c/
 	
-	matrix<libcan_component> rast = my_canvas.get_matrix(0,1,2,3);
+	matrix<unsigned char> rast = my_canvas.get_matrix(0,1,2,3);
 	
 	png_structp my_png_ptr = NULL;
 	png_infop my_info_ptr = NULL; 

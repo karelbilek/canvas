@@ -14,15 +14,15 @@ namespace libcan {
 		geom_line(const point& my_a, const point& my_b);
 		geom_line();
 		
-		static geom_line line_from_point_angle(const point& first, libcan_float angle, const libcan_float length);
+		static geom_line line_from_point_angle(const point& first, double angle, const double length);
 		
 		point move_point(const point& point) const;
 		
-		geom_line rotate_fixed_a(const libcan_float angle) const;
+		geom_line rotate_fixed_a(const double angle) const;
 		
-		geom_line line_from_rev_angle(const libcan_float angle, const libcan_float length) const;
+		geom_line line_from_rev_angle(const double angle, const double length) const;
 		
-		geom_line resize(libcan_float quoc) const;
+		geom_line resize(double quoc) const;
 	
 		
 			//proste jenom prehodi poradi .)
@@ -31,29 +31,29 @@ namespace libcan {
 			//vypocita uhel, pokud ale predpokladam, ze
 			// b=another.a,
 			// to znamena ze vlastne pocitam uhel od obracene orientovane usecky
-		libcan_float count_rev_angle(const geom_line another) const;
+		double count_rev_angle(const geom_line another) const;
 		
 			//uhel od horizontaly
-		libcan_float angle_from_x() const;
+		double angle_from_x() const;
 		
 			//delka
-		libcan_float length() const;
+		double length() const;
 		
 			//zkrati/prodlouzi to velikost na new_length
-		geom_line normalised(const libcan_float new_length) const;
+		geom_line normalised(const double new_length) const;
 		
 			//udela pravy uhel
-		point right_angle_a(const bool clockwise, const libcan_float length) const;
-		point right_angle_b(const bool clockwise, const libcan_float length) const;
+		point right_angle_a(const bool clockwise, const double length) const;
+		point right_angle_b(const bool clockwise, const double length) const;
 		
 		point right_angle_b(const point& c) const;
 		
 		
-		geom_line right_angle(const bool clockwise, const point& start, const libcan_float length) const;
+		geom_line right_angle(const bool clockwise, const point& start, const double length) const;
 		
 			//udela rovnobezku, vzdalenou distance ode mne
 			//vlevo / vpravo
-		geom_line parallel(const bool left, const libcan_float distance) const;
+		geom_line parallel(const bool left, const double distance) const;
 	
 			//prusecik s jinou useckou (muze, a casto je mimo)
 		point intersection(const geom_line& another) const;
@@ -64,9 +64,9 @@ namespace libcan {
 			//usecce, ale i na te sousedni. Tahle je spocita a vrati.
 			//second_hint je proto, ze pokud je uhel svirany temi useckami moc maly,
 			//udela se ten obal trochu jinak, kde potrebuju v jednom pripade prehodit poradi bodu
-		geom_line thick_cover(const geom_line& another, const libcan_float distance, bool second_hind) const;
+		geom_line thick_cover(const geom_line& another, const double distance, bool second_hind) const;
 		
-		libcan_float distance(const point& p) const;
+		double distance(const point& p) const;
 		
 	};
 	

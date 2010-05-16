@@ -552,6 +552,7 @@
     <addaction name="menuN_heln_k_prav_ze_st_edu"/>
     <addaction name="actionObd_ln_k"/>
     <addaction name="actionElipsu"/>
+    <addaction name="actionBezier_netvor"/>
    </widget>
    <widget class="QMenu" name="menuCanvas">
     <property name="title">
@@ -559,7 +560,7 @@
     </property>
     <widget class="QMenu" name="menuAntialias">
      <property name="title">
-      <string>antialias</string>
+      <string>(pseudo)antialias</string>
      </property>
      <addaction name="actionZapnout"/>
      <addaction name="actionVypnout"/>
@@ -830,6 +831,11 @@
   <action name="actionSt_vaj_c">
    <property name="text">
     <string>Stávající</string>
+   </property>
+  </action>
+  <action name="actionBezier_netvor">
+   <property name="text">
+    <string>bezier netvor</string>
    </property>
   </action>
  </widget>

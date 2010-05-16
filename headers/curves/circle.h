@@ -4,36 +4,35 @@
 #include "curve.h"
 #include "point.h"
 #include "geom_line.h"
-#include <list>
 
 namespace libcan{
 	class circle:public curve {
 		//circle, with given center and radius
 		
 	private:
-		void paint_more(libcan_float x, libcan_float y, moved_arrays& left, moved_arrays& right);
+		void paint_more(double x, double y, moved_arrays& left, moved_arrays& right);
 			//function for faster painting - paint about eight pixels at once, 4 to every segment
 			
 		point _center;
-		libcan_float _radius;
+		double _radius;
 		
 	public:	
-		circle(point center, libcan_float radius);
+		circle(point center, double radius);
 		
 		virtual std::list<moved_arrays> get_arrays();
 
-		virtual shape_type get_thick_line(const libcan_float thickness, const curve* const previous, const curve* const next)const;
+		virtual shape_type get_thick_line(const double thickness, const curve* const previous, const curve* const next)const;
 
-		virtual libcan_int get_min_y() const;
-		virtual libcan_int get_max_y() const;
-		virtual libcan_int get_min_x() const;
-		virtual libcan_int get_max_x() const;
+		virtual long get_min_y() const;
+		virtual long get_max_y() const;
+		virtual long get_min_x() const;
+		virtual long get_max_x() const;
 		virtual circle* clone() const;
 		virtual circle* clone_double() const;
 		virtual bool have_thick_line()const;
 		
-		virtual void rotate(const point& center, const libcan_float angle);
-		virtual void resize(const point& center, const libcan_float quoc);
+		virtual void rotate(const point& center, const double angle);
+		virtual void resize(const point& center, const double quoc);
 		virtual void move(const point& where);
 		
 		

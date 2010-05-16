@@ -4,7 +4,7 @@
 using namespace libcan;
 using namespace std;
 
-circle::circle(point center, libcan_float radius) :
+circle::circle(point center, double radius) :
   _center(center),
   _radius(radius) {
 }
@@ -72,9 +72,9 @@ circle::get_arrays() {
 	} 
 	else {
 		//nespecialni pripad
-		libcan_float lx = 0;
-		libcan_float ly = _radius;
-		libcan_float d = 1 - ly;
+		double lx = 0;
+		double ly = _radius;
+		double d = 1 - ly;
 	
 		moved_arrays left(_center.y-_radius, _center.y+_radius+1);
 		moved_arrays right(_center.y-_radius, _center.y+_radius+1);
@@ -107,7 +107,7 @@ bool
 circle::have_thick_line() const {return 1;}
 
 void 
-circle::rotate(const point& center, const libcan_float angle){
+circle::rotate(const point& center, const double angle){
 	if (center!=_center) {
 		_center = geom_line(center, _center).rotate_fixed_a(angle).b;
 	}
@@ -115,7 +115,7 @@ circle::rotate(const point& center, const libcan_float angle){
 		//rotating circle.... does exactly nothing.
 
 void 
-circle::resize(const point& center, const libcan_float quoc){
+circle::resize(const point& center, const double quoc){
 	if (center!=_center) {
 		_center = geom_line(center, _center).resize(quoc).b;
 	}
@@ -130,9 +130,9 @@ circle::move(const point& where){
 
 
 void 
-circle::paint_more(libcan_float fx, libcan_float fy, moved_arrays& left, moved_arrays& right){
-	libcan_int x = static_cast<libcan_int>(fx+0.5);
-	libcan_int y = static_cast<libcan_int>(fy+0.5);
+circle::paint_more(double fx, double fy, moved_arrays& left, moved_arrays& right){
+	long x = static_cast<long>(fx+0.5);
+	long y = static_cast<long>(fy+0.5);
 	left.set(_center.x-x, _center.y+y+1);
 	left.set(_center.x-y, _center.y+x+1);
 	left.set(_center.x-x, _center.y-y);
@@ -144,29 +144,29 @@ circle::paint_more(libcan_float fx, libcan_float fy, moved_arrays& left, moved_a
 	right.set(_center.x+y, _center.y-x);
 }
 
-libcan_int 
+long 
 circle::get_min_y() const {
-	return static_cast<libcan_int>(_center.y - _radius);
+	return static_cast<long>(_center.y - _radius);
 }
 
-libcan_int 
+long 
 circle::get_max_y() const {
-	return static_cast<libcan_int>(_center.y + _radius+2);
+	return static_cast<long>(_center.y + _radius+2);
 }
 
 
-libcan_int 
+long 
 circle::get_min_x() const {
-	return static_cast<libcan_int>(_center.x - _radius);
+	return static_cast<long>(_center.x - _radius);
 }
 
-libcan_int 
+long 
 circle::get_max_x() const {
-	return static_cast<libcan_int>(_center.x + _radius+2);
+	return static_cast<long>(_center.x + _radius+2);
 }
 
 shape_type
-circle::get_thick_line(const libcan_float thickness, const curve* const previous, const curve* const next) const{
+circle::get_thick_line(const double thickness, const curve* const previous, const curve* const next) const{
 	//nakresli se jako dva soustredne kruhy
 	circle* circle_in= new circle(_center, _radius-(thickness/2));
 	circle* circle_out= new circle(_center, _radius+(thickness/2));

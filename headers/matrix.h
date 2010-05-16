@@ -1,7 +1,7 @@
 #ifndef MATR_INC
 #define MATR_INC
 
-#include "types.h" //kvuli libcan_int
+#include "types.h" //kvuli long
 
 #define __m_is_legal(_x,_y,_kolik) (((_x) < _width) && ((_y) < _height) && ((_x) >= 0) && ((_y) >= 0) && ((_kolik) < _element_width))
 	//jestli je cislo v ramci mezi
@@ -28,9 +28,9 @@ namespace libcan {
 	private:
 		
 		
-		small _element_width;
-		libcan_int _height;
-		libcan_int _width;
+		unsigned char _element_width;
+		long _height;
+		long _width;
 		
 		T* _array;
 		
@@ -38,7 +38,7 @@ namespace libcan {
 		matrix<T>& operator= (const matrix<T>& other);
 		
 		matrix(const matrix<T>& other);
-		matrix(const libcan_int width, const libcan_int height, const small element_width);
+		matrix(const long width, const long height, const unsigned char element_width);
 			//vytvori matici s danou delkou, sirkou a sirkou policka
 		
 		matrix();
@@ -51,17 +51,17 @@ namespace libcan {
 		T** get_rows();	
 			//vrati pole ukazatelu na zacatky radku (hodi se pro libpng)
 		
-		T get(const libcan_int x, const libcan_int y, const small element) const;
+		T get(const long x, const long y, const unsigned char element) const;
 			//vrati konkretni prvek na pozici
 			
-		libcan_int get_width() const {return _width;}
-		libcan_int get_height() const {return _height;}
+		long get_width() const {return _width;}
+		long get_height() const {return _height;}
 
-		void set_more(const libcan_int start_x, const libcan_int end_x, const libcan_int y, const T* what);
+		void set_more(const long start_x, const long end_x, const long y, const T* what);
 			//nastavi vsechno od start_x do end_x na vysce y na to, co je na T
 			//T je potreba chapat jako pole! Nastavovany prvek muze mit tloustku > 1.
 		
-		void set(const libcan_int x, const libcan_int y, const small element, const T& what);
+		void set(const long x, const long y, const unsigned char element, const T& what);
 		
 		matrix<T> half();
 	};
@@ -80,22 +80,22 @@ libcan::matrix<T>::matrix (const matrix<T>& other) :
   _width(other._width),
   _array(new T[other._element_width*other._height*other._width]) {
 	  
-	const libcan_int max = _width*_height*_element_width;
-	for (libcan_int i = 0; i < max; ++i) {
+	const long max = _width*_height*_element_width;
+	for (long i = 0; i < max; ++i) {
 		_array[i] = other._array[i];
 	}
 }
 
 template<class T>
-libcan::matrix<T>::matrix(const libcan_int width, const libcan_int height, const small element_width) : 
-  _element_width(__maximum(1, element_width)), 
-  _height(__maximum(1, height)), 
-  _width(__maximum(1, width)), 
-  _array(new T[__maximum(1, width) * __maximum(1, height) * __maximum(1, element_width)])   {
+libcan::matrix<T>::matrix(const long width, const long height, const unsigned char element_width) : 
+  _element_width(std::max((unsigned char) 1, element_width)), 
+  _height(std::max((long) 1, height)), 
+  _width(std::max((long) 1, width)), 
+  _array(new T[_width * _height * _element_width])   {
 	  
   //maxima jsou tam pro pripad, ze bych dostal jako vysku/sirku 0
 		
-	for (libcan_int i = 0; i <  width * height * element_width; ++i) {
+	for (long i = 0; i <  width * height * element_width; ++i) {
 		_array[i] = T();
 	}
 	  
@@ -118,7 +118,7 @@ libcan::matrix<T>::get_all() {
 }
 
 template<class T>
-T libcan::matrix<T>::get(const libcan_int x, const libcan_int y, const small element) const {	
+T libcan::matrix<T>::get(const long x, const long y, const unsigned char element) const {	
 	if (__m_is_legal(x,y, element)) {
 		return _array[__m_position(x,y,element)];
 	} else {
@@ -135,7 +135,7 @@ T** libcan::matrix<T>::get_rows() {
 	
 		//nejdriv potrebuji pole s "vyskou" jako je vyska
 	
-	for (libcan_int i = 0; i < _height; ++i) {
+	for (long i = 0; i < _height; ++i) {
 		res[i] = &(_array[i * _width * _element_width]);
 		
 		//trivialnim zpusobem zjistim zacatky radku
@@ -148,7 +148,7 @@ T** libcan::matrix<T>::get_rows() {
 
 template<class T>
 void 
-libcan::matrix<T>::set(const libcan_int x, const libcan_int y, const small element, const T& what) {
+libcan::matrix<T>::set(const long x, const long y, const unsigned char element, const T& what) {
 	
 	if (__m_is_legal(x,y,element)) {
 		_array[__m_position(x,y,element)] = what;
@@ -158,16 +158,16 @@ libcan::matrix<T>::set(const libcan_int x, const libcan_int y, const small eleme
 template<class T>
 libcan::matrix<T>&
 libcan::matrix<T>::operator= (const matrix<T>& other) {
-	//nemusi delat __maximum apod, protoze ten druhy uz JE v poradku
+	//nemusi delat std::max apod, protoze ten druhy uz JE v poradku
 	_element_width = other._element_width;
 	_height = other._height;
 	_width = other._width;
 	if (_array!=NULL) {
 		delete [] _array;
 	}
-	const libcan_int max = _width*_height*_element_width;
+	const long max = _width*_height*_element_width;
 	_array = new T[max];
-	for (libcan_int i = 0; i < max; ++i) {
+	for (long i = 0; i < max; ++i) {
 		_array[i] = other._array[i];
 	}
 	return *this;
@@ -176,11 +176,11 @@ libcan::matrix<T>::operator= (const matrix<T>& other) {
 
 template<class T>
 void 
-libcan::matrix<T>::set_more(const libcan_int start_x, const libcan_int end_x, const libcan_int y, const T* what) {
+libcan::matrix<T>::set_more(const long start_x, const long end_x, const long y, const T* what) {
 
-	for (libcan_int x = start_x; x <= end_x; ++x) { 
+	for (long x = start_x; x <= end_x; ++x) { 
 		if (__m_is_legal(x,y,0)) {
-			for (libcan_int elem = 0; elem < _element_width; ++elem) {
+			for (long elem = 0; elem < _element_width; ++elem) {
 				_array[__m_position(x,y,elem)] = what[elem];
 				
 				//pocitam s tim, ze mi nikdo nepodstrci prilis kratke pole, jinak tam strcim nejakou nahodnou hodnotu nebo pretecu
@@ -196,9 +196,9 @@ libcan::matrix<T> libcan::matrix<T>::half() {
 
 
 	matrix<T> res = matrix(_width/2, _height/2, _element_width);
-	for (libcan_int x = 0; x < _width/2; ++x) {
-		for (libcan_int y = 0; y < _width/2; ++y) {
-			for (libcan_int i = 0; i<_element_width; ++i) {
+	for (long x = 0; x < _width/2; ++x) {
+		for (long y = 0; y < _width/2; ++y) {
+			for (long i = 0; i<_element_width; ++i) {
 				T a = _array[__m_position(x*2, y*2, i)];
 				T b = _array[__m_position(x*2, y*2+1, i)];
 				T c = _array[__m_position(x*2+1, y*2, i)];
