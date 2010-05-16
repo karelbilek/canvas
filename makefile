@@ -3,8 +3,8 @@ OBJECTS=canvas.o curves/circle.o curves/line.o curves/bezier.o moved_arrays.o po
 HEADS=all_shapes.h canvas.h curve.h curves/circle.h curves/line.h curves/bezier.h interval.h moved_arrays.h plane.h point.h RGBa.h shape.h types.h shape_type.h geom_line.h shape_types/disk.h shape_types/segment.h shape_types/bezier_segment.h shape_types/regular.h shape_types/rectangle.h shape_types/polygon.h all_curves.h shape_types/elipse.h
 
 
-CPPFLAGSHARD=-O3 -I./headers -I/opt/local/include/
-CPPFLAGS=-O0 -g -Wall -Weffc++ -Wextra -I./headers -I/opt/local/include/
+CPPFLAGS=-O3 -I./headers -I/opt/local/include/
+CPPFLAGSEASY=-O0 -g -Wall -Weffc++ -Wextra -I./headers -I/opt/local/include/
 
 
 REAL_OBJECTS=$(addprefix objects/, ${OBJECTS})
