@@ -43,10 +43,12 @@ canvas::change_order(size_t from, size_t to){
 	for (size_t i=0; i<to; ++i,++to_it){}
 	
 	_shapes.splice(to_it, _shapes, from_it);
+	to_it->undestroying_change();
+	from_it->undestroying_change();
+	
 }
 
 
-//-----------------------------CONSTRUCTORS
 
 canvas::canvas(const size_t width, const size_t height, const RGBa& background, bool antialias) :
   _antialias(antialias),
@@ -70,12 +72,15 @@ canvas::canvas() :
   _shapes(),
   _saved_plane() {}
 
-//----------------------------------DESTRUCTORS
 canvas::~canvas() {
 	remove_all();
 }
 
-//-----------------------------------GETTERS
+vector<interval_info> 
+canvas::what_should_paint() {
+	return what_to_paint().all_infos();
+}
+
 
 void 
 canvas::set_antialias(const bool what) {
@@ -159,7 +164,6 @@ canvas::get_plane()  {
 	bool force;
 	if (!_force_paint) {
 		
-		//neni to poprve, tj. ma smysl resit, co prekreslovat
 		should_paint = what_to_paint(true);
 		not_to_paint = should_paint.negative(1, 0, _width);
 		force = false;
@@ -167,19 +171,21 @@ canvas::get_plane()  {
 		
 		force = true;
 	}
-	
+	//^^^^^ tohle vsechno je jenom reseni toho, co mam kreslit, jestli mam kreslit apod.
 	
 	
 	for (list<shape>::iterator i = _shapes.begin(); i != _shapes.end(); ++i) {
 		
 		plane<RGBa> pixels = (*i).get_pixels(_height, _width, _antialias, not_to_paint, _background, force);
 		all_plane.add(pixels);
+			
+			//prida do not_to_paint ty, ktere uz jsou 100% alfa zamalovane
 		not_to_paint.add(pixels.flatten_plane<bool>(1, full));
 
 	}
 		//tohle je mozna antiintuitivni, ale kreslim zeshora dolu, tj. pozadi prictu jako posledni
 	
-	//all_plane.add(plane<RGBa>(0, _height, 0, _width, _background));
+	all_plane.add(plane<RGBa>(0, _height, 0, _width, _background));
 	
 	if (!_force_paint) {
 		
@@ -195,8 +201,29 @@ canvas::get_plane()  {
 }
 
 
+void canvas::push_front(const shape_style& style, const shape_type& type, size_t pos) {
+	size_t pos_c=std::min(pos, _shapes.size());
+	
+	list<shape>::iterator it = _shapes.begin();
+	for (size_t i = 0; i < pos_c; ++i) {
+		++it;
+	}
+	_shapes.insert(it, shape(style, type));
+}
 
-//----------------------------------SETTERS ("vector-like")
+void canvas::push_back(const shape_style& style, const shape_type& type, size_t pos) {
+	
+	size_t pos_c=std::min(pos, _shapes.size());
+	
+	
+	list<shape>::iterator it = _shapes.end();
+	for (size_t i = 0; i < pos_c; ++i) {
+		--it;
+	}
+	
+	_shapes.insert(it, shape(style, type));
+}
+
 void canvas::push_front(const shape g) {
 	
 	_shapes.push_front(g);

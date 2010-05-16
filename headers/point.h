@@ -52,9 +52,6 @@ namespace libcan {
 		bool operator!=(const point& other) const;
 			//negace vyse uvedeneho
 		
-		//bool smaller_deviation(const point& other) const;
-			//takova zlastni fce, porovnavajici, jak daleko jsou odpuvodniho "gridu" s celyma cislama
-			//je to k necemu jako trideni bodu
 		
 		point distance_from(const point& other) const;
 			//vzdalenost od dalsiho bodu

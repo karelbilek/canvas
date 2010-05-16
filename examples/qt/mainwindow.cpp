@@ -118,8 +118,8 @@ void MainWindow::repaint_wanted() {
 
 
             QRegion region;
-            std::vector<libcan_info> infos = c.what_to_paint().all_infos();
-            for (std::vector<libcan_info>::iterator it = infos.begin(); it < infos.end(); ++it) {
+            std::vector<interval_info> infos = c.what_should_paint();
+            for (std::vector<interval_info>::iterator it = infos.begin(); it < infos.end(); ++it) {
 
                 QRegion newregion(it->min_x, it->y, (it->max_x +1 - it->min_x), 1);
                 region = region.united(newregion);

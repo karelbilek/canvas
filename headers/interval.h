@@ -85,6 +85,8 @@ namespace libcan {
 		bool has_right() const;
 		bool is_empty() const;
 		
+			//obsahuje interval od from do to?
+			//ne ale pouze "ja", ale i left/right
 		bool includes(const long from, const long to) const;
 		
 		
@@ -115,12 +117,21 @@ namespace libcan {
 		contents get_all() const;
 			//vrati obsahy vsech svych deti, *vcetne* sebe
 			
+			//vse, co je urceno pomoci where, zmeni podle intervalu what
 		void selective_set(const interval<T>& what, const interval<bool>& where);
-		
+			
+			//vezme sam sebe a do res da pouze to, co je prunik s how
 		void reduce(const interval<bool>& how, interval<T>& res) const;
+		
+			//vezme sam sebe, vrati to, co zacina na how_start akonci na how_end
+			//ale VCETNE potomku
 		interval<T>* reduce_one(long how_start, long how_end) const;
+		
+			//smaze ze sebe a svych potomku vsechny WHAT
+			//v nejlepsim pripade vrati sam sebe, ale mozna ze ne
 		interval<T>* remove_all(const T& what);
 		
+			
 		void set_more(const long start, const long end, const T& what);
 		void set_one(const long where, const T& what);
 			//jenom zavola add_more/one s add=0
@@ -128,32 +139,37 @@ namespace libcan {
 		
 		void add_more(const long start, const long end, const T& what, int add=1);
 			//prida novy interval - pokud se s nicim nekryje. Pokud ano, vse se upravi.
+			//add = co se udela, kdyz se potkaji
 		
 		void add_one(const long where, const T& what, int add=1);
 			//Prida jeden "bod" - napr. mam interval 4-8, pridam 3, interval se zmeni na 3-8.
-			//Tady je videt to mysleni "po pixelech" - ano, je to diskretni :)
 		
 		void add_another(const interval<T>& other, int add=1);
-		
+			//pridam jiny interval
 		
 		interval<T>* add_far_right(interval<T>* other);
+			//prida dalsi, o kterem vim, ze nejlevejsi je vic pravo nez muj nejpravejsi
 		
 		interval<T>* half(std::vector<long>& add_where, std::vector<T>& add_what) const;
-		
+			//zdrcne na pulku
 		
 		interval<T>* quarter(interval<T> other, const T& background, const long& max_x) const;
-		
+			//vezme jiny, zdrcne s nim, pak na pulku
 		
 		interval<T>& operator=(const interval<T>& other);
 			//vrati kopii
 		
 		interval<T>* negative(const T& what, const long min_x, const long max_x);
-		
+			//vrati vse, co neni v tomto intervalu, od min_x do max_x, vyplneno what-em
 			
 		template <class U>
 		interval<U>* flatten_interval(const U& what, const T& min) const;
+			//vrati interval<U> takovy, ze vse, co je tady >= min, bude what, jinak nic
 		
 		bool is_all_same(const T& what) const;
+			//rovnitko srovnava, jestli jsou stejni i se strukturou
+			//tohle srovna jestli jsou stejni obsahem
+			//(tj == => is_all_same, ne naopak)
 	};
 	
 	template <class T> 

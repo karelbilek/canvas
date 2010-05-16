@@ -20,25 +20,23 @@
 \begin{document}
     \title{Dokumentace knihovny Canvas}
     \author{Karel Bílek}
-    \date{10. května 2010}
     \maketitle
-    
-    SMAZAT MATRIX
+
 \section{Úvod}
 Knihovna Canvas je knihovna, určená pro kreslení jednoduchých geometrických objektů na obrazovku, jejich zobrazování a manipulaci. 
 
 Implementováním podtříd pro některé třídy je pak možné jednoduše vytvářet nové geometrické objekty.
 
 \section{Stručný popis}
-Při kreslení canvasu postupuje knihovna takto:
+Při kreslení postupuje objekt \texttt{canvas} takto:
 
 \begin{itemize}
-    \item Podívá se na seznam \uv{svých} geometrických objektů (třída \texttt{shape}), jestli v některém z nich bylo od posledního kreslení změna - pokud ne, vrátí totéž, co minule, bez kreslení. Pokud kreslí poprvé, musí nakreslit vše.
+    \item Podívá se na seznam \uv{svých} geometrických objektů (třída \texttt{shape}), jestli v některém z nich byla od posledního kreslení změna - pokud ne, vrátí totéž, co minule, bez kreslení. Pokud kreslí poprvé, musí nakreslit vše.
     \item Poté zjistí, na jakém prostoru se změny staly (pokud kreslím poprvé, tento prostor = celý rozměr canvasu).
     \item Poté na \textbf{každý} \texttt{shape} zavolá funkci \texttt{get\_pixels} (s tím, že řekne, na jakém úseku se kreslí). Stane se tam následující:
     \begin{itemize}
         \item Pokud byl objekt nakreslen a od té doby nezměněn, vrátí se jeho nakreslení
-        \item Jinak nejdřív \texttt{shape} vezme svoje okraje (třída \texttt{curve}) a podle toho, jestli \texttt{curve} umí, nebo neumí vrátit sama sebe s určitou tloušťkou geometricky, se buď vrátí geometricky a vyplní, nebo se nakreslí bod po bodu
+        \item Jinak nejdřív \texttt{shape} vezme svoje okraje (třída \texttt{curve}) a podle toho, jestli daná \texttt{curve} umí, nebo neumí vrátit sama sebe s určitou tloušťkou geometricky, se buď vrátí geometricky a vyplní, nebo se nakreslí bod po bodu
         \item A nakonec se vyplní samotný obsah - tak, že krajní \texttt{curves} vrátí svojí reprezentaci jako pole začátků a konců, poté se provede algoritmus, lépe popsaný v \cite{Pelikan}.
     \end{itemize}
 \end{itemize}
@@ -59,9 +57,9 @@ Zbytek programu jsou podtřídy \texttt{shape\_type} a \texttt{curve}.
 Podtřída třídy \texttt{shape\_type} reprezentuje typ tvaru. Některé v knihovně jsou např. \texttt{elipse}, \texttt{segment} (úsečka) apod. Podtřída \texttt{shape\_type} musí mít definováno:
 \begin{itemize}
     \item konstruktor, co vytvoří \texttt{curves}
-    \item proceduru, kterou daný \uv{naklonuje} sám sebe
+    \item proceduru, kterou daný \texttt{shape\_type} \uv{naklonuje} sám sebe
 \end{itemize}
-a dále nepovinně procedury na seznam všech možných properties a na změnu a hodnotu nějaké property.\footnote{Seznam všech properties by, logicky vzato, měla být funkce \emph{třídy} a ne instance, ale C++ statické virtuální funkce neumí.}
+a dále nepovinně procedury na seznam všech properties a na změnu a hodnotu nějaké property.\footnote{Seznam všech properties by, logicky vzato, měla být funkce \emph{třídy} a ne instance, ale C++ statické virtuální funkce neumí.}
 
 Podtřída třídy \texttt{curve} má mít:
 \begin{itemize}
@@ -78,11 +76,187 @@ V předchozí verzi uměla knihovna i antialias - nepodařilo se mi ho v konečn
 Jak implementovat knihovnu ukazuje malý program, nazvaný prostě \texttt{qt}, který také ukazuje téměř všechny funkce knihovny.
 
 
+\subsection{canvas}
+Hlavním objektem je \texttt{canvas}, tj. objekt, na který jsou ukládány geometrické objekty a který se umí nakreslit. 
+
+\texttt{canvas} musí být vytvořen konstruktorem \texttt{canvas(const size\_t width, const size\_t height, const RGBa\& background, bool antialias)}, kde \texttt{width} je (dále už neměnitelná) šířka, \texttt{height} je (dále už neměnitelná) výška, \texttt{background} je dále už neměnitelné pozadí, \texttt{antialias} je zapnutí experimentálního antialiasingu.
+
+\texttt{background} a \texttt{antialias} nemusí být zadány, \texttt{background} je defaultně \texttt{RGBa(0,0,0,0)}, tedy absolutní průhledná, a \texttt{antialias} je defaultně \texttt{false}.
+
+\subsection{shape}
+\texttt{shape\_style} je styl objektu - přesně myšleno je to objekt, který uchovává tloušťku čáry, barvu čáry a barvu výplně. Vytvoří se konstruktorem \texttt{shape\_style(long line\_size=1, const RGBa\& line\_color=RGBa(0,0,0), const RGBa\& fill\_color=RGBa(0,0,0))}.
+
+\texttt{shape\_type} je, jak je výše uvedeno, typ tvaru, tj. objekt, který reprezentuje tvar bez vlastností, jako jsou barvy. \texttt{shape\_type} je třída, určená k vytváření podtříd, ale \emph{není} to čistě abstraktní třída. Pokud je podtřída \texttt{shape\_type} přiřazena objektu \texttt{shape\_type}, \emph{funguje} pro kreslení, ale \emph{nepředají} se properties.
+
+\texttt{shape} reprezentuje celý tvar, vytváří se konstruktorem \texttt{shape(const shape\_style\& style, const shape\_type\& type)}.
+
+\subsection{přidávání}
+
+Nový \texttt{shape} lze přidat do canvasu pomocí některé z následujících funkcí:
+
+\begin{itemize}
+    \item \texttt{void push\_front(shape g)}
+    \item \texttt{void push\_back(shape g)}
+    
+    \item \texttt{void push\_front(shape g, size\_t pos)}
+    \item \texttt{void push\_back(shape g, size\_t pos)}
+    
+    \item \texttt{void push\_front(shape\_style\& style, shape\_type\& type)}
+    \item \texttt{void push\_back(shape\_style\& style, shape\_type\& type)}
+    
+    \item \texttt{void push\_front(shape\_style\& style, shape\_type\& type, size\_t pos)}
+    \item \texttt{void push\_back(shape\_style\& style, shape\_type\& type, size\_t pos)}
+    
+\end{itemize}
+
+\texttt{front} jsou myšleny objekty \uv{blíže}, \texttt{back} objekty \uv{dále}.
+
+Jelikož je \texttt{shape} \uv{tvořen} z \texttt{shape\_type} a \texttt{shape\_style}, je jedno, jestli se použije \texttt{shape} nebo \texttt{shape\_style, shape\_type}. Pozor ale, že požití pouze \texttt{shape\_type} místo podtřídy může odstranit některé vlastnosti (properties).
+
+
+Maže se obdobně, procedurami \texttt{void remove\_all()}, \texttt{void remove(const size\_t pos)}.
+
+\subsection{kreslení}
+\texttt{bool canvas.should\_paint()} vrací informaci o tom, jestli je nějaká změna, kvůli které by se měl canvas překreslit.
+
+\texttt{bool canvas.is\_force\_paint()} vrací informaci o tom, jestli se má překreslovat \emph{celý} canvas (např. při změně barvy pozadí).
+
+\texttt{std::vector<interval\_info> canvas.what\_should\_paint()} vrací vektor intervalů, které se mají překreslit. Intervaly mají tvar třídy s veřejnými parametry y, min\_x a max\_x.
+
+Všechny výše uvedené změny jsou od posledního \texttt{plane<RGBa> canvas.get\_plane()}.
+
+\texttt{plane<RGBa> canvas.get\_plane()} vrátí \emph{celý} nakreslený \texttt{canvas}.
+
+\texttt{plane} je template, navržený k jednoduchému ukládání větších ploch pomocí binárního stromu - ze strany implementace je důležitá funkce \texttt{get(long x, long y)}, která vrací objekt (v tomto případě barvu) na pozici \texttt{x, y}. 
+
+\texttt{RGBa} je objekt pro ukládání barev. Z hlediska implementace jsou hlavně důležité funkce \texttt{unsigned char RGBa.get\_green()}, \texttt{unsigned char RGBa.get\_red()}, \texttt{unsigned char RGBa.get\_blue()}, \texttt{unsigned char RGBa.get\_alpha()}, které vrátí hodnoty jednotlivých složek barvy, stejně jako \texttt{void RGBa.get\_colors(unsigned char \&red, unsigned char \&green, unsigned char \&blue, unsigned char \&alpha)}.
+
+
+\section{O něco konkrétnější popis tříd}
+\subsection{canvas}
+
+\texttt{canvas} si \texttt{shapes} pamatuje v \texttt{std::list<shape> \_shapes}. Kromě jednoduchých přidávacích/odebíracích metod jsou hlavně zajímavé funkce \texttt{get\_plane} a \texttt{what\_to\_paint}. 
+
+\texttt{what\_to\_paint} na každý \texttt{shape} zavolá \texttt{get\_footprint}, což vrátí místo, které je potřeba překreslit vzhledem k tomuto \texttt{shape}. V případě, že byl nějaký \texttt{shape} vymazán, ještě přidá jeho \texttt{footprint} před vymazáním.
+
+\texttt{get\_plane} nejdřív zkontroluje, jestli má cenu kreslit, poté zjistí, kde má cenu kreslit, a poté každému \texttt{shape} řekne, aby se nakreslil. 
+
+\subsection{curve}
+\texttt{curve} je abstraktní třída pro čáru, co umí nakreslit sama sebe v podobě vektoru \texttt{moved\_arrays} - to jsou segmenty, kde nikde nejsou dva dlouhé úseky na jednom řádku. To znamená - na každém řádku segment buď není vůbec, nebo tam má 1 začátek a 1 konec.
+
+Ve složce \texttt{curves} jsou podtřídy \texttt{bezier}, \texttt{circle} a \texttt{line}, které představují beziérovu křivku (přiznávám, algoritmus pro ní jsem vzal, s autorovým svolením, z \cite{Bezier}), kruh (algoritmus z \cite{Pelikan2}) a úsečku.
+
+\subsection{geom\_line}
+\texttt{geom\_line} je třída pro pomocné výpočty s úsečkami, jako je rovnoběžná čára z jiného bodu, vypočítávání úhlů, průsečíků apod. 
+
+\subsection{interval, plane}
+\texttt{interval} je v podstatě binární strom, co má místo hodnoty levou a pravou hodnotu, plus obsahuje ještě něco dalšího, podle čeho se neřadí.
+
+Binární strom se nevyvažuje, ale např. se kontroluje, jestli vedle sebe nejsou dva intervaly se stejnou hodnotou.
+
+\texttt{interval} umí dost věcí, ale většina z nich není nijak extra algoritmicky složitá, většinou spíše pracná. Co např. umí:
+\begin{itemize}
+    \item vše, co je určeno podle dalšího \texttt{interval}u, změnit na hodnoty ve třetím \texttt{interval}u (hodí se pro překreslování)
+    \item zmenší sám sebe na půlku (kvůli experimentálnímu antialiasu)
+    \item \uv{negaci} - tj. další \texttt{interval}, kde je rozdíl od (matematického) intervalu, vyplněn danným obsahem
+    \item do \texttt{interval}u \emph{jiného} typu vrátí všechno, co je větší nebo rovno než daná hodnota
+\end{itemize}
+
+\texttt{plane} je v podstatě pouze pole \texttt{interval}ů, se zadanou maximální výškou.
+
+Důvod, proč používám template je proto, že jsem chtěl stejnou strukturu pro vyjádření \emph{obecné} plochy (např. pro vyjádření plochy toho, co musím překreslit) a pro vyjádření barevné plochy. 
+
+Pro vyjádření \emph{obecné} plochy používám \texttt{plane<bool>}, pro vyjádření plochy s barvami \texttt{RGBa}.
+
+\subsection{moved\_arrays}
+\texttt{moved\_arrays} je jednoduchá třída pro vyjádření segmentu čáry, co je na každém řádku maximálně jednou.
+
+\texttt{moved\_arrays} proto, protože ve skutečnosti jde o dvě pole se začátky a konci, co si pamatují svoje posunutí od osy $y$.
+
+\subsection{point}
+\texttt{point} je třída, co reprezentuje bod - co má ale celočíselné souřadnice.
+
+\subsection{RGBa}
+\texttt{RGBa} je třída, reprezentující barvu s alphou. Součet dvou barev je jejich součet, jako kdyby ležely za sebou (tj. záleží na pořadí a alfě). Násobek dvou barev je jejich průměr.
+
+\subsection{shape\_style}
+(definováno v \texttt{shape.h})
+\texttt{shape\_style} je jednoduchá třída pro reprezentaci stylu.
+
+\subsection{shape}
+\texttt{shape} má na starosti kreslení podle zadaného \texttt{shape\_style} a \texttt{shape\_type}.
+
+\texttt{shape} si drží něco, co jsem nazval stopa - \texttt{footprint} - aby se v případě změny překreslily pouze nutné části. Při vytvoření např. není stopa známá, jelikož nebyl tvar ještě nikdy nakreslen, proto beru stopu jako čtverec, začínající vlevo nahoře podle minim všech \texttt{curves} (\texttt{curve} umí dát minimum i bez svého nakreslení) a končící vpravo dole podle maxim všech \texttt{curves}.
+
+Stejně tak např. při rotaci. Naopak při posunutí se nic nemění, \uv{nová} a \uv{stará} stopa jsou stené.
+
+\subsection{shape\_type a potomci}
+\texttt{shape\_type} je samotný tvar. Má dvě důležité role: jednak vrací \texttt{curves}, co představují jeho čáry, jednak slouží k nastavování/čtení properties.
+
+K první roli stačí, když jsou v \texttt{\_curves} jeho čáry nastavené - proto je nastavuji už v konstruktoru. Pokud nepotřebuji properties, můžu takto vytvořené potomky \texttt{shape\_type} přetypovat na \texttt{shape\_type} a ničemu to nevadí.
+
+Pro přečtení, jaké properties daný \texttt{shape\_type} má, se zavolá \texttt{get\_specific\_properties()}. Pro jednoduchost jsem napsal variadické makro \texttt{\_\_shape\_type\_properties}, které funkci \texttt{get\_specific\_properties()} samo vygeneruje (pokud mají všechny instance třídy stejné properties).
+
+Čtení properties je jednoduché - jejich změna je ale možná trochu netradiční. Změna properties nezmění konkrétní \texttt{shape\_type}, ale vytvoří nový \texttt{shape\_type} s novými vlastnostmi.
+
+\section{Podrobněji geometrické podtřídy}
+\subsection{shape\_type}
+Úplně podrobně, jaké musí mít potomek \texttt{shape\_type} definovány funkce?
+\begin{itemize}
+    \item konstruktor, který zavolá konstruktor \texttt{shape\_type(const bool filled, const bool joined\_ends)} - \texttt{filled} = je tvar vyplněný?; \texttt{joined\_ends} = má tvar spojené konce?
+
+V konstruktoru by také mělo být něco ve stylu \texttt{\_curves.push\_back(new bezier(a,b,c,d))} - tj. naplnění \texttt{\_curves} křivkami.
+
+    \item \texttt{virtual shape\_type* clone() const} - funkce, co vrátí ukazatel na kopii
+\end{itemize}
+
+Jaké potomek \emph{může} mít definovány funkce?
+
+\begin{itemize}
+    \item \texttt{virtual std::vector<std::string> get\_specific\_properties()} - funkce, co vrátí vektor všech specifických vlastností
+    \item \texttt{virtual shape\_type* new\_with\_property(const std::string\& property, std::stringstream\& what)} - vrátí kopii sama sebe, ale s novou property \texttt{property}, kterou načte ze \texttt{stringstream\& what}
+    \item \texttt{virtual void get\_property(const std::string\& property, std::stringstream\& where) const} - vezme svojí property \texttt{property} a zapíše jí do \texttt{where}
+\end{itemize}
+
+\subsection{curve}
+Jaké musí mít potomek \texttt{curve} definovány funkce?
+\begin{itemize}
+    \item \texttt{virtual std::list<moved\_arrays> get\_arrays()} - funkce, co vrací \texttt{moved\_arrays} k dané \texttt{curve}
+    \item \texttt{virtual shape\_type get\_thick\_line(const double thickness, const curve* const previous, const curve* const next) const} - funkce, co vrací \texttt{shape\_type} jako čáru, tlustou \texttt{thickness} pixelů, kde \texttt{previous} a \texttt{next} jsou vlastní čáry. Pokud funkce \texttt{have\_thick\_line()} vrací \texttt{false}, na tom, co vrací tahle funkce, nezáleží.
+    \item 4 funkce, co vrací minima/maxima bez kreslení:
+    \begin{itemize}
+        \item \texttt{virtual long get\_min\_y() const}
+        \item \texttt{virtual long get\_min\_x() const}
+        \item \texttt{virtual long get\_max\_y() const}
+        \item \texttt{virtual long get\_max\_x() const}
+    \end{itemize}
+    \item \texttt{virtual curve* clone() const} - vrací ukazatel na kopii sama sebe
+    \item \texttt{virtual bezier* clone\_double() const} - vrací ukazatel na 2x větší kopii sama sebe
+    \item \texttt{virtual bool have\_thick\_line() const} - umí nakreslit tlustou čáru jako \texttt{shape\_type}?
+    \item 3 funkce na pohyb, které všechny změní samotnou \texttt{curve}:
+    \begin{itemize}
+        \item \texttt{virtual void rotate(const point\& center, const double angle)}
+		\item \texttt{virtual void resize(const point\& center, const double quoc)}
+		\item \texttt{virtual void move(const point\& where)}
+    \end{itemize}
+\end{itemize}
+
+
+\section{Instalace}
+Knihovna se určitě zkompiluje na všech UNIX-like systémech, přiložen je \texttt{makefile}, který by měl knihovnu zkompilovat do souboru \texttt{libcan.a}. Tuto knihovnu je možné \uv{normálně} přilinkovat.
+
+Knihovna by se \emph{měla} zkompilovat na Windows - není tam ale otestovaná, plus vůbec netuším, jak systém knihoven na MS Windows funguje.
+
+Je přiložen už zmiňovaný program \texttt{qt}, ten by se měl zkompilovat tradičním \texttt{qmake} a \texttt{make}. Opět nevím, jak bude běžet na jiných, než UNIX-like systémech, mám pocit, že tam se knihovna vůbec nepřilinkuje.
 
 \begin{thebibliography}{9}
 
    \bibitem{Pelikan}
      \url{http://cgg.mff.cuni.cz/~pepca/lectures/npgr003.html}
+     \bibitem{Bezier}
+       http://www.niksula.cs.hut.fi/~hkankaan/Homepages/bezierfast.html
+       \bibitem{Pelikan2}
+       \url{http://cgg.mff.cuni.cz/~pepca/lectures/npgr003.html}
      
  \end{thebibliography}
 

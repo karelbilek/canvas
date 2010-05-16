@@ -15,7 +15,7 @@ namespace libcan{
 		point _b;
 		point _c;
 		point _d;
-	public:
+	public: 
 		
 		bezier(point a, point b, point c, point d);
 		

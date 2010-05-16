@@ -7,7 +7,7 @@
 
 namespace libcan {
 	
-	struct libcan_info {
+	struct interval_info {
 		long min_x;
 		long max_x;
 		long y;
@@ -80,7 +80,7 @@ namespace libcan {
 		
 			//klasicke gettery
 			
-		std::vector<libcan_info> all_infos() const;
+		std::vector<interval_info> all_infos() const;
 		
 		long first_non_zero() const;
 		long last_non_zero() const;
@@ -223,16 +223,16 @@ namespace libcan {
 	
 	
 	template <class T> 
-	std::vector<libcan_info>
+	std::vector<interval_info>
 	plane<T>::all_infos() const {
 		
-		std::vector<libcan_info> res;
+		std::vector<interval_info> res;
 		
 		for (long i = 0; i < __real_height; ++i) {
 			int_cont ob = _intervals[i].get_all();
 			typename int_cont::const_iterator iter;
 			for (iter=ob.begin() ; iter != ob.end(); ++iter ) {
-				libcan_info newinfo;
+				interval_info newinfo;
 				newinfo.y = i + _start_height;
 				newinfo.min_x = iter->_start;
 				newinfo.max_x = iter->_end;

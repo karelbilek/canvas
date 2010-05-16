@@ -184,6 +184,11 @@ shape::destroying_change() {
 	_changed = true;
 }
 
+void
+shape::undestroying_change() {
+	_changed = true;
+}
+
 void 
 shape::rotate(double angle){
 	destroying_change();
@@ -198,9 +203,9 @@ shape::resize(double quoc){
 
 void 
 shape::move(const point& where) {
+	
 	_old_footprint = _new_footprint;
 	_changed = true;
-	_painted = true;	
 	
 	_new_footprint = _old_footprint.move_relative(where.x, where.y);	
 	_pixels = _pixels.move_relative(where.x, where.y);
@@ -280,28 +285,22 @@ shape::get_pixels(const long small_height, const long small_width, const bool& a
 		type_copy = type_copy->clone_double(); //pozor, tady alokuju novy, MUSI dole byt to delete!
 	}
 	
-
-	
-	//-----------------------------------------------hledani minima z curves
-	
-	long min_x, max_x, min_y, max_y;
-	
-	get_extremes(min_x,max_x,min_y,max_y, antialias, height, width);
-	
-	
-	//------------------------------------------------co kdyz vubec nemusim kreslit?
-	if (where_not_paint.includes_square(min_x, min_y, max_x, max_y)) {
 		
+	long min_x, max_x, min_y, max_y;
+	get_extremes(min_x,max_x,min_y,max_y, antialias, height, width);
+				//extremy z curves
+	
+	if (where_not_paint.includes_square(min_x, min_y, max_x, max_y)) {
 		return plane<RGBa>();	
-	}
+	}			//mozna nemusim kreslit
 	
 
 	//------------------------------------------------jdu kreslit!!!!!
 	
 	plane<RGBa> result(min_y, max_y);
 	
-	//------------------------------------------------jdu na okraje, ale jenom, kdyz jsou
 	if (_style._line_size != 0) {
+		//pokud mas okraje, nakresli je
 		
 		std::list<curve*>::const_iterator i = type_copy->_curves.begin();
 
@@ -332,7 +331,7 @@ shape::get_pixels(const long small_height, const long small_width, const bool& a
 					--j;
 					previous = *j;
 				}
-							//i nasledujici, aby se sama nakreslila
+							//...i nasledujici, aby se sama nakreslila
 				if (i==one_before_end) {
 					if (type_copy->_joined_ends) {
 						next = *begin;

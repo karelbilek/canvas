@@ -12,21 +12,6 @@
 
 
 namespace libcan {
-	/*
-	* Se shape to nakonec vypada takhle:
-	*
-	* instance shape_type je napriklad "polygon s temito body: ...."
-	* tj. nic nevi o tom, co ma za barvy, a umi se jenom zkopirovat nebo 2x zvetsit
-	* a hlavně umí vrátit svoje curves a jejich segmenty
-	* (tj. celý svůj "dokonalý" popis a popis čar)
-	* ty čáry pak umí říct shape_type, co popisuje jejich tloušťku (nebo neumí, ale to tolik neva)
-	* 
-	* shape_style je prostě pouze styl (tj. tloušťka čáry, barva čáry, plnosti a tak)
-	*
-	* shape tohle spojuje, má atributy _style a _type
-	* a podle typu a barvy vrací plochu s RGBa
-	*/
-	
 
 	
 	
@@ -45,28 +30,39 @@ namespace libcan {
 	private:
 		
 		std::string _name;
+			
+			
 			//aby se pokazde, kdyz mam tloustku velikosti N, nemusel znova generovat krouzek
 		static std::map<long, plane<bool> > brushes;
+		
 		
 		shape_style _style;
 		shape_type* _type;
 		
 		plane<RGBa> _pixels;
-		bool _changed;
+		
+		
+		bool _changed;			//booleany pro ruzne stavy
 		bool _painted;
 		bool _footprint_given;
+		
+		
 		plane<bool> _old_footprint;
 		plane<bool> _new_footprint;
-		
+			//pokud neco nakreslim, dam footprint do _new_footprint (i kdyz neni zmena)
+			//kdyz pak udelam zmenu, chci vedet, co prekreslit.
+			//je to ta stara stopa + (odhad) nove stopy.
+			//pokud novou stopu vim, dam ji, pokud ji NEVIM, odhadnu ji
 
 		static plane<bool> paint(const shape_type* const type, long min_y, long max_y) ;
 		
 		static bool compare_by_row(const moved_arrays& a, const moved_arrays& b);
 		
-		void destroying_change();
 		void get_extremes(long& min_x, long& max_x, long& max_x, long& max_y, const bool& double_it, const long height, const long width) const;
+		void destroying_change();
 		
 	public:
+		void undestroying_change();
 		
 		shape(const shape& another);
 		shape& operator=(const shape& another);
