@@ -4,6 +4,7 @@
 #include <QLayout>
 #include <QString>
 #include <QVector>
+#include <QPainter>
 
 
 

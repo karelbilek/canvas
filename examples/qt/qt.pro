@@ -7,8 +7,6 @@ INCLUDEPATH += ../../headers/
 LIBS += -L../../ \
     -lcan
 SOURCES += main.cpp \
-    mainwindow.cpp \
-    qimage_paint.cpp
-HEADERS += mainwindow.h \
-    qimage_paint.h
+    mainwindow.cpp
+HEADERS += mainwindow.h
 FORMS += mainwindow.ui

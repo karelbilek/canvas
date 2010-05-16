@@ -1,7 +1,6 @@
 #ifndef CANVAS_INC
 #define CANVAS_INC
 
-#include "matrix.h"
 #include "shape.h"
 
 
@@ -53,10 +52,6 @@ namespace libcan {
 		
 		~canvas();
 						//smaz canvas
-		
-		matrix<unsigned char> get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos); 
-						//vrat matrix s temahle pozicema
-						//NENI const, viz niz
 						
 		plane<RGBa> get_plane();
 						//vrati plane nakresleny

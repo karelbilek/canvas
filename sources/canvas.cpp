@@ -77,29 +77,6 @@ canvas::~canvas() {
 
 //-----------------------------------GETTERS
 
-
-matrix<unsigned char> canvas::get_matrix(const size_t red_pos, const size_t green_pos, const size_t blue_pos, const size_t alpha_pos) {
-
-	
-	plane<RGBa> all_plane = get_plane();
-	matrix<unsigned char> all_matrix(_width,_height,4);
-	
-	for (long y = 0; y < _height; ++y) {
-		
-		colors_row row = all_plane.get_row(y);
-		for (colors_row::iterator i = row.begin(); i != row.end(); ++i) {
-			
-			unsigned char color[4];
-			i->_cont.get_colors_pointer (color+red_pos, color+green_pos, color+blue_pos, color+alpha_pos);
-			
-			all_matrix.set_more(std::max(i->_start, (long)0), i->_end, y, color);
-			
-		}
-	}
-	
-	return all_matrix;
-}
-
 void 
 canvas::set_antialias(const bool what) {
 	if (what!=_antialias) {

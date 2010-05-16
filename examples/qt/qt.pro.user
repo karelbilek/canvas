@@ -77,19 +77,19 @@
   <valuemap type="QVariantMap">
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString">Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList">
-    <value type="QString">Apple_PubSub_Socket_Render=/tmp/launch-TFyV5I/Render</value>
+    <value type="QString">Apple_PubSub_Socket_Render=/tmp/launch-dgMfGA/Render</value>
     <value type="QString">COMMAND_MODE=legacy</value>
-    <value type="QString">DISPLAY=/tmp/launch-KOSpXX/org.x:0</value>
+    <value type="QString">DISPLAY=/tmp/launch-qq1vqV/org.x:0</value>
     <value type="QString">HOME=/Users/karelbilek</value>
     <value type="QString">LC_CTYPE=UTF-8</value>
     <value type="QString">LOGNAME=karelbilek</value>
-    <value type="QString">OLDPWD=/Users/karelbilek</value>
+    <value type="QString">OLDPWD=/Users/karelbilek/Desktop/all/canvas/canvas/examples</value>
     <value type="QString">PATH=/Developer/Tools/Qt:/opt/local/bin:/opt/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/usr/X11/bin</value>
-    <value type="QString">PWD=/Users/karelbilek/Desktop/canvas/canvas/examples/qt</value>
+    <value type="QString">PWD=/Users/karelbilek/Desktop/all/canvas/canvas/examples/qt</value>
     <value type="QString">QTDIR=/usr/local/Qt4.6</value>
     <value type="QString">SHELL=/bin/bash</value>
     <value type="QString">SHLVL=1</value>
-    <value type="QString">SSH_AUTH_SOCK=/tmp/launch-bBAvKv/Listeners</value>
+    <value type="QString">SSH_AUTH_SOCK=/tmp/launch-bGLoRi/Listeners</value>
     <value type="QString">TERM=xterm-color</value>
     <value type="QString">TERM_PROGRAM=Apple_Terminal</value>
     <value type="QString">TERM_PROGRAM_VERSION=273</value>
@@ -99,14 +99,14 @@
     <value type="QString">__CF_USER_TEXT_ENCODING=0x1F5:29:56</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList">
-    <value type="QString">/Users/karelbilek/Desktop/canvas/canvas/examples/qt/qt.pro</value>
+    <value type="QString">/Users/karelbilek/Desktop/all/canvas/canvas/examples/qt/qt.pro</value>
     <value type="QString">-spec</value>
     <value type="QString">macx-g++</value>
     <value type="QString">-r</value>
    </valuelist>
    <value key="abstractProcess.command" type="QString">/usr/bin/qmake</value>
    <value key="abstractProcess.enabled" type="bool">false</value>
-   <value key="abstractProcess.workingDirectory" type="QString">/Users/karelbilek/Desktop/canvas/canvas/examples/qt</value>
+   <value key="abstractProcess.workingDirectory" type="QString">/Users/karelbilek/Desktop/all/canvas/canvas/examples/qt</value>
   </valuemap>
  </data>
  <data>
@@ -114,19 +114,19 @@
   <valuemap type="QVariantMap">
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString">Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList">
-    <value type="QString">Apple_PubSub_Socket_Render=/tmp/launch-TFyV5I/Render</value>
+    <value type="QString">Apple_PubSub_Socket_Render=/tmp/launch-dgMfGA/Render</value>
     <value type="QString">COMMAND_MODE=legacy</value>
-    <value type="QString">DISPLAY=/tmp/launch-KOSpXX/org.x:0</value>
+    <value type="QString">DISPLAY=/tmp/launch-qq1vqV/org.x:0</value>
     <value type="QString">HOME=/Users/karelbilek</value>
     <value type="QString">LC_CTYPE=UTF-8</value>
     <value type="QString">LOGNAME=karelbilek</value>
-    <value type="QString">OLDPWD=/Users/karelbilek</value>
+    <value type="QString">OLDPWD=/Users/karelbilek/Desktop/all/canvas/canvas/examples</value>
     <value type="QString">PATH=/Developer/Tools/Qt:/opt/local/bin:/opt/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/usr/X11/bin</value>
-    <value type="QString">PWD=/Users/karelbilek/Desktop/canvas/canvas/examples/qt</value>
+    <value type="QString">PWD=/Users/karelbilek/Desktop/all/canvas/canvas/examples/qt</value>
     <value type="QString">QTDIR=/usr/local/Qt4.6</value>
     <value type="QString">SHELL=/bin/bash</value>
     <value type="QString">SHLVL=1</value>
-    <value type="QString">SSH_AUTH_SOCK=/tmp/launch-bBAvKv/Listeners</value>
+    <value type="QString">SSH_AUTH_SOCK=/tmp/launch-bGLoRi/Listeners</value>
     <value type="QString">TERM=xterm-color</value>
     <value type="QString">TERM_PROGRAM=Apple_Terminal</value>
     <value type="QString">TERM_PROGRAM_VERSION=273</value>
@@ -141,7 +141,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString">/usr/bin/make</value>
    <value key="abstractProcess.enabled" type="bool">true</value>
-   <value key="abstractProcess.workingDirectory" type="QString">/Users/karelbilek/Desktop/canvas/canvas/examples/qt</value>
+   <value key="abstractProcess.workingDirectory" type="QString">/Users/karelbilek/Desktop/all/canvas/canvas/examples/qt</value>
   </valuemap>
  </data>
  <data>
