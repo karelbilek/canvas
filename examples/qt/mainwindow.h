@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include "canvas.h"
-#include "qimage_paint.h"
 #include <QStack>
 #include <QSpinBox>
 
@@ -40,7 +39,7 @@ private:
     bool closing;
     bool clearing;
 
-    libcan::unsigned char carR, carG, carB, carA, fillR, fillG, fillB, fillA;
+    unsigned char carR, carG, carB, carA, fillR, fillG, fillB, fillA;
     unsigned char carSir;
 
 

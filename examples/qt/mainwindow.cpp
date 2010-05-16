@@ -5,10 +5,7 @@
 #include <QString>
 #include <QVector>
 
-#include "RGBa.h"
-#include "point.h"
-#include "all_shapes.h"
-#include "plane.h"
+
 
 using namespace libcan;//::canvas
 

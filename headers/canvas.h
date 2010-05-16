@@ -4,6 +4,12 @@
 #include "matrix.h"
 #include "shape.h"
 
+
+#include "RGBa.h"
+#include "point.h"
+#include "all_shapes.h"
+#include "plane.h"
+
 namespace libcan {
 	class canvas {
 			//canvas je "hlavni" trida

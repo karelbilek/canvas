@@ -722,7 +722,7 @@ namespace libcan {
 		} else {
 			if (start < _start) {
 				
-				long smaller = std::max (_start-1, end);
+				long smaller = std::min (_start-1, end);
 					//Chceme vlozit neco, co zacina driv
 					//Uvazuju ale jenom to, co "nekouka" pripadne prese mne - to pak poresim.
 					//Pokud je situace takhle:
