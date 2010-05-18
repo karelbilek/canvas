@@ -58,7 +58,7 @@ namespace libcan {
 		
 		static bool compare_by_row(const moved_arrays& a, const moved_arrays& b);
 		
-		void get_extremes(long& min_x, long& max_x, long& max_x, long& max_y, const bool& double_it, const long height, const long width) const;
+		void get_extremes(long& min_x, long& max_x, long& min_y, long& max_y, const bool& double_it, const long height, const long width) const;
 		void destroying_change();
 		
 	public:
